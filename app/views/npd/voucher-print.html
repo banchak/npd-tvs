@@ -1,0 +1,23 @@
+  <div ng-init="printForm = utils.$router.current.params.form || 'default'">
+    <div class="span3 pull-right no-print">
+      <div class="no-print" style="padding:4px;">
+        <button class="btn btn-primary" ng-click="utils.printPage()">Print</button>
+        <span style="padding-left:12px"></span>
+        <button class="btn" ng-click="editOpr.exit()">Cancel</button>
+      </div>
+    </div>
+    
+    <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
+      <li ng-class="printForm=='default' && 'active'">
+        <a href ng-click="printForm='default'">{{resource._type}}</a>
+        </li>
+      <li ng-class="printForm=='taken' && 'active'" ng-show="takenItems().length">
+        <a href ng-click="printForm='taken'">ค้างยืม</a>
+        </li>
+    </ul>
+    <div class="page-boundary">
+      <div class="print-page">
+        <div ng-include="'views/npd/voucher-print-'+ printForm +'.html'"></div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,31 @@
+
+  <div ng-controller="legacySearchResultCtrl">
+
+    <div style="margin:20px 10px;">
+      <form class="form-inline text-center" ng-submit="goSearch(search)">
+          <span ng-show="searchBusy"><img src="images/spinner.gif" /></span>
+          <input type="text" class="span8" ng-model="search" />
+          <button type="submit" class="btn" >search</button>
+      </form>
+    </div>
+
+    <div class="row-fluid" ng-show="utils.notEmpty(searchResult)">
+      <hr />
+      <ul ng-repeat="(name,rs) in searchResult">
+        <li>
+          <div>
+            <strong>
+              <a href ng-click="toggles[name] = !toggles[name]">{{ rs.title }}</a> 
+              ({{ rs.items.length }})
+            </strong>
+          </div>
+          <ul class="nav nav-list thumbnail" ng-hide="toggles[name]" style="overflow:auto; max-height:10em;">
+            <li ng-repeat="itm in rs.items | orderBy : '_name'">
+              <a href="{{urlPathItem(name,itm,true)}}">{{ itm._name }}</a>
+            </li>
+          </ul>
+        </li> 
+      </ul>
+    </div>
+
+  </div>

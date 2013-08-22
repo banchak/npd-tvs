@@ -1,0 +1,37 @@
+
+<div ng-controller="imageSyncCtrl">
+  <h2>Sync folder สินค้า</h2>
+
+  <div class="row-fluid" ng-show="folders.length">
+    <div class="span4">
+      <div class="container" >
+        <div class="row-fluid" ng-hide="syncBusy">
+          <label>เลือก base folder เพื่อ sync subfolder สินค้า </label>
+          <!-- div ng-repeat="fld in folders" ng-bind="fld.title"></div -->
+          <select class="input-xlarge"
+            ng-model  ="imageFolder" 
+            ng-options="fld.id as fld.title for fld in folders | orderBy : 'title'"
+          ></select>    
+        </div>
+        <div class="row-fluid">
+          <button class="btn btn-primary" ng-click="doFolderSync()" ng-hide="syncBusy">sync now</button>
+          <span  ng-show="syncBusy">
+            <img ng-src="images/spinner.gif" />
+          </span>
+          <span> {{imageFolder}} </span>
+        </div>
+      </div>
+    </div>
+
+    <div  class="span8">
+      <div ng-show="files.length">
+        sync เสร็จแล้ว <b>{{ files.length }}</b> รายการ
+        <hr />
+      </div>
+      <div style="max-height:10em; overflow:auto;">
+        <div ng-repeat="img in files">{{ $index + 1 }}. <span ng-bind="img.name"></span></div>
+      </div>
+    </div>
+  </div>
+
+</div>

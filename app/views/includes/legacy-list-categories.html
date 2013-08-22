@@ -1,0 +1,38 @@
+    
+      <ul ng-show="qvalues.length" class="nav nav-tabs nav-stacked">
+        <li>
+            <div class="pull-right"> 
+              <a href class="btn btn-mini" ng-click="utils.AND(goSearch(),goScope('&quot;' + qvalues.join(', ') + '&quot;'))">
+                <b>&Delta;</b>
+              </a>
+            </div>
+            <a href ng-click="goSearch()">
+              <b>&times;</b>
+              {{ qvalues.join(',') }} 
+            </a>
+        </li>
+      </ul>
+
+      <ul ng-show="categories.length" class="nav nav-pills nav-stacked">
+        <li>
+          <div ng-show="cat.dataList.length > 1" ng-repeat="cat in categories">
+            <ul class="nav nav-pills nav-stacked" ng-init="showCat={}">
+              <li class="active">
+                <a href ng-click="showCat[cat.label] = !showCat[cat.label]">
+                  <b>&equiv; {{ cat.label }}</b>
+                </a>
+              </li>
+              <li ng-show="showCat[cat.label]" ng-repeat="data in cat.dataList | orderBy:'name'">
+                <div class="pull-right"> 
+                  <button class="btn btn-mini" ng-click="goScope('&quot;' + data.name + '&quot;')">&Delta;</button>
+                </div>
+                <a href ng-click="goSearch(data.qry)">
+                    {{ data.name }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+
+    

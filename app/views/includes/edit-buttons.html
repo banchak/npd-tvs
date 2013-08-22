@@ -1,0 +1,19 @@
+  <div>
+    <span>
+      <button class="btn btn-primary" ng-click="editOpr.save()">Save</button>
+    </span>
+    <span ng-hide="true">
+      <button class="btn" ng-click="editOpr.save(utils.reload)">Save and new</button>
+    </span>
+    <span>
+      <button class="btn btn-info" ng-click="editOpr.save(editOpr.exit)">Save and exit</button>
+    </span>
+    <span ng-hide="!resource.$id() || hideEditButton.delete">
+      <button class="btn btn-warning" ng-click="editOpr.remove()">Delete</button>
+    </span>
+    <span style="padding-left:12px"></span>
+    <span>
+      <button class="btn" ng-click="editOpr.exit()">Cancel</button>
+    </span>
+  </div>
+  

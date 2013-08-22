@@ -1,0 +1,12 @@
+
+      <div class="row-fluid" style="margin:8px 0;" ng-show="db.orders && db.orders.length">
+        <div>
+             <label>
+              <a href class="btn btn-small" ng-class="(sort.dir==1) && 'btn-info'" ng-click="sort.dir = 1">&or;</a>
+              <a href class="btn btn-small" ng-class="(sort.dir!=1) && 'btn-info'" ng-click="sort.dir = -1">&and;</a>
+              เรียงตาม
+            </label>
+            <select class="span12" ng-options="ord.name as ord.label for ord in db.orders" ng-model="sort.name"></select>
+        </div>
+
+      </div>

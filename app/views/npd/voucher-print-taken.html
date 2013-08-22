@@ -1,0 +1,95 @@
+<div ng-repeat="__page in itemPages(10,takenItems())">
+  <div><hr class="no-print" ng-hide="__page==1" /></div>
+
+  <div class="paragraph">
+    <div class="pull-right" style="width:1.5in;">
+      <strong>{{ resource._name }}</strong>
+    </div>
+    <h3 class="text-center">
+      ค้างยืม
+    </h3>
+  </div>
+  <div class="paragraph">
+    <div class="pull-right" style="width:1.5in;">
+      {{ resource.info.issue_date | moment:'DD/MM/YYYY' }}
+    </div>
+    {{ resource.info.person.name }}
+  </div>
+  <div class="paragraph" ng-show="__page==1">
+   {{ resource.info.person.address }}
+  </div>
+  <div class="paragraph">
+  </div>
+  <div>
+  <table class="voucher">
+  <thead>
+    <tr>
+    <th>ที่</th><th>รูป</th><th>รายการ</th><th>น.น.</th><th>ราคา</th>
+    </tr>
+  </thead>
+  <tbody ng-init="__items = itemIndexes(__page,10,takenItems())">
+    <tr ng-repeat="item in __items">
+      <td class="center wid1">
+        {{ ((__page-1)*10) + $index+1 }}
+      </td>
+      <td class="center wid3">
+        <div class="thumbnail" ng-show="item.$temp.data.meta.images[0].thumbnailLink">
+          <img class="img-polariod" ng-src="{{ item.$temp.data.meta.images[0].thumbnailLink }}" />
+        </div>
+      </td>
+      <td>
+        <div>
+          <div class="pull-right">
+            <span class="label">
+              {{ utils.formatValue(item.$temp.data.taking.date) || '*ค้างยืม*'}}
+            </span>
+          </div>      
+          <strong>{{item.name}}</strong> 
+          <div style="word-break:break-all;">{{ item.$temp.data.info.detail }}</div>
+        </div>
+      </td>
+      <td class="center wid2">
+        <div style="word-break:break-all;">{{ item.$temp.data.info.weight }}</div>
+      </td>
+      <td class="right wid3">
+        {{ item.price | numeral}}
+      </td>
+    </tr>
+    <tr class="foot" ng-show="isLastPage(__page,10,takenItems())">
+      <td class="center" colspan="3">
+        {{ utils.sum(takenItems(),'price') | numeral:'bahttext'}}
+
+      </td>
+      <td class="center">
+        รวม
+      </td>
+      <td class="right">
+        {{ utils.sum(takenItems(),'price') | numeral }}
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+  </tfoot>
+  </table>
+  </div>
+  <div class="paragraph">
+    <div class="pull-right">
+      <small> {{__page }} / {{itemPages(10).length}}</small>
+    </div>
+    ลงชื่อ :
+  </div>
+  <div class="paragraph" ng-show="isLastPage(__page,10,takenItems())">
+      <div>
+        ยืมงวดนี้
+        {{ items().length }} รายการ
+        {{ utils.sum(items(),'price') | numeral }} บาท
+        /
+        <strong>
+        รวมยืมทั้งสิ้น
+        {{ items().length + takenItems().length }} รายการ
+        {{ utils.sum(items(),'price') + utils.sum(takenItems(),'price') | numeral }} บาท
+        </strong>
+      </div>
+  </div>
+  <div class="page-break"></div>
+</div>

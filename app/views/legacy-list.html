@@ -1,0 +1,91 @@
+<div class="container-fluid">
+
+
+  <div class="row-fluid" style="padding:10px 0;">
+
+    <div ng-hide="inspectMode()" ng-include="'views/includes/legacy-list-top.html'">
+    </div>
+
+    <div class="pull-right span5" ng-show="inspectMode()" ng-include="'views/npd/search-panel.html'">
+    </div>
+
+    <div>
+      <h2>
+        <a ng-href="#{{ basepath }}" ng-bind="db.title"></a>
+        <span style="padding:0 8px;" ng-show="promiseBusy">
+          <img src="images/spinner.gif" />
+        </span>
+      </h2>
+
+      <div ng-show="adminView">
+        <a ng-href="#{{ basepath }}/edit/new" class="btn btn-danger">เพิ่มใหม่ </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row-fluid" ng-hide="promiseBusy">
+
+    <div ng-hide="inspectMode()">
+      <div ng-class="(inspectMode() && 'no-span') || 'span2'">
+
+        <div ng-include="'views/includes/legacy-list-orders.html'" ></div>
+
+        <div ng-include="'views/includes/legacy-list-scopes.html'" ></div>
+
+        <div ng-include="'views/includes/legacy-list-categories.html'"></div>
+
+      </div>
+    </div>
+        
+    <div ng-class="(inspectMode() && 'span12') || 'span10'">
+
+        <div>
+          <ul  class="thumbnails">
+            <li 
+              ng-class="ifSingleShow('span12','span'+utils.gScope.thumb_span)" 
+              ng-repeat="data in dataList | filter : dataList.searchWithin"
+              >
+
+              <div class="thumbnail hover-opacity" ng-class="data.$temp.state && ('state-' + data.$temp.state)">
+
+                <div style="height:0; padding-left:20px">
+                  <div style="position:relative; z-index:100;">
+                    <span class="label" 
+                      ng-show="['sold','taken'].indexOf(data.$temp.state)>=0" 
+                      ng-class="{sold : 'label-important', taken : 'label-info'}[data.$temp.state]"
+                      >
+                      {{ data.$temp.state }}
+                    </span>
+
+                    <span ng-hide="ifSingleShow(true, !(showSortField && utils.lookup(data,showSortField)))">
+                      <span class="label">
+                      {{ formatValue(utils.lookup(data,showSortField)) }}
+                      </span>
+                    </span>
+                  </div>
+
+                </div>
+
+                <div class="container-fluid">
+                  <div 
+                    ng-class="{ 'pull-right span3' : ifSingleShow(false,utils.gScope.thumb_span==12) }" 
+                    ng-include="'views/includes/legacy-list-item-img.html'"
+                    >
+                  </div>
+              
+                  <div ng-include="'views/includes/legacy-list-item.html'"></div>
+                </div>
+
+              </div>
+            </li>
+          </ul>
+        </div>
+    </div>
+    
+  </div>
+</div>
+
+<div ng-include="'views/includes/legacy-list-image-viewer.html'"></div>
+<div ng-include="'views/includes/legacy-list-gdrive-viewer.html'"></div>
+

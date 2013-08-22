@@ -1,0 +1,43 @@
+  
+    <div class="editnav-top" >
+    
+      <div class="form-inline" ng-show="dataList && dataList.length>1">
+        <span style="padding:0 8px;" ng-show="promiseBusy">
+          <img src="images/spinner.gif" />
+        </span>
+
+          <span style="padding-right:8px;">
+            [ <a href=""
+              ng-class="{'label label-inverse' : utils.gScope.thumb_hide_desc}" 
+              ng-click="utils.gScope.thumb_hide_desc = !utils.gScope.thumb_hide_desc"> สรุปย่อ </a> ]
+          </span>
+          <span style="padding-right:8px;">
+            <select class="input-small"
+              ng-init   ="utils.gScope.thumb_span = utils.OR(utils.gScope.thumb_span,'12')"
+              ng-model  ="utils.gScope.thumb_span" 
+              ng-options="c.val as (c.dsp+' : แถว ') for c in [{val:'12',dsp:'1'},{val:'6',dsp:'2'},{val:'4',dsp:'3'},{val:'3',dsp:'4'}]"
+            ></select>
+          </span>
+          <input type="text" name="search-within" class="input-medium" ng-model="dataList.searchWithin" placeholder="ค้นภายในเนื้อหา" />
+      </div>
+
+      <div class="row-fluid text-right" style="padding:4px 0;" ng-show="!dataList || dataList.length!=1">
+        <span ng-hide="promiseBusy">
+          <span>
+            แสดง <strong>{{ dataList.length }}</strong>
+          </span>
+          <span ng-show="dataCount && dataCount != dataList.length">
+            จาก <strong>{{ dataCount }}</strong>
+          </span>
+          <span>รายการ</span>
+          <button class="btn btn-small" 
+            ng-show="!promiseBusy && dataCount && dataCount != dataList.length"
+            ng-click="readMore()"
+            >แสดงเพิ่ม</button>
+        </span>
+      </div>
+
+    </div>
+
+   
+

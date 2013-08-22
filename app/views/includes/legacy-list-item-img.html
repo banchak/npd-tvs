@@ -1,0 +1,13 @@
+
+
+        <div ng-repeat="img in data.meta.images | limitTo : 1">
+
+          <a href ng-click="viewImage(data)" >
+            <img class="img-polaroid" alt="album" title="{{ data._name }}"
+              ng-hide="ifSingleShow(false,utils.gScope.thumb_hide_desc)" 
+              ng-src="{{ img.thumbnailLink }}" 
+              />
+            <span ng-show="ifSingleShow(false,utils.gScope.thumb_hide_desc)">album</span>
+          </a>
+          
+        </div>

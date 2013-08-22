@@ -1,0 +1,62 @@
+
+<div modal="gdriveViewer.opened" close="gdriveViewer.close()" options="gdriveViewer.options">
+    <div class="modal-header">
+        <h3 ng-bind="gdriveViewer.title"></h3>
+    </div>
+
+    <div class="modal-body">
+        <div ng-show="gdriveViewer.data.$temp.shareCabinets"> 
+          <h4>Shared drive</h4>
+          <div class="alert alert-block">
+            <div class="row-fluid" style="padding:2px;" ng-repeat="cab in gdriveViewer.data.$temp.shareCabinets">
+              <div class="span4" ng-show="gdriveViewer.data.$temp.shareCabinets.length &gt; 1">{{cab.owner}}</div>
+              <div class="text-right">
+                <span ng-repeat="drw in cab.items">
+                  <a class="btn" ng-href="{{drw.alternateLink}}" target="_blank">
+                    <img ng-src="{{ cab.iconLink }}" />
+                    {{ ($index && ($index+1)) || 'open'}}
+                  </a>
+                </span>
+                <span ng-hide="cab.items && cab.items.length">
+                  <button class="btn btn-danger" ng-click="gdriveViewer.newDrawer(cab)">
+                    new
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div ng-show="gdriveViewer.data.$temp.cabinets"> 
+          <h4>User's drive</h4>
+          <div class="alert alert-block alert-info">
+
+            <div class="row-fluid" style="padding:2px;" ng-repeat="cab in gdriveViewer.data.$temp.cabinets">
+              <div class="span4">{{cab.owner}}</div>
+              <div class="text-right">
+                <span ng-repeat="drw in cab.items">
+                  <a class="btn" ng-href="{{drw.alternateLink}}" target="_blank">
+                    <img ng-src="{{ cab.iconLink }}" />
+                    {{ ($index && ($index+1)) || 'open'}}
+                  </a>
+                </span>
+                <span ng-hide="cab.items && cab.items.length">
+                  <button class="btn btn-danger" ng-click="gdriveViewer.newDrawer(cab)">
+                    new
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+      <span ng-hide="gdriveViewer.data.$temp.cabinets && gdriveViewer.data.$temp.shareCabinets">
+        <img src="images/spinner.gif" />
+      </span>
+      <button class="btn btn-warning cancel" ng-click="gdriveViewer.close()">Close</button>
+    </div>
+
+</div>
+<div class="modal-backdrop" ng-show="gdriveViewer.opened" ng-click="gdriveViewer.close()"></div>

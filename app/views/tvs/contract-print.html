@@ -1,0 +1,20 @@
+
+  <div ng-init="printForm = utils.$router.current.params.form || 'r1'">
+    <div class="span3 pull-right no-print">
+      <div class="no-print" style="padding:4px;">
+        <button class="btn btn-primary" ng-click="utils.printPage()">Print</button>
+        <span style="padding-left:12px"></span>
+        <button class="btn" ng-click="editOpr.exit()">Cancel</button>
+      </div>
+    </div>
+    
+    <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
+      <li ng-class="printForm=='r1' && 'active'"><a href ng-click="printForm='r1'">สัญญาเช่า</a></li>
+      <li ng-class="printForm=='s1' && 'active'"><a href ng-click="printForm='s1'">สัญญาบริการ</a></li>
+    </ul>
+    <div class="page-boundary">
+      <div class="print-page" ng-show="printForm">
+        <div ng-include="printForm && ('views/tvs/contract-print-'+printForm+'.html')"></div>
+      </div>
+    </div>
+  </div>

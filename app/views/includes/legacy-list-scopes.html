@@ -1,0 +1,35 @@
+
+      <div class="row-fluid">
+
+        <div class="well well-small">
+          <div ng-show="scopes.length">
+            <ul class="nav nav-pills nav-stacked">
+              <li ng-repeat="s in scopes" style="white-space : nowrap; overflow : hidden;">
+                <a href class="btn" ng-click="removeScope($index)" title="{{ s }}">
+                  <b>&times;</b> {{ s }}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <form ng-submit="goScope(dataScope)" style="margin-bottom:0;">
+            <!-- label ng-show="scopes.length">
+              <a class="btn btn-small" ng-click="goScope(dataScope, [])"><span class="text-error">new</span></a> 
+            </label -->
+            <input type="text" name="scope" class="span12" rows="2" 
+              ng-model="dataScope" 
+              placeholder="scope" 
+              typeahead="scope.name for scope in db.queries | filter:$viewValue"
+              />
+            <div class="row-fluid">
+              <div class="span6" ng-show="scopes.length || dataScope">
+                <a ng-show="scopes.length" class="btn btn-small" ng-click="goScope(dataScope, [])">
+                  <span class="text-error">reset</span>
+                </a> 
+              </div>
+              <div class="span6" ng-show="dataScope">
+                <input type="submit" class="btn btn-small btn-primary" ng-show="dataScope" value="scope &Delta;" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>

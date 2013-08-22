@@ -1,0 +1,189 @@
+  <div class="container-fluid" ng-init="typeaheadWait=150">
+
+        <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'">
+        </div>
+        
+        <div class="row-fluid">
+            <h2 ng-bind="db.title"></h2>
+        </div>
+
+        <div class="row-fluid">
+          <div class="span3">
+            <label>ประเภทบุคคล : </label>
+            <select class="input-medium"
+              ng-model  ="resource._type" 
+              ng-options="c.name as c.name for c in db.database.BUILT_IN.personTypes"
+            ></select>
+          </div>
+
+
+          <div class="span5">
+            <label>คำนำหน้า[:ลงท้าย] : </label>
+            <input type="text" class="input-large" 
+              ng-model="resource.info.prefix" 
+              typeahead="itm for itm in selfList('info.prefix', $viewValue)"
+              typeahead-wait-ms="typeaheadWait"
+              />
+          </div>
+        </div>
+
+        <div class="row-fluid">
+          <div>
+            <label>ชื่อ : </label>
+            <input type="text" class="input-xxlarge" ng-model="resource._name" />
+          </div>
+
+        <div class="row-fluid">
+          <div>
+            <label>เลขสำคัญ : </label>
+            <input type="text" class="input-large" placeholder="บัตรประชาชน/เลขนิติบุคคล" ng-model="resource.info.person_id" />
+          </div>
+
+          <div class="row-fluid"> <!-- area body -->
+            <tabset>
+              <tab heading="โทรศัพท์และอื่นๆ">
+                <div class="container-fluid">
+
+                  <div class="row-fluid">
+                    <label>
+                      โทรศัพท์ :
+                      [ <a href class="btn btn-small btn-danger" ng-click="resource$entry.add(phones())">
+                        เพิ่ม
+                        </a> ]
+                    </label>
+
+                    <div class="alert alert-info" ng-show="phones().length">
+                      <div class="row-fluid" ng-repeat="phone in phones()">
+                        <div class="pull-right">
+                          [ <a class="btn btn-small btn-warning" href ng-click="resource$entry.remove(phones(),$index)">
+                            ลบ</a> ]
+                        </div>
+
+                        <div class="span3">
+                          <input type="text" class="input-medium" placeholder="ประเภท"
+                            ng-model="phone.type" 
+                            typeahead="itm for itm in selfList('meta.phones.type', $viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
+
+                        <div class="input-prepend span6">
+                          <span class="add-on span3">หมายเลข</span>
+                          <input type="text" class="input-large" ng-model="phone.id" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row-fluid">                  
+                    <label>
+                      e-contact :
+                      [ <a href class="btn btn-small btn-danger" ng-click="resource$entry.add(econtacts())">
+                        เพิ่ม
+                        </a> ]
+                    </label>
+
+                    <div class="alert" ng-show="econtacts().length">
+                      <div class="row-fluid" ng-repeat="contact in econtacts()">
+                        <div class="pull-right">
+                          [ <a class="btn btn-small btn-warning" href ng-click="resource$entry.remove(econtacts(),$index)">
+                            ลบ</a> ]
+                        </div>
+
+                        <div class="span3">
+                          <input type="text" class="input-medium" placeholder="ประเภท"
+                            ng-model="contact.type" 
+                            typeahead="itm for itm in selfList('meta.econtacts.type', $viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
+
+                        <div class="input-prepend span6">
+                          <span class="add-on">id</span>
+                          <input type="text" class="input-large" ng-model="contact.id" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </tab>
+
+              <tab heading="ที่อยู่">
+                <div class="container-fluid">
+
+                  <div class="row-fluid">                  
+                    <label>
+                      ที่อยู่ :
+                      [ <a href class="btn btn-small btn-danger" ng-click="resource$entry.add(locations())">
+                        เพิ่ม
+                        </a> ]
+                    </label>
+
+                    <div class="alert alert-info" ng-repeat="loc in locations()">
+                      <div class="pull-right">
+                        [ <a class="btn btn-small btn-warning" href ng-click="resource$entry.remove(locations(),$index)">
+                          ลบ</a> ]
+                      </div>
+                      <div class="row-fluid">
+                        <div>
+                          <input type="text" class="input-medium" placeholder="ประเภท"
+                            ng-model="loc.type" 
+                            typeahead="itm for itm in selfList('meta.locations.type', $viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
+                        <div>
+                          <textarea rows="2" class="span10" placeholder="ที่อยู่" ng-model="loc.address"></textarea>
+                        </div>
+                      </div>
+
+                      <div class="row-fluid">
+                        <div class="input-prepend span4">
+                          <span class="add-on">เขต/อำเภอ</span>
+                          <input type="text" class="input-medium" 
+                            ng-model="loc.city" 
+                            typeahead="itm for itm in selfList('meta.locations.city', $viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
+
+                        <div class="input-prepend span4">
+                          <span class="add-on">จังหวัด</span>
+                          <input type="text" class="input-medium" 
+                            ng-model="loc.province" 
+                            typeahead="itm for itm in selfList('meta.locations.province', $viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
+
+                        <div class="input-prepend span4">
+                          <span class="add-on">รหัสไปรษณีย์</span>
+                          <input type="text" class="input-medium" 
+                            ng-model="loc.zipcode" 
+                            typeahead="itm for itm in selfList('meta.locations.zipcode', $viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
+                      </div>
+
+
+                  </div>
+
+                </div>
+              </tab>
+              
+              
+            </tabset>
+          </div>
+
+        </div>
+
+        <!-- save/delete/cancel buttons -->
+        <div class="editnav-bottom" ng-include="'views/includes/edit-buttons.html'"></div>
+        
+        <div class="row-fluid"> <!-- footer -->
+            <div style="width=100%;height:60px;"></div> <!-- reserved foot space -->
+        </div>
+
+  </div>
