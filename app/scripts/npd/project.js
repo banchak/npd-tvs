@@ -18,7 +18,7 @@ angular.module('npd.project', [
 
       this.appMenu  = {
           title         : 'Npd3'
-        , version       : '0.4.1.0 2013-08-21 jsat66@gmail.com'
+        , version       : '0.5.0.0 2013-08-26 jsat66@gmail.com'
         , menus         : [
             'Product', 'Person', 'Voucher'
           ]
@@ -28,11 +28,15 @@ angular.module('npd.project', [
 
           provider : function (provider, ctrl) {
             provider.controller = 'legacyGDriveListCtrl'
+
           }
 
         , listctrl : function (listctrl, ctrl) {
+
             if (ctrl.name == 'products') {
-              listctrl.gdriveCtrlBase = 'legacyImageListCtrl' 
+
+              listctrl.gdriveCtrlBase = 'legacyImageListCtrl'
+
             }
 
             //listctrl.adminView = true
@@ -41,9 +45,9 @@ angular.module('npd.project', [
 
                   $rootScope.authorize().then(function () {
                       if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
-
                         var roles = $rootScope.authorizeData.user.roles
-                        scope.adminView = roles.has('STAFF.IT', 'OFFICER', 'ADMIN', 'DEVELOPER')
+
+                        scope.adminView = roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')
 
                         if (scope.adminView && ctrl.name=='vouchers') {
                           scope.adminView = {
@@ -65,7 +69,7 @@ angular.module('npd.project', [
                     if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
 
                       var roles = $rootScope.authorizeData.user.roles
-                      scope.adminView = roles.has('OFFICER', 'STAFF.IT', 'ADMIN', 'DEVELOPER')
+                      scope.adminView = roles.has('OFFICER', 'STAFF.IT', 'MANAGER', 'ADMIN', 'DEVELOPER')
                     }
                 })
 
@@ -283,6 +287,7 @@ angular.module('npd.project', [
 
               return false
             }
+
           }
         }
   }])

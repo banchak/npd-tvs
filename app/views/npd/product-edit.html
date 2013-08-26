@@ -1,15 +1,23 @@
-  <div class="container-fluid" ng-init="typeaheadWait=150">
+  <div class="container-fluid">
 
         <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'"> </div>
         <div class="row-fluid">
-            <h2>
-              {{ db.title }}
-              <button tabindex="-1" class="btn btn-inverse" 
-                ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
-                ng-click="unlockEdit = !unlockEdit">
-                Unlock
-              </button>
-            </h2>
+          <div class="pull-left">
+            <a href tabindex="-1" class="label label-inverse"  title="unlock"
+              ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
+              ng-click="unlockEdit = !unlockEdit">
+              &part;
+            </a>
+          </div>
+          <h2>
+            {{ db.title }}
+            <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
+              ng-class="resource.info.approved && 'btn-success'" 
+              ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
+              ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
+              {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
+            </button>
+          </h2>
         </div>
 
         <div style="clear:both;">&nbsp;</div>
@@ -31,6 +39,7 @@
               <div>
                 <label>ชนิด : </label>
                 <input type="text" class="input-medium"
+                  ng-disabled="resource.info.approved"
                   ng-model="resource._type"
                   typeahead="itm for itm in selfList('_type',$viewValue)"
                   typeahead-wait-ms="typeaheadWait"
@@ -65,15 +74,24 @@
             <li ng-class="!__tabIdx && 'active'">
               <a href ng-click="__tabIdx=0">
                 คุณสมบัติ</a></li>
-            <li ng-class="__tabIdx==1 && 'active'" ng-show="authorizeData.user.roles.has('ADMIN','STAFF.IT','DEVELOPER')">
+            <li 
+              ng-class="__tabIdx==1 && 'active'" 
+              ng-show="authorizeData.user.roles.has('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
               <a href ng-click="__tabIdx=1">
                 ซื้อ</a></li>
-            <li ng-class="__tabIdx==2 && 'active'" ng-show="authorizeData.user.roles.has('ADMIN','STAFF.IT','DEVELOPER')">
+            <li 
+              ng-class="__tabIdx==2 && 'active'" 
+              ng-show="authorizeData.user.roles.has('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
               <a href ng-click="__tabIdx=2">
                 ปรับปรุง</a></li>
-            <li ng-class="__tabIdx==3 && 'active'">
+            <li 
+              ng-class="__tabIdx==3 && 'active'"
+              ng-show="authorizeData.user.roles.has('OFFICER', 'MANAGER', 'ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
               <a href ng-click="__tabIdx=3">
-                ที่เก็บ/ยืม/ขาย</a></li>
+                <span ng-class="{sold : 'label label-important', taken : 'label label-info'}[getState()]">
+                  {{ getState() || 'ที่เก็บ/ยืม/ขาย' }} 
+                </span>              
+              </a></li>
           </ul>
 
             <div ng-show="!__tabIdx" heading="คุณสมบัติ">
@@ -83,6 +101,72 @@
                     <textarea rows=2 class="input-xxlarge" ng-model="resource.info.detail"></textarea>
                 </div>
 
+                <div class="row-fluid">
+                  <div class="span4">
+                    <label>ราคาประเมิน : </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="resource.info.lowest_price"
+                      numeral="'money'"
+                      />
+                  </div>
+                  <div class="span4">
+                    <label>ราคาตั้งยืม : </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="resource.info.taking_price"
+                      numeral="'money'"
+                      />
+                  </div>
+                </div>
+
+                <div class="row-fluid">
+                  <div class="span4">
+                    <label>ราคาตั้งขาย : </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="resource.info.target_price"
+                      numeral="'money'"
+                      />
+                  </div>
+                </div>
+
+                <div class="row-fluid">
+                  <hr />
+                </div>
+
+                <div class="row-fluid">
+                  <div class="span4">
+                    <label>น้ำหนักรวม : </label>
+                    <input type="text" class="input-medium"
+                      ng-disabled="resource.info.approved"
+                      ng-model="resource.info.weight" 
+                      />
+                  </div>
+
+                  <div class="span4">
+                    <label>สภาพ : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.cond" 
+                      />
+                  </div>
+                </div>
+
+                <div class="row-fluid">
+                  <div class="span4">
+                    <label>brand : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.brand" 
+                      />
+                  </div>
+
+                  <div class="span4">
+                    <label>model : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.model" 
+                      />
+                  </div>
+                </div>
 
                 <div class="row-fluid">
                   <div class="span4">
@@ -95,15 +179,28 @@
 
                 <div class="row-fluid">
                   <div class="span4">
-                    <label>น้ำหนัก : </label>
+                    <label>warranty : </label>
                     <input type="text" class="input-medium"
-                      ng-model="resource.info.weight" 
+                      ng-model="resource.info.warranty" 
+                      />
+                  </div>
+                </div>
+
+                <div class="row-fluid">
+                  <div class="span10">
+                    <label>ตัวเรือน : </label>
+                    <input type="text" class="input-xxlarge"
+                      ng-model="resource.info.body" 
                       />
                   </div>
 
+                </div>
+
+                <div class="row-fluid">
                   <div class="span4">
                     <label>นน.ทอง : </label>
                     <input type="text" class="input-medium"
+                      ng-disabled="resource.info.approved"
                       ng-model="resource.info.gold_weight" 
                       />
                   </div>
@@ -111,31 +208,88 @@
 
                 <div class="row-fluid">
                   <div class="span4">
-                    <label>ราคาประเมิน : </label>
-                    <input type="text" class="input-medium" 
-                      ng-model="resource.info.lowest_price"
-                      numeral="'money'"
+                    <label>สายนาฬิกา : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.watchband" 
                       />
                   </div>
+
                   <div class="span4">
-                    <label>ราคาตั้งยืม : </label>
-                    <input type="text" class="input-medium" 
-                      ng-model="resource.info.taking_price"
-                      numeral="'money'"
+                    <label>หน้าปัดนาฬิกา : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.dial_size" 
                       />
                   </div>
                 </div>
 
                 <div class="row-fluid">
                   <div class="span4">
-                    <label>ราคาตั้งขาย : </label>
-                    <input type="text" class="input-medium" 
-                      ng-model="resource.info.target_price"
-                      numeral="'money'"
+                    <label>เบอร์แหวน : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.ring_size" 
                       />
                   </div>
                 </div>
 
+                <div class="row-fluid">
+                  <div class="span4">
+                    <label>ความยาวสร้อย : </label>
+                    <input type="text" class="input-medium"
+                      ng-model="resource.info.lace_size" 
+                      />
+                  </div>
+                </div>
+
+                <div class="row-fluid">
+                  <label>
+                    อัญมณี : 
+                    <span ng-hide="resource.info.approved">
+                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(gems())">เพิ่ม</a>
+                    </span>
+                  </label>
+
+                  <div class="alert alert-info" ng-show="gems().length">
+                    <div ng-repeat="gem in gems()">
+
+                      <div class="pull-right" ng-hide="resource.info.approved">
+                        [ <a tabindex="-1" class="btn btn-small btn-warning" href 
+                          ng-click="resource$entry.remove(gems(),$index)"
+                          >
+                          ลบ
+                          </a> ]
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">ชนิด</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="resource.info.approved"
+                          ng-model="gem.type" />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">น้ำหนัก</span>
+                        <input type="text" class="input-small" 
+                          ng-disabled="resource.info.approved"
+                          ng-model="gem.weight" 
+                          numeral="'money'" />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">จำนวน</span>
+                        <input type="text" class="input-small" 
+                          ng-disabled="resource.info.approved"
+                          ng-model="gem.qty" 
+                          numeral="'qty'" />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">cert</span>
+                        <input type="text" class="input-medium" ng-model="gem.cert" />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
             </div>
             
             <div ng-show="__tabIdx==1" heading="ซื้อ">
@@ -143,6 +297,7 @@
                 <div>
                   <label>วันที่ซื้อ : </label>
                   <input type="text" class="input-medium" 
+                    ng-disabled="resource.info.approved"
                     ng-model="resource.info.buying.date" 
                     moment="'DD/MM/**BB'"
                     boot-datepicker="{language: 'th-th'}"
@@ -152,6 +307,7 @@
                 <div>
                   <label>เงื่อนไขซื้อ : </label>
                   <input type="text" class="input-medium" 
+                    ng-disabled="resource.info.approved"
                     ng-model="resource.info.buying.cond"
                     typeahead="itm for itm in selfList('info.buying.cond',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
@@ -161,6 +317,7 @@
                 <div>
                   <label>ซื้อจาก : </label>
                   <input type="text" class="input-xlarge" 
+                    ng-disabled="resource.info.approved"
                     ng-model="resource.info.buying.person"
                     typeahead="itm for itm in selfList('info.buying.person',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
@@ -172,7 +329,64 @@
                   <div class="span4">
                     <label>ต้นทุนซื้อ : </label>
                     <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
                       ng-model="resource.info.buying.cost"
+                      numeral="'money'"
+                      />
+                  </div>
+
+                </div>
+
+                <div class="row-fluid">
+
+                  <label>
+                    ต้นทุนปรับปรุง : 
+                    <span ng-hide="resource.info.approved">
+                      <a href="" class="btn btn-small btn-danger" 
+                        ng-click="resource$entry.add(providings())">
+                        เพิ่ม
+                      </a>
+                    </span>
+                  </label>
+                  <input type="text" class="input-medium" disabled
+                    ng-model="calc.providing_cost"
+                    numeral="'money'"
+                    />
+
+                  <div class="alert alert-info" ng-show="providings().length">
+                    <div ng-repeat="provide in providings()">
+                      <div class="pull-right" ng-hide="resource.info.approved">
+                        [ <a tabindex="-1" class="btn btn-small btn-warning" href 
+                          ng-click="resource$entry.remove(providings(),$index)"
+                          >
+                          ลบ
+                          </a> ]
+                      </div>
+                      <div class="input-prepend">
+                        <span class="add-on">ปรับปรุง</span>
+                        <input type="text" class="input-xlarge" 
+                          ng-model="provide.description" />
+                      </div>
+                      <span style="padding-left:4px;"></span>
+                      <div class="input-prepend">
+                        <span class="add-on">ค่าใช้จ่าย</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="resource.info.approved"
+                          ng-model="provide.cost"
+                          numeral="'money'" 
+                           />
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="row-fluid">
+
+                  <div class="span4">
+                    <label>ต้นทุนซื้อสุทธิ : </label>
+                    <input type="text" class="input-medium" disabled
+                      ng-model="calc.total_buying_cost"
                       numeral="'money'"
                       />
                   </div>
@@ -191,12 +405,17 @@
                 </div>
 
                 <div class="row-fluid" >
+                  <hr />
+                </div>
+
+                <div class="row-fluid" >
 
                   <div class="span4">
                     <label>
                       ต้นทุนร้าน : 
                     </label>
                     <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
                       ng-model="resource.info.cost"
                       numeral="'money'"
                       />
@@ -231,6 +450,7 @@
                       <span ng-show="calc.lowest_price_percent">{{ calc.lowest_price_percent }}%</span>
                     </label>
                     <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
                       ng-model="resource.info.lowest_price"
                       numeral="'money'"
                       />
@@ -242,6 +462,7 @@
                       <span ng-show="calc.target_price_percent">{{ calc.target_price_percent }}%</span>
                     </label>
                     <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
                       ng-model="resource.info.target_price"
                       numeral="'money'"
                       />
@@ -252,27 +473,35 @@
 
             <div ng-show="__tabIdx==2" heading="ปรับปรุง">
 
-                <div class="row-fluid">
+                <div class="row-fluid" >
 
                   <div class="span4">
-                    <label class="add-on">คชจ.ปรับปรุงสุทธิ : </label>
+                    <label>
+                      ต้นทุนร้าน : 
+                    </label>
                     <input type="text" class="input-medium" disabled
-                      ng-model="calc.repair_cost"
+                      ng-model="resource.info.cost"
                       numeral="'money'"
                       />
                   </div>
 
                 </div>
 
-                <div>
-                  <label>การปรับปรุง :  
-                    <span>
+                <div class="row-fluid">
+
+                  <label class="add-on">
+                    คชจ.ปรับปรุง: 
+                    <span ng-hide="resource.info.approved">
                       <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(repairings())">เพิ่ม</a>
                     </span>
                   </label>
+                  <input type="text" class="input-medium" disabled
+                    ng-model="calc.repair_cost"
+                    numeral="'money'"
+                    />
                   <div class="alert alert-info" ng-show="repairings().length">
                     <div ng-repeat="repair in repairings()">
-                      <div class="pull-right">
+                      <div class="pull-right" ng-hide="resource.info.approved">
                         [ <a tabindex="-1" class="btn btn-small btn-warning" href 
                           ng-click="resource$entry.remove(repairings(),$index)"
                           >
@@ -280,18 +509,57 @@
                           </a> ]
                       </div>
                       <div class="input-prepend">
-                        <span class="add-on">รายละเอียด</span>
+                        <span class="add-on">ปรับปรุง</span>
                         <input type="text" class="input-xlarge" ng-model="repair.description" />
                       </div>
                       <span style="padding-left:4px;"></span>
                       <div class="input-prepend">
                         <span class="add-on">ค่าใช้จ่าย</span>
                         <input type="text" class="input-medium" 
+                          ng-disabled="resource.info.approved"
                           ng-model="repair.cost"
                           numeral="'money'" 
                            />
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div class="row-fluid">
+
+                  <div class="span4" >
+                    <label class="add-on">ต้นทุนร้านสุทธิ : </label>
+                    <input type="text" class="input-medium" disabled
+                      ng-model="calc.total_cost"
+                      numeral="'money'"
+                    />
+                  </div>
+
+                </div>
+
+                <div class="row-fluid">
+                  <div class="span4">
+                    <label>
+                      ราคาประเมิน : 
+                      <span ng-show="calc.lowest_price_percent">{{ calc.lowest_price_percent }}%</span>
+                    </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="resource.info.lowest_price"
+                      numeral="'money'"
+                      />
+                  </div>
+
+                  <div class="span4">
+                    <label>
+                      ราคาตั้งขาย : 
+                      <span ng-show="calc.target_price_percent">{{ calc.target_price_percent }}%</span>
+                    </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="resource.info.target_price"
+                      numeral="'money'"
+                      />
                   </div>
                 </div>
 
@@ -308,7 +576,7 @@
                     typeahead-wait-ms="typeaheadWait"
                     />
                 </div>
-
+                
                 <div class="row-fluid" ng-show="utils.notEmpty(keeping())">
                   <div class="alert alert-success">
                     <div class="input-prepend">
@@ -320,8 +588,8 @@
                         boot-datepicker="{language: 'th-th'}"
                         />
                     </div>
+                  </div>
                 </div>
-
 
                 <div>
                   <label>ยืมโดย : </label>
@@ -354,24 +622,6 @@
                         />
                     </div>
 
-                    <div class="input-prepend">
-                      <span class="add-on">ราคายืมสุทธิ</span>
-                      <input type="text" class="input-medium" 
-                        ng-disabled="!unlockEdit"
-                        ng-model="taking().net_price"
-                        numeral="'money'"
-                        />
-                    </div>
-
-                    <div class="input-prepend">
-                      <span class="add-on">ราคายืมสุทธิ</span>
-                      <input type="text" class="input-medium" 
-                        ng-disabled="!unlockEdit"
-                        ng-model="taking().net_price"
-                        numeral="'money'"
-                        />
-                    </div>
-
                     <div>
                       <textarea rows="1" class="input-xxlarge"  placeholder="หมายเหตุ"
                         ng-disabled="!unlockEdit"
@@ -381,7 +631,7 @@
                     </div>
                   </div>
                 </div>
-
+                
                 <div>
                   <label>
                     ขายให้ : 

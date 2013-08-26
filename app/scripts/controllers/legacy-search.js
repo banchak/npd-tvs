@@ -3,13 +3,14 @@
 angular.module('controllers.legacy-search',['modules.utils'])
 
   .factory('legacySearchDI',['$routeParams', '$q', 'utils'
-  , function($routeParams, $q, utils)
+  , function($routeParams, $q, utils, GCalendar)
     {
 
       return {
             $routeParams  : $routeParams
           , $q            : $q
           , utils         : utils
+          , GCalendar     : GCalendar
           }
     }
   ])
@@ -18,6 +19,7 @@ angular.module('controllers.legacy-search',['modules.utils'])
   , function($scope, legacySearchDI, Database)
     {
       var utils   = legacySearchDI.utils
+        , $q = legacySearchDI.$q
 
       $scope.utils        = utils
       $scope.promiseBusy  = 0
@@ -101,22 +103,28 @@ angular.module('controllers.legacy-search',['modules.utils'])
           qry = db.scopeQuery(keyword, scopefields)
 
           if (!options) {
-            options = { fields : {_name : 1}}
+            var fields = {_name : 1}
+
+            angular.forEach(db.descriptions, function(d) {
+              fields[d.name] = 1
+            })
+            options = { fields : fields}
           }
 
           $scope.promiseBusy++
-          promise = db.dataAccess.query(qry, options)
+
+          promise = $q.when(qry).then(function (_qry) { return db.dataAccess.query(_qry, options) })
 
           promise.then(function(data) { 
             if (data && data.length) {
-              result[db.name]  = { title : db.title, keyword : keyword, items : data }
+              result[db.name]  = { title : db.title, keyword : keyword, items : data, descriptions : db.descriptions }
             }
           }).then (promiseReady,promiseReady)
 
           promises.push(promise)
         })
 
-        return legacySearchDI.$q.all(promises).then(function () { return result})
+        return $q.all(promises).then(function () { console.log('result',result); return result})
       }
 
     } 
@@ -133,7 +141,6 @@ angular.module('controllers.legacy-search',['modules.utils'])
         , legacySearchDI  : legacySearchDI
         , Database        : Database
         })
-
 
       if ($scope.search) {
         $scope.searchBusy = true
@@ -159,7 +166,6 @@ angular.module('controllers.legacy-search',['modules.utils'])
           $scope.searchBusy = false 
         })
       }
-
 
     } 
 

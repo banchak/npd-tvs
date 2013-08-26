@@ -2,12 +2,15 @@
 'use strict'
 
 angular.module('npd.project')
-  .value('GAPI_CONFIG',{
+  .service('GAPI_CONFIG', ['COLLECTIONS', function (COLLECTIONS){
+    return {
       client_id : '1088349293256.apps.googleusercontent.com'
     , scopes    : [
           'https://www.googleapis.com/auth/drive'
       ,   'https://www.googleapis.com/auth/userinfo.email'
       ,   'https://www.googleapis.com/auth/userinfo.profile'
+      ,   'https://www.googleapis.com/auth/calendar'
+      //,   'https://www.googleapis.com/auth/calendar.readonly'
       ]
     //, immediate : true
     , apiKey    : 'AIzaSyAkP37SMBfu2WTW0efOo0NfGLzJkKXE_xY'
@@ -15,6 +18,7 @@ angular.module('npd.project')
     , shareCabinets : ['0B6k4xcbsslocdEVBZGVBdFJLU2c', '0B4yFwOMMfo5HZk96REVZaEkwMkk']
     , clientServices : [
           {name : 'drive', version : 'v2'}
+        , {name : 'calendar', version : 'v3'}
       ]
     , userSignIn : function (user) {
         var email = user.email
@@ -44,12 +48,18 @@ angular.module('npd.project')
             }
 
           if (email.match(/panida66\@gmail\.com/)){ 
-            user.roles = ['STAFF', 'OFFICER']
+            user.roles = ['STAFF']
           }
 
           user.roles.has = user.hasRole
         }
 
+        if (!user.roles || !user.roles.has('OFFICER', 'OFFICER.COST', 'MANAGER', 'STAFF.IT', 'ADMIN', 'DEVELOPER')) {
+            COLLECTIONS.Product.limitScope = function (keyword) {
+              return ['@sellable', keyword]
+            }
+        }
         return user
       }
-  })
+    }
+  }])

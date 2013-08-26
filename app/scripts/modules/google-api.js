@@ -400,7 +400,7 @@ angular.module('modules.google-api',[])
 
       angular.forEach(GAPI_CONFIG.clientServices, function(service) {
 
-        self.client.load (service.name, service.version)
+        self.client.load (service.name, service.version,function (resp){ console.log('load',service.name,resp)})
       })
     }
 

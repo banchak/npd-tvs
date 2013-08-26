@@ -1,3 +1,5 @@
+// jsat66@gmail.com 2013-8-22
+// for all Thai people with love, use as your risks.
 
 (function () {
 
@@ -145,6 +147,25 @@
     return result
   }
 
-  this.num2str = num2str
 
+  /************************************
+      Exposing
+  ************************************/
+  // CommonJS module is defined
+  if (typeof module !== 'undefined' && module.exports) {
+      module.exports = num2str
+  }
+  /*global ender:false */
+  if (typeof ender === 'undefined') {
+      // here, `this` means `window` in the browser, or `global` on the server
+      // add `num2str` as a global object via a string identifier,
+      // for Closure Compiler "advanced" mode
+      this['num2str'] = num2str
+  }
+  /*global define:false */
+  if (typeof define === "function" && define.amd) {
+      define("num2str", [], function () {
+          return num2str
+      })
+  }
 }).call(this);

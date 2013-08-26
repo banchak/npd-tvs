@@ -9,23 +9,31 @@
       </form>
     </div>
 
-    <div class="row-fluid" ng-show="utils.notEmpty(searchResult)">
-      <hr />
-      <ul ng-repeat="(name,rs) in searchResult">
-        <li>
-          <div>
-            <strong>
-              <a href ng-click="toggles[name] = !toggles[name]">{{ rs.title }}</a> 
-              ({{ rs.items.length }})
-            </strong>
-          </div>
-          <ul class="nav nav-list thumbnail" ng-hide="toggles[name]" style="overflow:auto; max-height:10em;">
-            <li ng-repeat="itm in rs.items | orderBy : '_name'">
-              <a href="{{urlPathItem(name,itm,true)}}">{{ itm._name }}</a>
-            </li>
-          </ul>
-        </li> 
+    <div class="row-fluid" ng-show="utils.notEmpty(searchResult)" ng-init="__tabIdx = ''">
+
+      <ul class="nav nav-tabs">
+        <li ng-repeat="(name,rs) in searchResult" 
+          ng-class="($parent.__tabIdx = $parent.__tabIdx || name) == name && 'active'">
+          <a href ng-click="$parent.__tabIdx = name">
+            {{ rs.title }} ({{ rs.items.length }})
+          </a>
+        </li>
       </ul>
+
+      <div ng-repeat="(name,rs) in searchResult" ng-show="$parent.__tabIdx==name">
+          <ul class="nav nav-list">
+            <li ng-repeat="itm in rs.items | orderBy : '_name'">
+              <a href="{{urlPathItem(name,itm,true)}}">
+                <strong>{{ itm._name }}</strong>
+                <div>                
+                  <span ng-repeat="desc in rs.descriptions" ng-class="desc.viewClass">
+                    {{ utils.formatValue(utils.lookup(itm, desc.name)) }}
+                  </span>
+                </div>
+              </a>
+            </li>
+          </ul>      
+      </div>
     </div>
 
   </div>

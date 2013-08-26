@@ -11,6 +11,12 @@ angular.module('modules.gdrive', ['modules.google-api', 'modules.utils'])
     var hash = utils.hash(key)
 
     if (this.promiseCache[hash]) {
+
+      if (func === false) {
+        delete this.promiseCache[hash]
+        return
+      }
+      
       console.log ('cache hit', key)
       return this.promiseCache[hash]
     }

@@ -40,6 +40,16 @@
         
     <div ng-class="(inspectMode() && 'span12') || 'span10'">
 
+        <div ng-show="boundList">
+          <ul class="nav nav-tabs">
+            <li ng-repeat="_bound in boundList" ng-class="(_bound.name == bound) && 'active'">
+              <a ng-href="{{ urlBound(_bound.name)}}">
+                {{ _bound.label || _bound.name }}
+              </a>
+            </li>
+          </ul> 
+        </div>
+
         <div>
           <ul  class="thumbnails">
             <li 

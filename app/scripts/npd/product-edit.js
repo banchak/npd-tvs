@@ -45,14 +45,21 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
                   $scope.selling().price = $scope.taking().price
                 }
               }
-
+            , getState : function () {
+                if (utils.notEmpty($scope.selling())) {
+                  return 'sold'
+                }
+                if (utils.notEmpty($scope.taking().person)) {
+                  return 'taken'
+                }
+              }
             }
 
           angular.extend($scope, services)
 
           var entry = $scope.resource$entry
           // entry for view
-          angular.forEach(['repairings', 'takings'], function (n) {
+          angular.forEach(['gems', 'providings', 'repairings', 'takings'], function (n) {
               $scope[n] = function () { return entry.meta(n) }
               $scope[n]()
             })
@@ -70,23 +77,26 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
               return Math.round((pc/base) * round)
             }
 
-            this.calc_repair_cost = function () {
-              var cost = 0
+            this.calc_providing_cost = function () {
+              self.providing_cost = utils.sum($scope.providings(), 'cost')
+            }
 
-              angular.forEach($scope.repairings(),function(repair){
-                  cost += (repair.cost || 0)
-              })
-              self.repair_cost = cost
+            this.calc_repair_cost = function () {
+              self.repair_cost = utils.sum($scope.repairings(), 'cost')
             }
 
             this.calc_total_cost = function () {
               self.total_cost = self.repair_cost + $scope.resource.info.cost
             }
 
+            this.calc_total_buying_cost = function () {
+              self.total_buying_cost = $scope.buying().cost + self.providing_cost
+            }
+
             this.calc_provider_cost = function () {
               // onchange: buying.cost, cost
 
-              $scope.buying().provider_cost = $scope.resource.info.cost - ($scope.buying().cost || 0) 
+              $scope.buying().provider_cost = $scope.resource.info.cost - self.total_buying_cost
 
               self.provider_cost_percent = 0
               if ($scope.buying().cost ) {
@@ -122,9 +132,13 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
             this.calc_lowest_price_percent()
             getThumbnail($scope.resource)
 
+            $scope.$watch('providings()',this.calc_providing_cost, true)
+
             $scope.$watch('repairings()',this.calc_repair_cost, true)
 
-            $scope.$watch('resource.info.cost - buying().cost',this.calc_provider_cost)
+            $scope.$watch('calc.providing_cost + buying().cost',this.calc_total_buying_cost)
+
+            $scope.$watch('resource.info.cost - calc.total_buying_cost',this.calc_provider_cost)
 
             $scope.$watch('calc.repair_cost + buying().cost',this.calc_total_cost)
 

@@ -53,12 +53,12 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
         var promise, query
 
         $scope.resource.meta.takenItems = []
-        if ($scope.resource._type != 'ยืม' || !$scope.resource.info.person.name 
+        if (!$scope.resource.info.person.name 
           || !$scope.resource.info.person.$temp || !$scope.resource.info.person.$temp.synced) {
           return
         }
 
-        query = productDb.scopeQuery(['@taken','@info.taking.person=\''+$scope.resource.info.person.name])
+        query = productDb.rawScopeQuery(['@taken','@info.taking.person=\''+$scope.resource.info.person.name])
         promise = productDb.dataAccess.query(query)
 
         promise.then(function (dataList) {
@@ -98,6 +98,25 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
                 }
                 return list
               }
+            , selectedItems : function () {
+                var items = []
+                angular.forEach($scope.takenItems(),function (_itm) {
+                  if (_itm.selected) {
+                    items.push(_itm)
+                  }
+                })
+                return items
+              } 
+            , unselectedItems : function () {
+                var items = []
+
+                angular.forEach($scope.takenItems(),function (_itm) {
+                  if (!_itm.selected) {
+                    items.push(_itm)
+                  }
+                })
+                return items
+              } 
             , isLastPage : function (page, rows, items) {
                 items = items || $scope.items()
                 rows = rows || 10
@@ -129,9 +148,10 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
                 promise = $scope.xdataSync (item, 'name', 'Person', force)
 
                 promise.then(function (data) {
+                  var address = ''
 
                   if (data) {
-                    if (data.info.prefix) {
+                    if (data.info && data.info.prefix) {
                       var pf = data.info.prefix
 
                       if (pf.indexOf(':')>=0) {
@@ -142,15 +162,23 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
                         item.name = pf + item.name
                       }
 
-                      item.$temp.synced = item.name
                     }
 
-                    if (data.meta.locations && data.meta.locations.length) {
+                    if (data.meta && data.meta.locations) {
 
-                      var loc = data.meta.locations[0]
+                      angular.forEach(data.meta.locations, function (loc) {
+                        var a
 
-                      item.address = $scope.loc2Address(data.meta.locations[0])
+                        a = $scope.loc2Address(loc)
+                        if (!address || item.address == a) {
+                          address = a
+                        }
+                      })
                     }
+
+                    item.address = address
+                    item.$temp.synced = item.name
+
                   }
                   syncTakenItems()
                 })
@@ -183,9 +211,7 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
               $scope[n]()
             })
 
-          $scope.oldItemsLength = $scope.items().length
-
-          if ($scope.items().length==0) {
+          if ($scope.items().length==0 && !$scope.resource._id) {
             $scope.resource$entry.add($scope.items())
           }
           else {

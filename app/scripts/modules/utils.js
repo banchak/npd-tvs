@@ -13,11 +13,20 @@ angular.module('modules.utils', [])
           , notEmpty  : notEmpty
           , deepStrip : deepStrip
           , trim      : trim
-          , lookup    : lookup
+          //, lookup    : lookup
           , $location : $location
           , $route    : $route
           , $rootScope: $rootScope
           }
+
+      utils.lookup = function (data, attr) {
+        /*if (old_lookup(data,attr) != (attr && $parse(attr)(data)))
+        {
+          console.log ('lookup:',attr,data,old_lookup(data,attr), attr &&  $parse(attr)(data))
+        }*/
+        return attr && $parse(attr)(data)
+      }
+
 
       utils.stringify = function (key) {
         return (angular.isObject(key) && JSON.stringify(key)) || key.toString()
@@ -71,7 +80,7 @@ angular.module('modules.utils', [])
 
           // default formatter for some datatype
           if (angular.isNumber(v)) {
-            return numeral(v).format('0,0[.]00')
+            return (v && numeral(v).format('0,0[.]00')) || ''
           }
 
           if (angular.isString(v) && v.match(/^\d{4}-\d{2}-\d{2}$/)) {
@@ -211,7 +220,6 @@ var deepStrip = function (obj, resourceOnly) {
       var e = []
 
       for (var k in obj) {
-        //console.log(k,typeof obj[k])
         if (!deepStrip(obj[k], resourceOnly)) {
           e.push(k)
         }
@@ -226,7 +234,7 @@ var deepStrip = function (obj, resourceOnly) {
     return notEmpty(obj)
 }
 
-var lookup = function (data, attr) {
+var old_lookup = function (data, attr) {
   var 
     obj   = data
   , elems = (attr || '').split('.')
@@ -241,7 +249,7 @@ var lookup = function (data, attr) {
         var lst = []
         
         angular.forEach(obj, function (o) {
-          var v = lookup(o,p)
+          var v = old_lookup(o,p)
 
           if (notEmpty(v) && lst.indexOf(v)==-1) 
             lst.push(v)
@@ -269,5 +277,6 @@ var lookup = function (data, attr) {
   return obj
 
 }
+
 
 }).call(this);

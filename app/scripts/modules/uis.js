@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('modules.uis', ['ui.bootstrap'])
-  .factory('uis',['$dialog', function($dialog){
+  .factory('uis',['$dialog', '$rootScope', function($dialog, $rootScope){
 
       var messageBox = function (title, msg, btn){
 
@@ -12,6 +12,7 @@ angular.module('modules.uis', ['ui.bootstrap'])
 
             return messageBox('error : '+errorno,btn)
           }
+      $rootScope.typeaheadWait = 10
 
       return {
           $dialog     : $dialog

@@ -1,22 +1,25 @@
-  <div class="container-fluid" ng-init="typeaheadWait=50">
+  <div class="container-fluid">
 
         <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'"> </div>
 
         <div class="row-fluid">
-            <h2>
-              {{resource._type || db.title}}
-              <button tabindex="-1" class="btn btn-inverse" 
-                ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
-                ng-click="unlockEdit = !unlockEdit">
-                Unlock
-              </button>
-              <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
-                ng-class="resource.info.approved && 'btn-success'" 
-                ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
-                ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
-                {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
-              </button>
-            </h2>
+          <div class="pull-left">
+            <a href tabindex="-1" class="label label-inverse"  title="unlock"
+              ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
+              ng-click="unlockEdit = !unlockEdit">
+              &part;
+            </a>
+          </div>
+          <h2>
+            {{resource._type || db.title}}
+            <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
+              ng-class="resource.info.approved && 'btn-success'" 
+              ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
+              ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
+              {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
+            </button>
+          </h2>
+
         </div>
 
         <div class="row-fluid">
@@ -59,7 +62,10 @@
                 ผู้เกี่ยวข้อง</a></li>
             <li ng-class="__tabIdx==1 && 'active'">
               <a href ng-click="__tabIdx=1">
-                รายการ</a></li>
+                รายการใหม่</a></li>
+            <li ng-class="__tabIdx==2 && 'active'" ng-show="takenItems().length">
+              <a href ng-click="__tabIdx=2">
+                ค้างยืม</a></li>
           </ul>
 
           <div ng-show="!__tabIdx">
@@ -67,6 +73,12 @@
             <div class="row-fluid">
                 <label>
                   ชื่อ :
+                  <span class="label label-warning" ng-show="takenItems().length">
+                    ค้างยืมรวม {{ takenItems().length }} รายการ  
+                    <strong ng-show="utils.sum(takenItems(),'price')"> 
+                      {{utils.sum(takenItems(),'price') | numeral}} บาท 
+                    </strong>
+                  </span>
                 </label>
                   <div class="input-append">
                     <form style="margin:0" ng-submit="personSync(person())">
@@ -120,90 +132,136 @@
                   </div>
                 </div>
             </div>
+          </div><!--/tab-->
 
-            <div ng-show="resource._type=='ยืม' && takenItems().length">
-              <div class="row-fluid">
-                <div>
-                  <label>
-                    <span class="label label-warning">
-                      ค้างยืมรวม {{ takenItems().length }} รายการ  {{utils.sum(takenItems(),'price') | numeral}} บาท
-                      <a href class="btn btn-small" ng-click="__hideTaking = !__hideTaking">
-                        {{ (__hideTaking && 'แสดง') || 'ซ่อน' }}
-                      </a>
+          <div ng-show="__tabIdx==1" heading="รายการ">
+            <h5>{{ person().name }}</h5>
+            <div class="row-fluid">
+              <div>
+                  <span class="alert alert-info">
+                    รายการใหม่ {{ items().length }} รายการ 
+                    <strong ng-show="utils.sum(takenItems(),'price')">
+                      {{utils.sum(items(),'price') | numeral}} บาท
+                    </strong>                  
+                    <span ng-hide="resource.info.approved">
+                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
                     </span>
-                  </label>
-                  <div ng-hide="__hideTaking">
-                    <div class="alert" ng-repeat="item in takenItems()">
-                      <div class="media">
-                        <div class="media-object pull-right span2" 
-                          ng-show="item.$temp.data.meta.images[0].thumbnailLink"
-                          >
-                          <span style="margin:4px;">
-                            <img class="img-polariod" ng-src="{{ item.$temp.data.meta.images[0].thumbnailLink }}" />
-                          </span>
-                        </div>
-                        <div class="media-body">
-                          <h4 class="media-heading">
-                            <span class="label">{{ $index+1 }}</span> {{ item.name }}
-                            <small>
-                              <span style="padding:0 1em;;" ng-show="item.$temp.data.info.taking.date">
-                                วันที่ยืม: {{ item.$temp.data.info.taking.date | moment }}</span>
-                              <span style="padding:0 1em;" ng-show="item.$temp.data.info.weight">
-                                น้ำหนัก: {{ item.$temp.data.info.weight }}</span>
+                  </span>
+              </div>
+              <div class="alert alert-info" ng-show="items().length">
+                <div ng-repeat="item in items()">
+                  <hr ng-show="$index" />
+                  <div>
+                    <div class="pull-right" style="padding:0 1em;" 
+                      ng-hide="resource.info.approved">
+                      <a tabindex="-1" class="btn btn-small btn-warning" href 
+                        ng-click="resource$entry.remove(items(),$index)"
+                        >
+                        ลบ
+                        </a>
+                    </div>
+                    <div class="media">
+                      <div class="media-object pull-right span2" 
+                        ng-show="item.$temp.data.meta.images[0].thumbnailLink"
+                        >
+                        <span style="margin:4px;">
+                          <img class="img-polariod" ng-src="{{ item.$temp.data.meta.images[0].thumbnailLink }}" />
+                        </span>
+                      </div>
 
-                              <div class="input-prepend">
-                                <span class="add-on">ราคา</span>
-                                <input type="text" class="input-medium" 
-                                  ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
-                                  ng-model="item.price"
-                                  numeral="'money'" 
-                                   />
+                      <div>
+                        <div>
+                          <form style="margin:0" ng-submit="itemSync(item)">
+                            <div style="height:0; width:0; overflow:hidden;">
+                              <input tabindex="-1" type="submit" />
+                            </div>
+                            <div>
+                              <div>
+                                <div class="input-append">
+                                  <span class="label" style="margin-right:2px;">
+                                    {{ $index + 1 }}
+                                  </span>
+                                </div>
+                                <div class="input-prepend input-append">
+                                  <span class="add-on">รหัส</span>
+                                  <input type="text" class="input-medium" 
+                                    ng-disabled="resource.info.approved"
+                                    ng-model="item.name" />
+                                  <span class="add-on btn btn-small" 
+                                    ng-disabled="resource.info.approved"
+                                    ng-class="!isSynced(item) && 'btn-info'"
+                                    ng-click="itemSync(item,true)"
+                                    >
+                                    &crarr;
+                                    </span>
+                                </div>
+                                <div class="input-prepend" ng-show="resource._type=='คืน'">
+                                  <span class="add-on">น้ำหนัก</span>
+                                  <input type="text" class="input-small" 
+                                    ng-model="item.weight"
+                                     />
+                                </div>
+                                <div class="input-prepend">
+                                  <span class="add-on">ราคา</span>
+                                  <input type="text" class="input-medium" 
+                                    ng-disabled="resource.info.approved"
+                                    ng-model="item.price"
+                                    numeral="'money'" 
+                                     />
+                                </div>
                               </div>
-                            </small>
-                          </h4>
+                            </div>
+                          </form>
+
+                          <div class="text-error">
+                            {{ item.$temp.data.error }}
+                          </div>
                           <div>
                             <span class="label" style="margin-right: 4px;" 
                               ng-class="(item.$temp.data.state=='sold' && 'label-important') || 'label-info'"
                               ng-show="item.$temp.data.state">
                               {{ item.$temp.data.state}}
                             </span>
-                             {{item.$temp.data.info.detail}}
+
+                            {{ item.$temp.data.info.detail }}
                           </div>
-                          <div ng-show="authorizeData.user.roles.has('MANAGER','ADMIN')"> 
-                            <div style="margin:2px 0;">
-                              <textarea rows="1" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
-                                ng-model="item.remark">
-                              </textarea>
-                            </div>
-                            <div style="margin:2px 0;">
-                              <span class="label" style="margin-right:4px;" ng-show="item.$temp.data.info.target_price">
-                                ราคาตั้งขาย
-                                <button class="btn btn-small"  tabindex="-1" 
-                                  ng-disabled="resource.info.approved"
-                                  ng-click="item.price= item.$temp.data.info.target_price"
-                                  >
-                                    {{ utils.formatValue(item.$temp.data.info.target_price) }}
-                                  </button>
-                              </span>
-                              <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.taking_price">
-                                ราคาตั้งยืม
-                                <button class="btn btn-small"  tabindex="-1" 
-                                  ng-disabled="resource.info.approved"
-                                  ng-click="item.price= item.$temp.data.info.taking_price"
-                                  >
-                                    {{ utils.formatValue(item.$temp.data.info.taking_price) }}
-                                  </button>
-                              </span>
-                              <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.lowest_price">
-                                ราคาประเมิน
-                                <button class="btn btn-small"  tabindex="-1" 
-                                  ng-disabled="resource.info.approved"
-                                  ng-click="item.price= item.$temp.data.info.lowest_price"
-                                  >
-                                    {{ utils.formatValue(item.$temp.data.info.lowest_price) }}
-                                  </button>
-                              </span>
-                            </div>
+
+                        </div>
+
+                        <div ng-show="authorizeData.user.roles.has('MANAGER','ADMIN')"> 
+                          <div style="margin:2px 0;">
+                            <textarea rows="1" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
+                              ng-model="item.remark">
+                            </textarea>
+                          </div>
+                          <div style="margin:2px 0;">
+                            <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.target_price">
+                              ราคาตั้งขาย
+                              <button class="btn btn-small"  tabindex="-1" 
+                                ng-disabled="resource.info.approved"
+                                ng-click="item.price= item.$temp.data.info.target_price"
+                                >
+                                  {{ utils.formatValue(item.$temp.data.info.target_price) }}
+                                </button>
+                            </span>
+                            <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.taking_price">
+                              ราคาตั้งยืม
+                              <button class="btn btn-small"  tabindex="-1" 
+                                ng-disabled="resource.info.approved"
+                                ng-click="item.price= item.$temp.data.info.taking_price"
+                                >
+                                  {{ utils.formatValue(item.$temp.data.info.taking_price) }}
+                                </button>
+                            </span>
+                            <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.lowest_price">
+                              ราคาประเมิน
+                              <button class="btn btn-small"  tabindex="-1" 
+                                ng-disabled="resource.info.approved"
+                                ng-click="item.price= item.$temp.data.info.lowest_price"
+                                >
+                                  {{ utils.formatValue(item.$temp.data.info.lowest_price) }}
+                                </button>
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -211,148 +269,127 @@
                   </div>
                 </div>
               </div>
+              <div ng-show="items().length">
+                  <span class="alert alert-info">
+                    รายการใหม่ {{ items().length }} รายการ 
+                    <strong ng-show="utils.sum(takenItems(),'price')">
+                      {{utils.sum(items(),'price') | numeral}} บาท
+                    </strong>                  
+                    <span ng-hide="resource.info.approved">
+                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
+                    </span>
+                  </span>
+              </div>
             </div>
+          </div><!-- /tab -->
 
-          </div><!--/tab-->
-
-          <div ng-show="__tabIdx==1">
-            <div>
-              <label>
-                รวม {{ items().length }} รายการ  
-                <span ng-hide="resource.info.approved">
-                  <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
-                </span>
-              </label>
-            </div>
-
-            <div class="alert alert-info" ng-show="items().length">
-              <div ng-repeat="item in items()">
-                <hr ng-show="$index" />
+          <div ng-show="__tabIdx==2" heading="ค้างยืม">
+            <h5>{{ person().name }}</h5>
+            <div class="row-fluid">
+              <div ng-show="takenItems().length">
                 <div>
-                  <div class="pull-right" style="padding:0 1em;" 
-                    ng-hide="resource.info.approved">
-                    <a tabindex="-1" class="btn btn-small btn-warning" href 
-                      ng-click="resource$entry.remove(items(),$index)"
-                      >
-                      ลบ
-                      </a>
-                  </div>
-                  <div class="media">
-                    <div class="media-object pull-right span2" 
-                      ng-show="item.$temp.data.meta.images[0].thumbnailLink"
-                      >
-                      <span style="margin:4px;">
-                        <img class="img-polariod" ng-src="{{ item.$temp.data.meta.images[0].thumbnailLink }}" />
-                      </span>
-                    </div>
+                  <span class="alert">
+                    ค้างยืม {{ takenItems().length }} รายการ  
+                    <strong ng-show="utils.sum(takenItems(),'price')">
+                      {{utils.sum(takenItems(),'price') | numeral}} บาท
+                    </strong>
+                  </span>
+                </div>
 
-                    <div>
+                <div class="alert">
+                  <div ng-repeat="item in takenItems()"  ng-class="item.selected && 'alert-info'">
+                    <div class="media" style="margin:4px;">
+                      <div class="media-object pull-right span2" 
+                        ng-show="item.$temp.data.meta.images[0].thumbnailLink"
+                        >
+                        <span style="padding:4px;">
+                          <img class="img-polariod" ng-src="{{ item.$temp.data.meta.images[0].thumbnailLink }}" />
+                        </span>
+                      </div>
                       <div>
-                        <form style="margin:0" ng-submit="itemSync(item)">
-                          <div style="height:0; width:0; overflow:hidden;">
-                            <input tabindex="-1" type="submit" />
+                        <div>
+                          <div class="input-append">
+                            <label> 
+                              <input type="checkbox" 
+                                ng-disabled="resource.info.approved"
+                                ng-model="item.selected" />
+                            </label>
                           </div>
-                          <div>
-                            <div>
-                              <div class="input-append">
-                                <span class="label" style="margin-right:2px;">
-                                  {{ $index + 1 }}
-                                </span>
-                              </div>
-                              <div class="input-prepend input-append">
-                                <span class="add-on">รหัส</span>
-                                <input type="text" class="input-medium" 
-                                  ng-disabled="resource.info.approved"
-                                  ng-model="item.name" />
-                                <span class="add-on btn btn-small" 
-                                  ng-disabled="resource.info.approved"
-                                  ng-class="!isSynced(item) && 'btn-info'"
-                                  ng-click="itemSync(item,true)"
-                                  >
-                                  &crarr;
-                                  </span>
-                              </div>
-                              <div class="input-prepend" ng-show="resource._type=='ซื้อ'">
-                                <span class="add-on">น้ำหนัก</span>
-                                <input type="text" class="input-small" 
-                                  ng-model="item.weight"
-                                   />
-                              </div>
-                              <div class="input-prepend">
-                                <span class="add-on">ราคา</span>
-                                <input type="text" class="input-medium" 
-                                  ng-disabled="resource.info.approved"
-                                  ng-model="item.price"
-                                  numeral="'money'" 
-                                   />
-                              </div>
-                            </div>
+                          <div class="input-prepend">
+                            <span class="add-on" ng-show="resource._type!='ยืม'">
+                              รหัส
+                            </span>
+                            <input type="text" class="input-medium" 
+                              disabled
+                              ng-model="item.name" />
                           </div>
-                        </form>
 
-                        <div class="text-error">
-                          {{ item.$temp.data.error }}
+                          <div class="input-prepend">
+                            <span class="add-on">ราคา</span>
+                            <input type="text" class="input-medium" 
+                              ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                              ng-model="item.price"
+                              numeral="'money'" 
+                               />
+                          </div>
+
+                          <div class="input-prepend">
+                            <span style="padding:0 1em;;" ng-show="item.$temp.data.info.taking.date">
+                              วันที่ยืม: {{ item.$temp.data.info.taking.date | moment }}</span>
+                          </div>
                         </div>
+
                         <div>
                           <span class="label" style="margin-right: 4px;" 
                             ng-class="(item.$temp.data.state=='sold' && 'label-important') || 'label-info'"
                             ng-show="item.$temp.data.state">
                             {{ item.$temp.data.state}}
                           </span>
-
-                          {{ item.$temp.data.info.detail }}
+                           {{item.$temp.data.info.detail}}
                         </div>
-
-                      </div>
-
-                      <div ng-show="authorizeData.user.roles.has('MANAGER','ADMIN')"> 
-                        <div style="margin:2px 0;">
-                          <textarea rows="1" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
-                            ng-model="item.remark">
-                          </textarea>
-                        </div>
-                        <div style="margin:2px 0;">
-                          <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.target_price">
-                            ราคาตั้งขาย
-                            <button class="btn btn-small"  tabindex="-1" 
-                              ng-disabled="resource.info.approved"
-                              ng-click="item.price= item.$temp.data.info.target_price"
-                              >
-                                {{ utils.formatValue(item.$temp.data.info.target_price) }}
-                              </button>
-                          </span>
-                          <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.taking_price">
-                            ราคาตั้งยืม
-                            <button class="btn btn-small"  tabindex="-1" 
-                              ng-disabled="resource.info.approved"
-                              ng-click="item.price= item.$temp.data.info.taking_price"
-                              >
-                                {{ utils.formatValue(item.$temp.data.info.taking_price) }}
-                              </button>
-                          </span>
-                          <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.lowest_price">
-                            ราคาประเมิน
-                            <button class="btn btn-small"  tabindex="-1" 
-                              ng-disabled="resource.info.approved"
-                              ng-click="item.price= item.$temp.data.info.lowest_price"
-                              >
-                                {{ utils.formatValue(item.$temp.data.info.lowest_price) }}
-                              </button>
-                          </span>
+                        <div ng-show="authorizeData.user.roles.has('MANAGER','ADMIN')"> 
+                          <div style="margin:2px 0;">
+                            <textarea rows="1" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
+                              ng-model="item.remark">
+                            </textarea>
+                          </div>
+                          <div style="margin:2px 0;">
+                            <span class="label" style="margin-right:4px;" ng-show="item.$temp.data.info.target_price">
+                              ราคาตั้งขาย
+                              <button class="btn btn-small"  tabindex="-1" 
+                                ng-disabled="resource.info.approved"
+                                ng-click="item.price= item.$temp.data.info.target_price"
+                                >
+                                  {{ utils.formatValue(item.$temp.data.info.target_price) }}
+                                </button>
+                            </span>
+                            <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.taking_price">
+                              ราคาตั้งยืม
+                              <button class="btn btn-small"  tabindex="-1" 
+                                ng-disabled="resource.info.approved"
+                                ng-click="item.price= item.$temp.data.info.taking_price"
+                                >
+                                  {{ utils.formatValue(item.$temp.data.info.taking_price) }}
+                                </button>
+                            </span>
+                            <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.lowest_price">
+                              ราคาประเมิน
+                              <button class="btn btn-small"  tabindex="-1" 
+                                ng-disabled="resource.info.approved"
+                                ng-click="item.price= item.$temp.data.info.lowest_price"
+                                >
+                                  {{ utils.formatValue(item.$temp.data.info.lowest_price) }}
+                                </button>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
+                  <hr />
                   </div>
                 </div>
+                <hr />
               </div>
-            </div>
-            <div>
-              <label>
-                รวม {{ items().length }} รายการ  
-                <span ng-hide="resource.info.approved">
-                  <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
-                </span>
-              </label>
             </div>
           </div><!-- /tab -->
 

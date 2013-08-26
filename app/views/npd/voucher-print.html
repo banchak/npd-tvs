@@ -1,23 +1,34 @@
-  <div ng-init="printForm = utils.$router.current.params.form || 'default'">
-    <div class="span3 pull-right no-print">
-      <div class="no-print" style="padding:4px;">
-        <button class="btn btn-primary" ng-click="utils.printPage()">Print</button>
-        <span style="padding-left:12px"></span>
-        <button class="btn" ng-click="editOpr.exit()">Cancel</button>
-      </div>
-    </div>
-    
-    <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
-      <li ng-class="printForm=='default' && 'active'">
-        <a href ng-click="printForm='default'">{{resource._type}}</a>
-        </li>
-      <li ng-class="printForm=='taken' && 'active'" ng-show="takenItems().length">
-        <a href ng-click="printForm='taken'">ค้างยืม</a>
-        </li>
-    </ul>
-    <div class="page-boundary">
-      <div class="print-page">
-        <div ng-include="'views/npd/voucher-print-'+ printForm +'.html'"></div>
-      </div>
-    </div>
+  <div ng-init="printForm = utils.$router.current.params.form">
+
+        <div class="span3 pull-right no-print">
+          <div class="no-print" style="padding:4px;">
+            <button class="btn btn-primary" ng-click="utils.printPage()">Print</button>
+            <span style="padding-left:12px"></span>
+            <button class="btn" ng-click="editOpr.exit()">Cancel</button>
+          </div>
+        </div>
+
+        <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
+          <li
+            ng-class="printForm=='default' && 'active'" 
+            ng-show="items().length && (printForm = printForm || 'default')">
+            <a href ng-click="printForm='default'">{{resource._type}}</a>
+            </li>
+          <li
+            ng-class="printForm=='untaken' && 'active'" 
+            ng-show="selectedItems().length &&  (printForm = printForm || 'untaken')">
+            <a href ng-click="printForm='untaken'">ตัดยืม</a>
+            </li>
+          <li
+            ng-class="printForm=='taken' && 'active'" 
+            ng-show="unselectedItems().length &&  (printForm = printForm || 'taken')">
+            <a href ng-click="printForm='taken'">ค้างยืม</a>
+            </li>
+        </ul>
+        <div class="page-boundary">
+          <div class="print-page">
+            <div ng-include="printForm && 'views/npd/voucher-print-'+ printForm +'.html'"></div>
+          </div>
+        </div>
+
   </div>

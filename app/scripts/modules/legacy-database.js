@@ -16,8 +16,8 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
     })
 
   .factory(
-    'Database',['$mongolabResourceHttp', 'SCHEMA', 'BUILT_IN', 'COLLECTIONS'
-  , function($mongolabResourceHttp, SCHEMA, BUILT_IN, COLLECTIONS)
+    'Database',['$mongolabResourceHttp', '$q', 'SCHEMA', 'BUILT_IN', 'COLLECTIONS'
+  , function($mongolabResourceHttp, $q, SCHEMA, BUILT_IN, COLLECTIONS)
     {
       var database = { BUILT_IN : BUILT_IN }
 
@@ -70,13 +70,11 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
           return new this.dataAccess(schema)
         }
 
-
-
-      database.legacy.prototype.scopeQuery 
+      database.legacy.prototype.rawScopeQuery 
       = function(keyword, scopeFields) 
         {
           var self = this
-            , kmatch
+            , kmatch, xcmd
 
           if (!keyword)
             return
@@ -88,7 +86,7 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
 
             angular.forEach(keyword, function(k)
             {
-              q = self.scopeQuery(k, scopeFields)
+              q = self.rawScopeQuery(k, scopeFields)
               if (q)
                 qs.push (q)              
             })
@@ -102,7 +100,7 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
           // && operator 
           if ((kmatch = keyword.split(/\s+\&\&\s+/))) {
             if (kmatch.length > 1) {
-              return self.scopeQuery(kmatch, scopeFields)
+              return self.rawScopeQuery(kmatch, scopeFields)
             }
           }
 
@@ -112,7 +110,7 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
               var q, qs = []
 
               angular.forEach(kmatch, function (kw) {
-                q = self.scopeQuery(kmatch, scopeFields)
+                q = self.rawScopeQuery(kmatch, scopeFields)
                 if (q) {
                   qs.push(q)
                 }
@@ -128,10 +126,10 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
             for (var q in self.queries) {
               q = self.queries[q]
               if (q.name == keyword && q.value) {
-                return self.scopeQuery(q.value, scopeFields)
+                return self.rawScopeQuery(q.value, scopeFields)
               }
               if ('!'+q.name == keyword && q.notValue) {
-                return self.scopeQuery(q.notValue, scopeFields)
+                return self.rawScopeQuery(q.notValue, scopeFields)
               }
             }
           }
@@ -178,16 +176,20 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
               return qdef            
           }
 
+          if (keyword == '@all') {
+            return {}
+          }
 
-          var xcmd = keyword.match(/^(\!)?\@([a-z._]+)$/) 
+          xcmd = keyword.match(/^(\!)?\@([a-z._]+)$/) 
           if (xcmd)
           {
             var  q = {}
+
             q[xcmd[2]] = { $exists : !xcmd[1]}
             return q
           }
 
-          var xcmd = keyword.match(/^(\!)?\@([a-z._]+)\=(.+)$/) 
+          xcmd = keyword.match(/^(\!)?\@([a-z._]+)\=(.+)$/) 
           if (xcmd)
           {
             var q = {}
@@ -258,6 +260,21 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
           }
           
         }
+
+      database.legacy.prototype.scopeQuery 
+      = function(keyword, scopeFields) 
+        {
+          var self = this
+          
+          if (this.limitScope) {
+            keyword = this.limitScope(keyword)
+          }
+
+          return $q.when(keyword).then(function (kw) {
+            return self.rawScopeQuery(kw, scopeFields)
+          })
+        }
+
 
       return database; 
     }

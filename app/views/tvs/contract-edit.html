@@ -1,23 +1,25 @@
-  <div class="container-fluid" ng-init="typeaheadWait=50">
+  <div class="container-fluid">
 
         <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'">
         </div>
         
         <div class="row-fluid">
-            <h2>
-              {{ resource._type || db.title }}
-              <button tabindex="-1" class="btn btn-inverse" 
-                ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
-                ng-click="unlockEdit = !unlockEdit">
-                Unlock
-              </button>
-              <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
-                ng-class="resource.info.approved && 'btn-success'" 
-                ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
-                ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
-                {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
-              </button>
-            </h2>
+          <div class="pull-left">
+            <a href tabindex="-1" class="label label-inverse"  title="unlock"
+              ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
+              ng-click="unlockEdit = !unlockEdit">
+              &part;
+            </a>
+          </div>
+          <h2>
+            {{ resource._type || db.title }}
+            <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
+              ng-class="resource.info.approved && 'btn-success'" 
+              ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
+              ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
+              {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
+            </button>
+          </h2>
         </div>
         
         <div class="row-fluid">
