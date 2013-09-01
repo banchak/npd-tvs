@@ -1,12 +1,23 @@
 'use strict';
 
 angular.module('controllers.app-menu',[])
-  .controller('appMenuCtrl', ['$scope', '$rootScope', '$location', 'APP_CONFIG', 'COLLECTIONS'
-  , function ($scope, $rootScope, $location, APP_CONFIG, COLLECTIONS) {
+  .controller('appMenuCtrl', ['$scope', '$rootScope', '$location', 'APP_CONFIG', 'COLLECTIONS', '$q'
+  , function ($scope, $rootScope, $location, APP_CONFIG, COLLECTIONS, $q) {
 
     var menu = APP_CONFIG.appMenu
 
     $scope.menu = APP_CONFIG.appMenu
+
+    function urlBound (db, bound) {
+      var url = $location.url()
+        , newpath = '/' + db.name
+
+      if (bound) {
+        newpath += '/view/' + bound
+      }
+      url = url.replace(encodeURI($location.path()),encodeURI(newpath))
+      return '#'+ url
+    }
 
     //$scope.appTitle = menu.title
     //$scope.appVersion = menu.version
@@ -14,9 +25,23 @@ angular.module('controllers.app-menu',[])
 
     angular.forEach($scope.menu.menus, function (n){
         var db = COLLECTIONS[n]
-
-        if (db) 
-          $scope.appMenus.push( { title: db.title, module : db.name })
+          , mnu, subs
+        if (db) {
+          mnu = { title: db.title, module : db.name }
+          if (db.boundList) {
+            subs = angular.isFunction(db.boundList) ? db.boundList() : db.boundList
+            $q.when(subs).then(function(subs){
+              if (subs) {
+                mnu.subMenus = []
+                angular.forEach(subs,function (bound){
+                  mnu.subMenus.push({ label : bound.label || bound.name, url : urlBound(db,bound.name) })
+                })
+                console.log(mnu)                
+              }
+            })
+          }
+          $scope.appMenus.push( mnu )
+        }
       })
 
     function changePageTitle() {

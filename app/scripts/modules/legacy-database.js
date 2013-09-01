@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('modules.legacy-database', ['mongolabResourceHttp'])
+angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.utils'])
 
   .value('SCHEMA'
   , {
@@ -16,8 +16,8 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
     })
 
   .factory(
-    'Database',['$mongolabResourceHttp', '$q', 'SCHEMA', 'BUILT_IN', 'COLLECTIONS'
-  , function($mongolabResourceHttp, $q, SCHEMA, BUILT_IN, COLLECTIONS)
+    'Database',['$mongolabResourceHttp', '$q', 'SCHEMA', 'BUILT_IN', 'COLLECTIONS', 'utils'
+  , function($mongolabResourceHttp, $q, SCHEMA, BUILT_IN, COLLECTIONS, utils)
     {
       var database = { BUILT_IN : BUILT_IN }
 
@@ -274,6 +274,55 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp'])
             return self.rawScopeQuery(kw, scopeFields)
           })
         }
+
+      database.legacy.prototype.describeItem  = function (k, v) {
+        var itm, d
+
+        if (utils.notEmpty(v)) {
+
+          if (k.name) {
+
+            itm = angular.extend({ value : v }, k)
+          }
+          else {
+
+            itm = { name : k, value : v }
+          }
+
+          if (itm.formatter) {
+
+            itm.format = itm.formatter(v)
+
+            if (!itm.format) {
+              return
+            }
+          }
+          else {
+            var fmt = utils.formatValue(v)
+
+            if (fmt != v) {
+              itm.format = fmt
+            }
+          }
+          return itm
+        }
+      }
+
+      database.legacy.prototype.describe = function(data) {
+        var self  = this
+          , flds  = this.descriptions
+          , temp  = utils.temp('displayItems')
+
+        temp.set(data, [])
+        angular.forEach(flds, function(fld) {
+          var item = self.describeItem(fld, utils.lookup(data,fld.name || fld))
+
+          if (item) {
+            temp.get(data).push(item)
+          }
+        })
+
+      }
 
 
       return database; 

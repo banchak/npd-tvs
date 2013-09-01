@@ -79,51 +79,70 @@ angular.module('controllers.legacy-search',['modules.utils'])
       $scope.doSearch = function (keyword,databases, target, options) {
 
         var promises = []
+        var result    = $scope[target || 'searchResult'] = {}
 
         if (!keyword)
           return
 
-        var result    = $scope[target || 'searchResult'] = {}
 
         angular.forEach(databases || Database.COLLECTIONS, function(db) {
 
-          var qry, promise, scopefields
+          var qry, promise, scopefields, searchable
 
-          if (db.searchable === false) {
+          if (!db.searchable) {
             return
           }
 
-          if (angular.isArray(db.searchable)) {
-            scopefields = db.searchable
+          searchable = db.searchable
+
+          if (angular.isFunction(searchable)) {
+            searchable = searchable(db)
           }
+          promise = $q.when(searchable).then(function(searchable) {
 
-          db = new Database.legacy(db)
+            var pm, fields
 
-          qry = db.scopeQuery(keyword, scopefields)
+            if (!searchable) {
+              return
+            }
 
-          if (!options) {
-            var fields = {_name : 1}
+            if (angular.isArray(searchable)) {
+              scopefields = searchable
+            }
+
+
+            db = new Database.legacy(db)
+
+            qry = db.scopeQuery(keyword, scopefields)
+
+            fields = {_name : 1, _type : 1}
 
             angular.forEach(db.descriptions, function(d) {
               fields[d.name] = 1
             })
-            options = { fields : fields}
-          }
 
-          $scope.promiseBusy++
 
-          promise = $q.when(qry).then(function (_qry) { return db.dataAccess.query(_qry, options) })
+            $scope.promiseBusy++
 
-          promise.then(function(data) { 
-            if (data && data.length) {
-              result[db.name]  = { title : db.title, keyword : keyword, items : data, descriptions : db.descriptions }
-            }
-          }).then (promiseReady,promiseReady)
+            pm = $q.when(qry).then(function (_qry) { 
+
+              return db.dataAccess.query(_qry, angular.extend({ fields : fields}, options))
+            })
+
+            pm.then(function(items) { 
+              if (items && items.length) {
+                angular.forEach(items,function (data) { db.describe(data) } )
+                result[db.name]  = { title : db.title, keyword : keyword, items : items }
+              }
+            }).then (promiseReady,promiseReady)
+
+            return pm
+          })
 
           promises.push(promise)
         })
 
-        return $q.all(promises).then(function () { console.log('result',result); return result})
+        return $q.all(promises).then(function () { utils.safe$apply($scope); return result})
       }
 
     } 

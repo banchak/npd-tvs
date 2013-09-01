@@ -120,7 +120,9 @@ angular.module('modules.gcalendar', ['modules.google-api', 'modules.utils'])
 
       if (resp) {
         angular.forEach(resp.items, function (cal) {
-          promises.push(_events(cal))
+          if (cal.selected) {
+            promises.push(_events(cal))
+          }
         })
       }
       if (promises.length) {

@@ -50,11 +50,24 @@
           </button>
           <a class="brand" ng-href="{{ menu.root || './' }}">/</a>
           <a class="brand" ng-href="{{ menu.home || '#/' }}" title="{{ menu.version }}">{{ menu.title }}</a>
-          <div collapse="appmenu_collapse">
-            <ul class="nav" ng-hide="signIn && (!authorizeData.user || authorizeData.user.limitAccess)">
-                <li ng-repeat="mnu in appMenus">
-                  <a ng-href="{{ mnu.project }}#/{{ mnu.module }}" ng-bind="mnu.title">module</a>
-                </li>
+          <div ng-hide="appmenu_collapse">
+            <ul class="nav" 
+              ng-hide="signIn && (!authorizeData.user || authorizeData.user.limitAccess)"
+              >
+              <li ng-repeat="mnu in appMenus" ng-class="mnu.subMenus && 'dropdown'" ng-switch="(!!mnu.subMenus).toString()">
+                  <a ng-href="{{ mnu.project + '#/' + mnu.module }}" ng-switch-when="false">
+                    {{ mnu.title }}
+                  </a>
+                  <a href class="dropdown-toggle" ng-switch-when="true">
+                    {{ mnu.title }}
+                    <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="sub in mnu.subMenus">
+                      <a ng-href="{{ sub.url }}">{{ sub.label }}</a>
+                    </li>
+                  </ul>
+              </li>
             </ul>
           </div>
 
@@ -62,3 +75,5 @@
       </div>
     </div>
   </div>
+
+

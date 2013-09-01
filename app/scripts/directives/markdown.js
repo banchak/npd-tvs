@@ -26,7 +26,7 @@ angular.module('directives.markdown', [])
                   if (angular.isFunction(makeHtml)) {
                     makeHtml(scope,element,attrs)
                   }
-                  console.log(element.html())
+
                   $compile(element.contents())(scope)
 
                 })

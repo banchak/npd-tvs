@@ -1,50 +1,10 @@
 
-<div class="row-fluid">
-
-  <div class="span10" >
-
-    <div ng-hide="authorizeData.user">
-      <div style="margin:20px;" ng-controller="appAuthCtrl">
-        <div ng-show="authorizeData.ready">
-          <div>
-            We want a 
-            <a href ng-click="signIn()"><strong class="text-warning">Google</strong></a> 
-            account to work with, thank you.
-          </div>
-          <div style="margin: 20px 4px;">
-            <button class="btn btn-large btn-primary" ng-click="signIn()">Sign in</button>
-          </div>
-        </div>
-        <div style="margin: 20px 4px;" ng-show="signed && !authorizeData">
-          <span class="text-warning">Waiting... or <a href ng-click="reload()">reload</a>.</span>
-        </div>
-      </div>
-    </div>
-
-    <div ng-show="authorizeData.user">
-      <div class="container" ng-controller="mainSearchCtrl">
-        <div class="row-fluid">
-          <form class="form-inline text-center" ng-submit="goSearch(search)">
-              <span style="padding:8px;"><img src="images/thanya-logo-small.jpg" /> </span>
-              <input type="text" class="span4" ng-model="search" />
-              <button type="submit" class="btn" >search</button>
-          </form>
-        </div>
-        <div class="row-fluid" ng-show="utils.notEmpty(searchResult)">
-          <hr />
-          <ul ng-repeat="(name,rs) in searchResult">
-            <li>
-              <h5><a href ng-click="goPathScope(name,rs)">{{ rs.title }}</a> ({{ rs.items.length }})</h5>
-              <ul>
-                <li ng-repeat="itm in rs.items">
-                  <a href ng-click="goPathItem(name,itm)">{{ itm._name }}</a>
-                </li>
-              </ul>
-            </li> 
-          </ul>
-        </div>
-
-      </div>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span10"
+      ng-init="appLogo='images/thanya-logo-small.jpg'" 
+      ng-include="'views/includes/main-search.html'"
+      >
     </div>
   </div>
 </div>

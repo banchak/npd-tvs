@@ -22,7 +22,7 @@
           <span style="padding-right:4px;" ng-repeat="cat in categories">
             <span class="label hover-opacity-high" style="margin:1px 0;" ng-init="_v=utils.lookup(data,cat.name);" ng-show="_v">
               <span ng-init="_q={}; _q[cat.name]=_v" ng-bind="cat.label"></span>
-              <button class="btn btn-small" ng-click="goSearch(_q)">{{ formatValue(_v) }}</button>
+              <button class="btn btn-small" ng-click="goSearch(_q)">{{ utils.formatValue(_v) }}</button>
             </span>
           </span>
         </div>
@@ -51,13 +51,13 @@
                 </dt>
 
                 <dd ng-class="fld.dataClass">
-                  <div class="pre-wrap" ng-class="fld.viewClass">{{ fld.format || formatValue(fld.value) }}</div>
+                  <div class="pre-wrap" ng-class="fld.viewClass">{{ fld.format || fld.value }}</div>
                   <div ng-show="fld.subfields">
                     <dl ng-class="ifSingleShow('table-display table-sub','')" ng-hide="dtToggles[fldId]">
                       <div ng-repeat="subfld in fld.subfields" ng-class="fld.defClass">
                         <dt ng-bind="subfld.label" ng-class="subfld.termClass">{{ subfld.label }}</dt>
                         <dd ng-class="subfld.dataClass">
-                          <div class="pre-wrap" ng-class="subfld.viewClass">{{ subfld.format || formatValue(subfld.value) }}</div>
+                          <div class="pre-wrap" ng-class="subfld.viewClass">{{ subfld.format || subfld.value }}</div>
                         </dd>
                       </div>
                     </dl>

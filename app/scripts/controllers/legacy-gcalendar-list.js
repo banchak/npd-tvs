@@ -36,8 +36,8 @@ angular.module('controllers.legacy-gcalendar-list',['controllers.legacy-list', '
               if (text[0]!='@') {
                 text = '@'+text
               }
-              params.text = text + ' -'
-              params.details = text + ' -'
+              params.text = text + ' - '
+              params.details = text + ' - '
             }
 
             if (src) {
@@ -53,7 +53,6 @@ angular.module('controllers.legacy-gcalendar-list',['controllers.legacy-list', '
             temp.set(data, null)
             GCalendar.events(data._name).then(function(resp){
               temp.set(data, resp || [])
-              console.log('$temp.events',data.$temp.events)
             })
 
             angular.extend ($scope.gcalendarViewer, {
@@ -72,8 +71,9 @@ angular.module('controllers.legacy-gcalendar-list',['controllers.legacy-list', '
               , cals = []
             console.log('calendars',resp)
             if (resp && resp.items){
+
               angular.forEach(resp.items, function (cal) {
-                if (cal.accessRole.match(/owner|writer/)) {
+                if (cal.accessRole.match(/owner|writer/) && cal.selected) {
                   cals.push({email : cal.id, name : cal.summary})
                 }
               })

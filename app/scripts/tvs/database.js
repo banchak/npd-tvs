@@ -74,21 +74,25 @@ angular.module('tvs.database', ['modules.legacy-database'])
         ]
       , queries :
         [
-          { name : '@y1', label : '@1 ปี', value : '@_type=1 ปี'}
+          { name : '@draft', label : '@รออนุมัติ', value : '!@info.approved', notValue : '@info.approved'}
+        , { name : '@approved', label : '@อนุมัติแล้ว', value : '@info.approved', notValue : '!@info.approved'}
+        , { name : '@y1', label : '@1 ปี', value : '@_type=1 ปี'}
         , { name : '@y3', label : '@3 ปี', value : '@_type=3 ปี'}
         , { name : '@y15',label : '@15 ปี', value : '@_type=15 ปี'}
         , { name : '@yo', label : '@อื่นๆ', value : 'อื่นๆ'}
         ]
       , boundList : function () {
                 return [ 
-                        { name : '@_type=1 ปี', label : '1 ปี'}
+                        { name : '@draft',  label : 'รออนุมัติ'}
+                      , { name : '@approved',  label : 'อนุมัติแล้ว'}
+                      , { name : '@_type=1 ปี', label : '1 ปี'}
                       , { name : '@_type=3 ปี',    label : '3 ปี'}
                       , { name : '@_type=15 ปี',    label : '15 ปี'}
                       , { name : '@_type=อื่นๆ',    label : 'อื่นๆ'}
                       , { label : 'ทั้งหมด'}
                       ]
         }
-
+      , searchable : ['_name', 'display.area', 'display.tenant']
       }
 
     , Area : 
@@ -105,6 +109,7 @@ angular.module('tvs.database', ['modules.legacy-database'])
         , { name : 'info.job',            label : 'งาน'}
         ] 
       , descriptions : ['info.size', 'info.rate' ]
+      , searchable : ['_name', 'info.building', 'info.floor', 'info.zone', 'info.job']
       }
 
     , Tenant : 
@@ -123,6 +128,22 @@ angular.module('tvs.database', ['modules.legacy-database'])
         , { name :'meta.phones.id', label : 'โทรศัพท์'}
         , { name :'meta.econtacts.id', label : 'e-contact'}
         , { name :'meta.locations.address', label : 'ที่อยู่'}
+        ]
+      , boundList : function () {
+                return [ 
+                       { name : '@_type=บุคคล', label : 'บุคคล'}
+                      ,{ name : '@_type=นิติบุคคล', label : 'นิติบุคคล'}
+                      , { label : 'ทั้งหมด'}
+                      ]
+        }
+      , searchable : [
+          '_name'
+        , 'info.person_id'
+        , 'meta.phones.id'
+        , 'meta.econtacts.id'
+        , 'meta.locations.address'
+        ,'meta.locations.city'
+        ,'meta.locations.province'
         ]
       }
 

@@ -1,3 +1,5 @@
+(function () {
+
 'use strict';
 
 angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
@@ -85,7 +87,20 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         , { name : '@img',  label : '@มีรูปภาพ',    value : '@meta.images', 
                               notValue : '!@meta.images' }
         ]
-      , searchable : [ '_name', 'info.detail', 'info.serial']
+      , searchable : function() {
+          return $rootScope.authorize().then(function () {
+
+            if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+              var roles = $rootScope.authorizeData.user.roles
+
+              if (roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
+                return ['_name', 'info.detail', 'info.serial', 'info.taking.person', 'info.selling.person', 'info.keeping.person']
+              }
+            }
+
+            return ['_name', 'info.detail']
+          })
+        }
       , boundList : function () {
           return $rootScope.authorize().then(function () {
 
@@ -118,7 +133,6 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
             return ['@sellable', keyword]
           })
         }
-
       }
 
     , Person : 
@@ -133,18 +147,43 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         , { name : 'meta.locations.province', label : 'จังหวัด'}
         ] 
       , descriptions : [
-          { name : 'meta.locations.address',  label: 'ที่อยู่'}
+          { name : 'info.person_id',          label: 'เลขสำคัญ' }
+        , { name : 'meta.locations.address',  label: 'ที่อยู่'}
         , { name : 'meta.locations.province', label: 'จังหวัด' }
         , { name : 'meta.phones.id',          label: 'โทรศัพท์' }
         , { name : 'meta.faxes.id',           label: 'แฟกซ์' }
-        , { name : 'meta.econtancts',         label: 'e-contact'}
+        , { name : 'meta.econtacts',         label: 'e-contact'}
         ]
       , orders :
         [
           { name : '_id',                 label : 'ลำดับข้อมูล'}
         , { name : '_name',               label : 'ชื่อ'}
-        ]        
-      , searchable : false
+        ]
+      , queries :
+        [
+          { name : '@supplier', label : '@แหล่งซื้อ', value : '@info.is_supplier', notValue : '!@info.is_supplier'}
+        , { name : '@broker', label : '@ตัวแทนขาย', value : '@info.is_broker', notValue : '!@info.is_broker'}
+        , { name : '@customer', label : '@ลูกค้า', value : '!@info.is_supplier && !@info.is_broker', notValue : '@info.is_supplier || @info.is_broker'}
+        ]
+      , boundList : function () {
+                return [ 
+                       { name : '@supplier', label : 'แหล่งซื้อ'}
+                      ,{ name : '@broker', label : 'ตัวแทนขาย'}
+                      ,{ name : '@customer', label : 'ลูกค้า'}
+                      , { label : 'ทั้งหมด'}
+                      ]
+        }
+      , searchable : function() {
+          return $rootScope.authorize().then(function () {
+            if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+              var roles = $rootScope.authorizeData.user.roles
+
+              if (roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
+                return ['_name', 'info.person_id', 'meta.phones.id', 'meta.econtacts.id']
+              }
+            }
+          })
+        }
       }
     , Voucher : 
       {
@@ -171,10 +210,22 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
           { name : '_id',                 label : 'ลำดับข้อมูล'}
         , { name : '_name',               label : 'เลขที่'}
         ]        
-      , searchable : false
+      , searchable : function() {
+          return $rootScope.authorize().then(function () {
+            if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+              var roles = $rootScope.authorizeData.user.roles
+
+              if (roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
+                return ['_name', 'info.person.name', 'meta.items.name', 'meta.takenItems.name']
+              }
+            }
+          })
+        }
       , queries :
         [
-          { name : '@take', label : '@ยืม', value : '@_type=ยืม', notValue : '!@_type=ยืม'}
+          { name : '@draft', label : '@รออนุมัติ', value : '!@info.approved', notValue : '@info.approved'}
+        , { name : '@approved', label : '@อนุมัติแล้ว', value : '@info.approved', notValue : '!@info.approved'}
+        , { name : '@take', label : '@ยืม', value : '@_type=ยืม', notValue : '!@_type=ยืม'}
         , { name : '@sell', label : '@ขาย', value : '@_type=ขาย', notValue : '!@_type=ขาย'}
         , { name : '@return', label : '@คืน', value : '@_type=คืน', notValue : '!@_type=คืน'}
         ]
@@ -186,7 +237,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
 
               if (roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
                 return [ 
-                        { name : '@take',  label : 'ยืม'}
+                        { name : '@draft',  label : 'รออนุมัติ'}
+                      , { name : '@approved',  label : 'อนุมัติแล้ว'}
+                      , { name : '@take',  label : 'ยืม'}
                       , { name : '@sell',  label : 'ขาย'}
                       , { name : '@return',  label : 'คืน'}
                       , { label : 'ทั้งหมด'}
@@ -199,5 +252,5 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
     }
   }])
 
-
+}).call(this);
 

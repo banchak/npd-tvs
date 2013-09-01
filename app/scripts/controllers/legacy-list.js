@@ -179,7 +179,7 @@ angular.module('controllers.legacy-list',['modules.utils'])
           angular.forEach($scope.dataList, function (data) {
 
             if (!gone) {
-              $scope.describe(data)
+              $scope.db.describe(data)
             }
           })
 
@@ -357,94 +357,6 @@ angular.module('controllers.legacy-list',['modules.utils'])
       if (listctrl.singleShowFields || listctrl.db.singleShowFields)  {
 
         $scope.singleShowFields = listctrl.singleShowFields || listctrl.db.singleShowFields
-      }
-
-      $scope.formatValue = function (v) {
-        return utils.formatValue(v)
-      }
-
-      $scope.describeItem  = function (k, v) {
-        var itm, d
-
-        if (utils.notEmpty(v)) {
-
-
-          if (k.name) {
-            itm = angular.extend({ value : v }, k)
-          }
-          else {
-            itm = { name : k, value : v }
-          }
-
-          if (itm.formatter) {
-            itm.format = itm.formatter(v)
-            if (!itm.format)
-              return
-          }
-          return itm
-        }
-      }
-
-      $scope.descFields = function(data) {
-
-        var flds  = [] 
-          , xflds = ['_name'] ;
-          
-        // prepare exclude fields
-        angular.forEach($scope.categories, function(cat) {
-
-            xflds.push(cat.name); 
-          })
-        
-        flds  = []
-
-        angular.forEach(data, function (v, k) {
-
-            if (xflds.indexOf(k)>=0 || k[0]=='$') {
-              return
-            }
-
-            if (angular.isString(v)) 
-            {
-
-              flds.push(k);
-              return;
-            }
-          })
-        
-        return flds
-      }
-
-      if (listctrl.describeItem || listctrl.db.describeItem)  {
-
-        $scope.describeItem = listctrl.describeItem || listctrl.db.describeItem
-      }
-
-      if (listctrl.descriptions || listctrl.db.descriptions) {
-
-        $scope.descFields = function () {
-
-          return listctrl.descriptions || listctrl.db.descriptions          
-        }
-      }
-
-      $scope.describe = function(data) {
-
-        var flds  =  $scope.descFields(data)
-          , temp  = utils.temp('displayItems')
-
-        temp.set(data, [])
-        angular.forEach(flds, function(fld) {
-
-            var item = $scope.describeItem(fld, utils.lookup(data,fld.name || fld))
-
-            if (item) {
-
-              temp.get(data).push(item)
-            }
-
-          })
-
       }
 
       function loadBoundList () {
