@@ -8,6 +8,7 @@ angular.module('tvs.project')
           'https://www.googleapis.com/auth/drive'
       ,   'https://www.googleapis.com/auth/userinfo.email'
       ,   'https://www.googleapis.com/auth/userinfo.profile'
+      ,   'https://www.googleapis.com/auth/calendar'
       ]
     //, immediate : true
     , apiKey    : 'AIzaSyAkP37SMBfu2WTW0efOo0NfGLzJkKXE_xY'
@@ -15,6 +16,7 @@ angular.module('tvs.project')
     , shareCabinets : ['0B4yFwOMMfo5HZk96REVZaEkwMkk']
     , clientServices : [
           {name : 'drive', version : 'v2'}
+        , {name : 'calendar', version : 'v3'}
       ]
     , userSignIn : function (user) {
         var email = user.email

@@ -3,8 +3,8 @@
 'use strict'
 
 angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
-  .controller('productEditCtrl', ['$scope', 'legacyEditDI', '$controller','Database', 'googleApi'
-  , function ($scope, legacyEditDI, $controller, Database, googleApi)
+  .controller('productEditCtrl', ['$scope', 'legacyEditDI', '$controller','Database', 'GDrive'
+  , function ($scope, legacyEditDI, $controller, Database, GDrive)
     {
       var db    = new Database.legacy('Product')
         , utils = legacyEditDI.utils
@@ -18,10 +18,7 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
 
               $scope.thumbnailLink = null
 
-              googleApi.client.execute( {
-                  path    : 'drive.files.get'
-                , params  : {fileId : img.id}
-                }, function (meta) {
+              GDrive.fileMeta(img.id).then(function (meta) {
 
                   if (meta.thumbnailLink && !meta.trashed) {
 
@@ -39,21 +36,26 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
 
           var services = {
 
-              sellFromTaking : function () {
-                $scope.selling().person = $scope.taking().person
-                if (!$scope.selling().price) {
-                  $scope.selling().price = $scope.taking().price
-                }
-              }
-            , getState : function () {
-                if (utils.notEmpty($scope.selling())) {
-                  return 'sold'
-                }
-                if (utils.notEmpty($scope.taking().person)) {
-                  return 'taken'
-                }
+            sellFromTaking : function () {
+
+              $scope.selling().person = $scope.taking().person
+
+              if (!$scope.selling().price) {
+
+                $scope.selling().price = $scope.taking().price
               }
             }
+
+          , getState : function () {
+
+              if (utils.notEmpty($scope.selling())) {
+                return 'sold'
+              }
+              if (utils.notEmpty($scope.taking().person)) {
+                return 'taken'
+              }
+            }
+          }
 
           angular.extend($scope, services)
 
@@ -64,7 +66,7 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
               $scope[n]()
             })
 
-          angular.forEach(['buying', 'taking', 'keeping', 'selling'], function (n) {
+          angular.forEach(['buying', 'taking', 'keeping', 'selling', 'metal', 'watch'], function (n) {
               $scope[n] = function () { return entry.info(n,{}) }
               $scope[n]()
             })
@@ -149,7 +151,9 @@ angular.module('npd.product-edit',['controllers.legacy-edit','npd.database'])
 
           $scope.calc = new calc ()
 
-
+          $scope.__moreWatch  = utils.notEmpty($scope.watch())
+          $scope.__moreGems   = utils.notEmpty($scope.gems())
+          $scope.__moreMetal  = utils.notEmpty($scope.metal())
 
         }
       

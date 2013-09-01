@@ -52,7 +52,7 @@
     </div>
 
     <div class="modal-footer">
-      <span ng-hide="gdriveViewer.data.$temp.cabinets && gdriveViewer.data.$temp.shareCabinets">
+      <span ng-hide="gdriveViewer.data.$temp.cabinets != null && gdriveViewer.data.$temp.shareCabinets != null">
         <img src="images/spinner.gif" />
       </span>
       <button class="btn btn-warning cancel" ng-click="gdriveViewer.close()">Close</button>

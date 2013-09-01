@@ -510,7 +510,18 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
                   }
 
                 }
+              , makeHtml : function (tof) {
+                  tof = tof || 'views/tvs/contract-print-tof.html'
+                  return function (scope, element, attrs) {
 
+                    var hr = element.find('hr').addClass("no-print")
+
+                    if ($scope.record().title_section)
+                    {
+                      hr.after(angular.element('<div ng-include="\'' + tof + '\'"></div>'))
+                    }
+                  }
+                }
 
               }
 
@@ -521,6 +532,12 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
 
               $scope[n] = function () { return entry.meta(n) }
             })
+
+          angular.forEach(['record'], function (n) {
+              $scope[n] = function () { return entry.info(n,{}) }
+              $scope[n]()
+            })
+
 
           angular.extend($scope, services)
 

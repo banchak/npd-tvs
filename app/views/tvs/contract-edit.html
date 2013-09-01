@@ -1,577 +1,592 @@
   <div class="container-fluid">
 
-        <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'">
-        </div>
+        <div ng-include="'views/includes/edit-header.html'"> </div>
         
-        <div class="row-fluid">
-          <div class="pull-left">
-            <a href tabindex="-1" class="label label-inverse"  title="unlock"
-              ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
-              ng-click="unlockEdit = !unlockEdit">
-              &part;
-            </a>
+        <div><!--head-->
+          <div class="row-fluid">
+              <div class="span4">
+                <label>ชนิดสัญญา : </label>
+                <select class="input-medium"
+                  ng-disabled = "!unlockEdit"
+                  ng-model  ="resource._type" 
+                  ng-options="c.name as c.name for c in BUILT_IN.contractTypes"
+                  ng-change  ="contract_type_change()"
+                ></select>
+              </div>
           </div>
-          <h2>
-            {{ resource._type || db.title }}
-            <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
-              ng-class="resource.info.approved && 'btn-success'" 
-              ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
-              ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
-              {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
-            </button>
-          </h2>
-        </div>
-        
-        <div class="row-fluid">
-
-          <div class="span9">
-            <div class="row-fluid"> <!-- contract head -->
-                <div class="span4">
-                  <label>ชนิดสัญญา : </label>
-                  <select class="input-medium"
-                    ng-disabled = "!unlockEdit"
-                    ng-model  ="resource._type" 
-                    ng-options="c.name as c.name for c in BUILT_IN.contractTypes"
-                    ng-change  ="contract_type_change()"
-                  ></select>
-                </div>
-            </div>
+          
+          <div class="row-fluid">
+              <div class="span4">
+                <label>วันที่ทำสัญญา : {{resource.info.issue_date}}</label>
+                <input type="text" class="input-medium" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.info.issue_date" 
+                  moment="'DD/MM/**BB'"
+                  typeahead="d.name as (d.label || d.name) 
+                    for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                  />
+              </div>
             
-            <div class="row-fluid"> <!-- contract head -->
-                <div class="span4">
-                  <label>วันที่ทำสัญญา : {{resource.info.issue_date}}</label>
-                  <input type="text" class="input-medium" 
+              <div class="span4">
+                <label>เลขที่สัญญา : </label>
+                <input type="text" class="input-medium" 
+                  ng-disabled = "!unlockEdit"
+                  ng-model="resource._name" />
+                <span></span>
+              </div>
+          </div>
+        </div>
+
+        <div class="row-fluid"><!--tabs menu-->
+
+          <ul class="nav nav-tabs">
+            <li ng-class="!__tabIdx && 'active'">
+              <a href ng-click="__tabIdx=0">
+                คู่สัญญา</a></li>
+            <li ng-class="__tabIdx==1 && 'active'">
+              <a href ng-click="__tabIdx=1">
+                พื้นที่เช่า</a></li>
+            <li ng-class="__tabIdx==2 && 'active'">
+              <a href ng-click="__tabIdx=2">
+                กำหนดเวลา</a></li>
+            <li ng-class="__tabIdx==3 && 'active'">
+              <a href ng-click="__tabIdx=3">
+                อัตราค่าเช่า</a></li>
+            <li ng-class="__tabIdx==4 && 'active'">
+              <a href ng-click="__tabIdx=4">
+                บันทึกแนบท้าย</a></li>
+            <li ng-class="__tabIdx==5 && 'active'">
+              <a href ng-click="__tabIdx=5">
+                ฝ่ายกฎหมาย</a></li>
+
+          </ul>
+        </div>
+
+        <div class="row-fluid"><!--tabs body-->
+
+          <div class="container-fluid" ng-show="!__tabIdx"  heading="คู่สัญญา">
+              <label>คู่สัญญา :
+                <span>
+                  [ <a href="" 
+                      ng-class="utils.AND(switching.meta_tenant,'label')" 
+                      ng-click="switching.meta_tenant= !switching.meta_tenant">
+                      meta</a> ]
+                </span>
+                <span>
+                  [ <a href="" 
+                      ng-class="utils.AND(switching.tenant,'label')" 
+                      ng-click="switching.tenant= !switching.tenant">
+                      description</a> ]
+                </span>
+                <span ng-show="resource.meta.tenant_type && !resource.info.approved">
+                  <span ng-show="utils.AND(switching.meta_tenant,tenant_addable())">
+                    <a href="" class="btn btn-small btn-danger" 
+                      ng-click="resource$entry.add(tenants())">
+                      เพิ่มผู้เช่า</a>
+                  </span>
+                  <span ng-show="switching.meta_tenant">
+                    <a href="" class="btn btn-small btn-danger" 
+                      ng-click="resource$entry.add(tenant_signers())">
+                      เพิ่มผู้ลงนาม</a>
+                  </span>
+                  <span ng-hide="switching.tenant_synced">
+                    <a class="btn btn-small btn-info" href="" ng_click="meta_tenant_render(true)">sync</a>
+                  </span>
+                </span>
+              </label>
+              <div class="alert alert-info" ng-show="switching.meta_tenant">
+                <div class="input-prepend">
+                  <span class="add-on">ประเภท</span>
+                  <select class="input-medium"
                     ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.issue_date" 
-                    moment="'DD/MM/**BB'"
-                    boot-datepicker="{language: 'th-th'}"
-                    />
+                    ng-model  ="resource.meta.tenant_type" 
+                    ng-options="c.name as c.name for c in BUILT_IN.personTypes"
+                    ></select>
                 </div>
               
-                <div class="span4">
-                  <label>เลขที่สัญญา : </label>
-                  <input type="text" class="input-medium" 
-                    ng-disabled = "!unlockEdit"
-                    ng-model="resource._name" />
-                  <span></span>
-                </div>
-            </div>
-            
-            <div class="row-fluid"> <!-- contract body -->
-
-              <ul class="nav nav-tabs">
-                <li ng-class="!__tabIdx && 'active'">
-                  <a href ng-click="__tabIdx=0">
-                    คู่สัญญา</a></li>
-                <li ng-class="__tabIdx==1 && 'active'">
-                  <a href ng-click="__tabIdx=1">
-                    พื้นที่เช่า</a></li>
-                <li ng-class="__tabIdx==2 && 'active'">
-                  <a href ng-click="__tabIdx=2">
-                    กำหนดเวลา</a></li>
-                <li ng-class="__tabIdx==3 && 'active'">
-                  <a href ng-click="__tabIdx=3">
-                    อัตราค่าเช่า</a></li>
-                <li ng-class="__tabIdx==4 && 'active'">
-                  <a href ng-click="__tabIdx=4">
-                    ฝ่ายกฎหมาย</a></li>
-
-              </ul>
-            
-              <div ng-show="!__tabIdx"  heading="คู่สัญญา">
-                  <label>คู่สัญญา :
-                    <span>
-                      [ <a href="" 
-                          ng-class="utils.AND(switching.meta_tenant,'label')" 
-                          ng-click="switching.meta_tenant= !switching.meta_tenant">
-                          meta</a> ]
-                    </span>
-                    <span>
-                      [ <a href="" 
-                          ng-class="utils.AND(switching.tenant,'label')" 
-                          ng-click="switching.tenant= !switching.tenant">
-                          description</a> ]
-                    </span>
-                    <span ng-show="resource.meta.tenant_type && !resource.info.approved">
-                      <span ng-show="utils.AND(switching.meta_tenant,tenant_addable())">
-                        <a href="" class="btn btn-small btn-danger" 
-                          ng-click="resource$entry.add(tenants())">
-                          เพิ่มผู้เช่า</a>
-                      </span>
-                      <span ng-show="switching.meta_tenant">
-                        <a href="" class="btn btn-small btn-danger" 
-                          ng-click="resource$entry.add(tenant_signers())">
-                          เพิ่มผู้ลงนาม</a>
-                      </span>
-                      <span ng-hide="switching.tenant_synced">
-                        <a class="btn btn-small btn-info" href="" ng_click="meta_tenant_render(true)">sync</a>
-                      </span>
-                    </span>
-                  </label>
-                  <div class="alert alert-info" ng-show="switching.meta_tenant">
-                    <div class="input-prepend">
-                      <span class="add-on">ประเภท</span>
-                      <select class="input-medium"
+                <div ng-repeat="tenant in tenants()">
+                  <div class="pull-right" ng-show="!resource.info.approved">
+                    <a tabindex="-1" class="btn btn-small btn-warning" href 
+                      ng-click="resource$entry.remove(tenants(),$index)">
+                      ลบ
+                    </a>
+                  </div>
+                  
+                  <div class="input-prepend input-append">
+                    <form style="margin:0;" ng-submit="tenantSync(tenants()[$index])">
+                      <div style="height:0; width:0; overflow:hidden;">
+                        <input type="submit" />
+                      </div>                          
+                      <span class="add-on">ชื่อผู้เช่า</span>
+                      <input type="text" class="input-xlarge" 
                         ng-disabled = "resource.info.approved"
-                        ng-model  ="resource.meta.tenant_type" 
-                        ng-options="c.name as c.name for c in BUILT_IN.personTypes"
-                        ></select>
-                    </div>
-                  
-                    <div ng-repeat="tenant in tenants()">
-                      <div class="pull-right" ng-show="!resource.info.approved">
-                        <a tabindex="-1" class="btn btn-small btn-warning" href 
-                          ng-click="resource$entry.remove(tenants(),$index)">
-                          ลบ
-                        </a>
-                      </div>
-                      
-                      <div class="input-prepend input-append">
-                        <form style="margin:0;" ng-submit="tenantSync(tenants()[$index])">
-                          <div style="height:0; width:0; overflow:hidden;">
-                            <input type="submit" />
-                          </div>                          
-                          <span class="add-on">ชื่อผู้เช่า</span>
-                          <input type="text" class="input-xlarge" 
-                            ng-disabled = "resource.info.approved"
-                            ng-model="tenant.name"
-                            typeahead="itm for itm in selfList('Tenant/_name', $viewValue,{_type : resource.meta.tenant_type})"
-                            typeahead-wait-ms="typeaheadWait"
-                            />
-                            <span class="add-on btn btn-small" 
-                              ng-disabled = "resource.info.approved"
-                              ng-class="!isSynced(tenant) && 'btn-info'"
-                              ng-click="tenantSync(tenants()[$index],true)"
-                              >
-                              &crarr;
-                            </span>
-                          </form>
-                      </div>
-                      
-                      <div class="input-prepend">
-                        <span class="add-on">เลขสำคัญ</span>
-                        <input type="text" class="input-medium" 
-                          placeholder="{{ (resource.meta.tenant_type=='นิติบุคคล' && 'เลขนิติบุคคล') || (resource.meta.tenant_type=='บุคคล' && 'บัตรประชาชน') || '' }} " 
+                        ng-model="tenant.name"
+                        typeahead="itm for itm in selfList('Tenant/_name', $viewValue,{_type : resource.meta.tenant_type})"
+                        typeahead-wait-ms="typeaheadWait"
+                        />
+                        <span class="add-on btn btn-small" 
                           ng-disabled = "resource.info.approved"
-                          ng-model="tenant.register_id"
-                          />
-                      </div>
-                      
-                      <div>
-                        <div ng-show="tenant.$temp.data.meta.locations.length &gt; 1 && !resource.info.approved">
-                          <ul class="nav nav-pills" style="margin:0;" >
-                            <li 
-                              ng-repeat="loc in tenant.$temp.data.meta.locations"
-                              ng-class="(loc2Address(loc)==tenant.address)&&'active'">
-                              <a href ng-click="tenant.address = loc2Address(loc)">
-                                {{ loc.type || ($index +1) }}
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="input-prepend" ng-class="(tenant.$temp.data.meta.locations.length > 1) && 'input-append'">
-                          <span class="add-on">ที่อยู่</span>
-                          <textarea rows="2.5" class="input-xxlarge" 
-                            ng-disabled = "resource.info.approved"
-                            ng-model="tenant.address" 
-                            ></textarea>
-                        </div>
-                      </div>
-                      <hr/>
-                    </div>
-                    <div ng-repeat="signer in tenant_signers()">
-                      <div class="pull-right">
-                        <a tabindex="-1" class="btn btn-small btn-warning" href 
-                          ng-click="resource$entry.remove(tenant_signers(),$index)"
+                          ng-class="!isSynced(tenant) && 'btn-info'"
+                          ng-click="tenantSync(tenants()[$index],true)"
                           >
-                          ลบ
-                        </a>
-                      </div>
-
-                      <div class="input-prepend input-append">
-                        <form style="margin:0;" ng-submit="tenantSync(tenant_signers()[$index])">
-                          <div style="height:0; width:0; overflow:hidden;">
-                            <input type="submit" />
-                          </div>                          
-                          <span class="add-on">ผู้ลงนาม</span>
-                          <input type="text" class="input-xlarge" placeholder="กรรมการ หรือ ผู้รับมอบอำนาจ(ถ้ามี)" 
-                            ng-model="signer.name" 
-                            typeahead="itm for itm in selfList('Tenant/_name', $viewValue,{_type : 'บุคคล'})"
-                            typeahead-wait-ms="typeaheadWait"
-                            />
-                          <span class="add-on btn btn-small" 
-                            ng-class="!isSynced(signer) && 'btn-info'"
-                            ng-click="tenantSync(tenant_signers()[$index],true)"
-                            >
-                            &crarr;
-                          </span>
-                        </form>
-                      </div>
-                    </div>
+                          &crarr;
+                        </span>
+                      </form>
                   </div>
                   
-                  <div ng-show="switching.tenant">
-                    <textarea rows="5" class="input-xxlarge" 
-                      ng-disabled = "resource.info.approved"
-                      ng-model="resource.display.tenant" 
-                      >
-                    </textarea>
-                    <span class="help-inline">
-                      ข้อความคู่สัญญาที่แสดง
-                    </span>
-                  </div>
-
-
-                  <div>
-                    <label>ลงนามผู้ทำสัญญา :
-                    </label>
-                    <input type="text" class="input-xlarge" 
-                      ng-model="resource.info.signer1"
-                      typeahead="itm for itm in selfList('info.signer1',$viewValue)"
-                      typeahead-wait-ms="typeaheadWait"
-                       />
-                  </div>
-
-                  <label>
-                    ลงนามคู่สัญญา :
-                    <span ng-hide="(sumSigner2() || resource.info.signer2) == resource.info.signer2">
-                      <a href class="btn btn-small btn-info" ng-click="resource.info.signer2 = sumSigner2()">sync</a>
-                    </span>
-                  </label>
-                  <input type="text" class="input-xxlarge" 
-                    ng-model="resource.info.signer2"
-                     />
-
-                  <label>ลงนามพยาน :  
-                    <span>
-                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(witnesses())">เพิ่ม</a>
-                    </span>
-                  </label>
-                  <div class="alert alert-info" ng-show="witnesses().length">
-                    <div ng-repeat="witness in witnesses()">
-                      <div class="pull-right">
-                        <a tabindex="-1" class="btn btn-small btn-warning" href
-                          ng-click="resource$entry.remove(witnesses(),$index)">
-                          ลบ
-                        </a>
-                      </div>
-                      <input type="text" class="input-xlarge"  
-                          ng-model="witness.name"
-                          typeahead="itm for itm in selfList('meta.witnesses.name',$viewValue)"
-                          typeahead-wait-ms="typeaheadWait"
-                           />
-                    </div>
-                  </div>
-
-              </div>
-
-              <div ng-show="__tabIdx==1" heading="พื้นที่เช่า">
-                  <label>พื้นที่เช่า :
-                    <span>
-                      [ <a href="" ng-class="utils.AND(switching.meta_area,'label')" ng-click="switching.meta_area=!switching.meta_area">meta</a> ]
-                    </span>
-                    <span>
-                      [ <a href="" ng-class="utils.AND(switching.area,'label')" ng-click="switching.area=!switching.area">description</a> ]
-                    </span>
-                    <span ng-show="switching.meta_area && !resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(areas())">เพิ่มห้อง</a>
-                    </span>
-                    <span ng-hide="switching.area_synced">
-                      <a href="" class="btn btn-small btn-info" ng_click="meta_area_render(true)">sync</a>
-                    </span>
-                  </label>
-                  
-                  <div class="alert alert-info" ng-show="switching.meta_area">
-                    <div ng-repeat="area in areas()">
-                      <hr ng-show="$index && !resource.info.approved" />
-                      <div class="pull-right">
-                        <a tabindex="-1" class="btn btn-small btn-warning" href 
-                          ng-click="resource$entry.remove(areas(),$index)">
-                          ลบ
-                        </a>
-                      </div>
-                      <div class="input-prepend input-append">
-                        <form style="margin:0;" ng-submit="meta_room_to_floor_building(area)">
-                          <div style="height:0; width:0; overflow:hidden;">
-                            <input type="submit" />
-                          </div>                          
-
-                          <span class="add-on">ห้อง</span>
-                          <input type="text" class="input-small" 
-                            ng-disabled = "resource.info.approved"
-                            ng-model="area.room"
-                            />
-                          <span class="add-on btn" 
-                            ng-disabled = "resource.info.approved"
-                            ng-class="!isSynced(area,'room') && 'btn-info'"
-                            ng-click="meta_room_to_floor_building(area, true)"
-                            >
-                            &crarr;
-                          </span>
-                        </form>
-                      </div>
-                      
-                      <div class="input-prepend">
-                        <span class="add-on">โซน</span>
-                        <input type="text" class="input-mini" 
-                          ng-disabled = "resource.info.approved"
-                          ng-model="area.zone"
-                          typeahead="itm for itm in selfList('meta.areas.zone',$viewValue)"
-                          typeahead-wait-ms="typeaheadWait"
-                          />
-                      </div>
-                      
-                      <div class="input-prepend">
-                        <span class="add-on">ชั้น</span>
-                        <input type="text" class="input-mini" 
-                          ng-disabled = "resource.info.approved"
-                          ng-model="area.floor"
-                          />
-                      </div>
-                      
-                      <div class="input-prepend">
-                        <span class="add-on">อาคาร</span>
-                        <input type="text" class="input-mini" 
-                          ng-disabled = "resource.info.approved"
-                          ng-model="area.building"
-                          typeahead="itm for itm in selfList('meta.areas.building')"
-                          typeahead-wait-ms="typeaheadWait"
-                          />
-                      </div>
-
-                      <div class="input-prepend">
-                        <span class="add-on">ขนาด</span>
-                        <input type="text" class="input-mini" 
-                          ng-disabled = "resource.info.approved"
-                          ng-model="area.size"
-                          numeral="'qty'"
-                          />
-                      </div>
-
-                    </div>
-                  </div>
-                  
-                  <div ng-show="switching.area">
-                    <textarea rows="1.5" class="input-xxlarge" 
-                      ng-disabled = "resource.info.approved"
-                      ng-model="resource.display.area" 
-                      >
-                    </textarea>
-                    <span class="help-inline">ข้อความพื้นที่เช่าในสัญญา</span>
-                  </div>
-                  
-                  <label>
-                    ขนาดพื้่นที่ :
-                    <span ng-hide="(sumAreaSize() || resource.info.area_size) == resource.info.area_size"> 
-                      <a href class="btn btn-small btn-info" ng-click="resource.info.area_size = sumAreaSize()">
-                        sync
-                      </a>
-                    </span>
-                  </label>
-                  <input type="text" class="input-small" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.area_size"
-                    numeral="'qty'"
-                     />
-                  <span style="padding-left:4px;"></span>
                   <div class="input-prepend">
-                    <span class="add-on">เพิ่ม-ลด</span> 
-                    <input type="text" class="input-small" 
+                    <span class="add-on">เลขสำคัญ</span>
+                    <input type="text" class="input-medium" 
+                      placeholder="{{ (resource.meta.tenant_type=='นิติบุคคล' && 'เลขนิติบุคคล') || (resource.meta.tenant_type=='บุคคล' && 'บัตรประชาชน') || '' }} " 
                       ng-disabled = "resource.info.approved"
-                      ng-model="resource.info.area_xsize"
-                      numeral="'qty'"
-                       />
+                      ng-model="tenant.register_id"
+                      />
                   </div>
+                  
                   <div>
-                    <label>ประเภทกิจการ :   </label>
-                    <input type="text" class="input-large" 
-                      ng-model="resource.info.business_type"
-                      typeahead="itm for itm in selfList('info.business_type',$viewValue)"
+                    <div ng-show="tenant.$temp.data.meta.locations.length &gt; 1 && !resource.info.approved">
+                      <ul class="nav nav-pills" style="margin:0;" >
+                        <li 
+                          ng-repeat="loc in tenant.$temp.data.meta.locations"
+                          ng-class="(loc2Address(loc)==tenant.address)&&'active'">
+                          <a href ng-click="tenant.address = loc2Address(loc)">
+                            {{ loc.type || ($index +1) }}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="input-prepend" ng-class="(tenant.$temp.data.meta.locations.length > 1) && 'input-append'">
+                      <span class="add-on">ที่อยู่</span>
+                      <textarea rows="2.5" class="input-xxlarge" 
+                        ng-disabled = "resource.info.approved"
+                        ng-model="tenant.address" 
+                        ></textarea>
+                    </div>
+                  </div>
+                  <hr/>
+                </div>
+                <div ng-repeat="signer in tenant_signers()">
+                  <div class="pull-right">
+                    <a tabindex="-1" class="btn btn-small btn-warning" href 
+                      ng-click="resource$entry.remove(tenant_signers(),$index)"
+                      >
+                      ลบ
+                    </a>
+                  </div>
+
+                  <div class="input-prepend input-append">
+                    <form style="margin:0;" ng-submit="tenantSync(tenant_signers()[$index])">
+                      <div style="height:0; width:0; overflow:hidden;">
+                        <input type="submit" />
+                      </div>                          
+                      <span class="add-on">ผู้ลงนาม</span>
+                      <input type="text" class="input-xlarge" placeholder="กรรมการ หรือ ผู้รับมอบอำนาจ(ถ้ามี)" 
+                        ng-model="signer.name" 
+                        typeahead="itm for itm in selfList('Tenant/_name', $viewValue,{_type : 'บุคคล'})"
+                        typeahead-wait-ms="typeaheadWait"
+                        />
+                      <span class="add-on btn btn-small" 
+                        ng-class="!isSynced(signer) && 'btn-info'"
+                        ng-click="tenantSync(tenant_signers()[$index],true)"
+                        >
+                        &crarr;
+                      </span>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              
+              <div ng-show="switching.tenant">
+                <textarea rows="5" class="input-xxlarge" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.display.tenant" 
+                  >
+                </textarea>
+                <span class="help-inline">
+                  ข้อความคู่สัญญาที่แสดง
+                </span>
+              </div>
+
+
+              <div>
+                <label>ลงนามผู้ทำสัญญา :
+                </label>
+                <input type="text" class="input-xlarge" 
+                  ng-model="resource.info.signer1"
+                  typeahead="itm for itm in selfList('info.signer1',$viewValue)"
+                  typeahead-wait-ms="typeaheadWait"
+                   />
+              </div>
+
+              <label>
+                ลงนามคู่สัญญา :
+                <span ng-hide="(sumSigner2() || resource.info.signer2) == resource.info.signer2">
+                  <a href class="btn btn-small btn-info" ng-click="resource.info.signer2 = sumSigner2()">sync</a>
+                </span>
+              </label>
+              <input type="text" class="input-xxlarge" 
+                ng-model="resource.info.signer2"
+                 />
+
+              <label>ลงนามพยาน :  
+                <span>
+                  <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(witnesses())">เพิ่ม</a>
+                </span>
+              </label>
+              <div class="alert alert-info" ng-show="witnesses().length">
+                <div ng-repeat="witness in witnesses()">
+                  <div class="pull-right">
+                    <a tabindex="-1" class="btn btn-small btn-warning" href
+                      ng-click="resource$entry.remove(witnesses(),$index)">
+                      ลบ
+                    </a>
+                  </div>
+                  <input type="text" class="input-xlarge"  
+                      ng-model="witness.name"
+                      typeahead="itm for itm in selfList('meta.witnesses.name',$viewValue)"
                       typeahead-wait-ms="typeaheadWait"
                        />
-                  </div>
-                  
+                </div>
               </div>
-                
-              <div ng-show="__tabIdx==2" heading="กำหนดเวลา">
-                  <label>อายุสัญญา : </label>
-                  <input type="text" class="input-medium" placeholder="ระยะเวลา" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.duration" />
-                  
-                  <label>วันที่เริ่มเช่า : </label>
-                  <div class="input-append">
-                    <form style="margin:0;" ng-submit="sync_rent_date()">
+          </div>
+
+          <div class="container-fluid" ng-show="__tabIdx==1" heading="พื้นที่เช่า">
+              <label>พื้นที่เช่า :
+                <span>
+                  [ <a href="" ng-class="utils.AND(switching.meta_area,'label')" ng-click="switching.meta_area=!switching.meta_area">meta</a> ]
+                </span>
+                <span>
+                  [ <a href="" ng-class="utils.AND(switching.area,'label')" ng-click="switching.area=!switching.area">description</a> ]
+                </span>
+                <span ng-show="switching.meta_area && !resource.info.approved">
+                  <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(areas())">เพิ่มห้อง</a>
+                </span>
+                <span ng-hide="switching.area_synced">
+                  <a href="" class="btn btn-small btn-info" ng_click="meta_area_render(true)">sync</a>
+                </span>
+              </label>
+              
+              <div class="alert alert-info" ng-show="switching.meta_area">
+                <div ng-repeat="area in areas()">
+                  <hr ng-show="$index && !resource.info.approved" />
+                  <div class="pull-right">
+                    <a tabindex="-1" class="btn btn-small btn-warning" href 
+                      ng-click="resource$entry.remove(areas(),$index)">
+                      ลบ
+                    </a>
+                  </div>
+                  <div class="input-prepend input-append">
+                    <form style="margin:0;" ng-submit="meta_room_to_floor_building(area)">
                       <div style="height:0; width:0; overflow:hidden;">
                         <input type="submit" />
                       </div>                          
 
-                      <input type="text" class="input-medium" placeholder="เริ่ม" 
+                      <span class="add-on">ห้อง</span>
+                      <input type="text" class="input-small" 
                         ng-disabled = "resource.info.approved"
-                        ng-model="resource.info.rent_date"
-                        moment="'DD/MM/**BB'"
-                        boot-datepicker="{language: 'th-th'}"
-                         />
+                        ng-model="area.room"
+                        />
                       <span class="add-on btn" 
-                          ng-disabled = "resource.info.approved"
-                          ng-class="!resource.info.approved && !rent_date_isSynced() && 'btn-info'"
-                          ng-click="!resource.info.approved && sync_rent_date(true)"
-                          >
-                          &gt;
-                        </a>
+                        ng-disabled = "resource.info.approved"
+                        ng-class="!isSynced(area,'room') && 'btn-info'"
+                        ng-click="meta_room_to_floor_building(area, true)"
+                        >
+                        &crarr;
                       </span>
                     </form>
                   </div>
-                  <span style="padding-left:4px;"></span>
+                  
                   <div class="input-prepend">
-                    <span class="add-on">ถึงวันที่ : </span>
-                    <input type="text" class="input-medium" placeholder="สิ้นสุด" 
+                    <span class="add-on">โซน</span>
+                    <input type="text" class="input-mini" 
                       ng-disabled = "resource.info.approved"
-                      ng-model="resource.info.rent_until"
-                      moment="'DD/MM/**BB'"
-                      boot-datepicker="{language: 'th-th'}"
-                       />
-                  </div>
-
-                  <label>กำหนดตกแต่งสถานที่ : </label>
-                  <input type="text" class="input-medium" placeholder="เริ่ม" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.decorate_date"
-                    moment="'DD/MM/**BB'"
-                    boot-datepicker="{language: 'th-th'}"
-                     />
-                  <span style="padding-left:4px;"></span>
-                  <div class="input-prepend">
-                    <span class="add-on">ถึงวันที่ : </span>
-                    <input type="text" class="input-medium" placeholder="สิ้นสุด" 
-                      ng-disabled = "resource.info.approved"
-                      ng-model="resource.info.decorate_until"
-                      moment="'DD/MM/**BB'"
-                      boot-datepicker="{language: 'th-th'}"
-                       />
-                  </div>
-
-                  <label>กำหนดชำระค่าเช่า : </label>
-                  <input type="text" class="input-medium" placeholder="เริ่ม" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.pay_date"
-                    moment="'DD/MM/**BB'"
-                    boot-datepicker="{language: 'th-th'}"
-                     />
-                  <span style="padding-left:4px;"></span>
-                  <div class="input-prepend">
-                    <span class="add-on">ถึงวันที่ : </span>
-                    <input type="text" class="input-medium" placeholder="สิ้นสุด" 
-                      ng-disabled = "resource.info.approved"
-                      ng-model="resource.info.pay_until"
-                      moment="'DD/MM/**BB'"
-                      boot-datepicker="{language: 'th-th'}"
-                       />
-                  </div>
-
-                  <label>กำหนดเปิดดำเนินงาน : </label>
-                  <input type="text" class="input-medium" placeholder="เริ่ม" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.operate_date"
-                    moment="'DD/MM/**BB'"
-                    boot-datepicker="{language: 'th-th'}"
-                     />
-              </div>
-                
-              <div ng-show="__tabIdx==3" heading="อัตราค่าเช่า">
-
-                  <label>อัตราค่าเช่า :  
-                    <span ng-show="!resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="inc_rent_rates()">เพิ่ม</a>
-                    </span>
-                    <span ng-show="rent_rates().length &gt; 0 && !resource.info.approved" >
-                      <a href="" class="btn btn-small btn-warning" ng-click="dec_rent_rates()">ลบ</a>
-                    </span>
-                  </label>
-                  <div class="alert alert-info" ng-show="rent_rates().length">
-                    <div ng-repeat="rate in rent_rates()">
-                      <div class="input-prepend">
-                        <span class="add-on">ข้อความ</span>
-                        <input type="text" class="input-large" ng-model="rate.description" />
-                      </div>
-                      <span style="padding-left:4px;"></span>
-                      <div class="input-prepend">
-                        <span class="add-on">อัตรา</span>
-                        <input type="text" class="input-medium" 
-                          ng-disabled = "resource.info.approved"
-                          ng-model="rate.value"
-                          numeral="'money'" 
-                           />
-                      </div>
-                    </div>
+                      ng-model="area.zone"
+                      typeahead="itm for itm in selfList('meta.areas.zone',$viewValue)"
+                      typeahead-wait-ms="typeaheadWait"
+                      />
                   </div>
                   
-                  <label>อัตราค่าบริการ : 
-                    <span ng-show="!resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="inc_service_rates()">เพิ่ม</a>
-                    </span>
-                    <span ng-show="service_rates().length &gt; 0 && !resource.info.approved" >
-                      <a href="" class="btn btn-small btn-warning" ng-click="dec_service_rates()">ลบ</a>
-                    </span>
-                  </label>
-                  <div class="alert alert-info" ng-show="service_rates().length">
-                    <div ng-repeat="rate in service_rates()">
-                      <div class="input-prepend">
-                        <span class="add-on">ข้อความ</span>
-                        <input type="text" class="input-large" ng-model="rate.description" />
-                      </div>
-                      <span style="padding-left:4px;"></span>
-                      <div class="input-prepend">
-                        <span class="add-on">อัตรา</span>
-                        <input type="text" class="input-medium" 
-                          ng-disabled = "resource.info.approved"
-                          ng-model="rate.value"
-                          numeral="'money'" 
-                           />
-                      </div>
-                    </div>
+                  <div class="input-prepend">
+                    <span class="add-on">ชั้น</span>
+                    <input type="text" class="input-mini" 
+                      ng-disabled = "resource.info.approved"
+                      ng-model="area.floor"
+                      />
                   </div>
                   
-                  <label>ค่าเช่าล่วงหน้า : </label>
-                  <input type="text" class="input-medium" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.rental_deposit"
-                    numeral="'money'" 
-                     />
-                  
-                  <label>เงินประกัน : </label>
-                  <input type="text" class="input-medium" 
-                    ng-disabled = "resource.info.approved"
-                    ng-model="resource.info.insure_deposit"
-                    numeral="'money'" 
-                     />
-              </div>
+                  <div class="input-prepend">
+                    <span class="add-on">อาคาร</span>
+                    <input type="text" class="input-mini" 
+                      ng-disabled = "resource.info.approved"
+                      ng-model="area.building"
+                      typeahead="itm for itm in selfList('meta.areas.building')"
+                      typeahead-wait-ms="typeaheadWait"
+                      />
+                  </div>
 
-              <div ng-show="__tabIdx==4" heading="ฝ่ายกฏหมาย">
-                  <label>ครบกำหนด ท.ด.25 : </label>
-                  <input type="text" class="input-medium"
-                    ng-model="resource.info.td25_due"
+                  <div class="input-prepend">
+                    <span class="add-on">ขนาด</span>
+                    <input type="text" class="input-mini" 
+                      ng-disabled = "resource.info.approved"
+                      ng-model="area.size"
+                      numeral="'qty'"
+                      />
+                  </div>
+
+                </div>
+              </div>
+              
+              <div ng-show="switching.area">
+                <textarea rows="1.5" class="input-xxlarge" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.display.area" 
+                  >
+                </textarea>
+                <span class="help-inline">ข้อความพื้นที่เช่าในสัญญา</span>
+              </div>
+              
+              <label>
+                ขนาดพื้่นที่ :
+                <span ng-hide="(sumAreaSize() || resource.info.area_size) == resource.info.area_size"> 
+                  <a href class="btn btn-small btn-info" ng-click="resource.info.area_size = sumAreaSize()">
+                    sync
+                  </a>
+                </span>
+              </label>
+              <input type="text" class="input-small" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.area_size"
+                numeral="'qty'"
+                 />
+              <span style="padding-left:4px;"></span>
+              <div class="input-prepend">
+                <span class="add-on">เพิ่ม-ลด</span> 
+                <input type="text" class="input-small" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.info.area_xsize"
+                  numeral="'qty'"
+                   />
+              </div>
+              <div>
+                <label>ประเภทกิจการ :   </label>
+                <input type="text" class="input-large" 
+                  ng-model="resource.info.business_type"
+                  typeahead="itm for itm in selfList('info.business_type',$viewValue)"
+                  typeahead-wait-ms="typeaheadWait"
+                   />
+              </div>
+          </div>
+            
+          <div class="container-fluid" ng-show="__tabIdx==2" heading="กำหนดเวลา">
+              <label>อายุสัญญา : </label>
+              <input type="text" class="input-medium" placeholder="ระยะเวลา" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.duration" />
+              
+              <label>วันที่เริ่มเช่า : </label>
+              <div class="input-append">
+                <form style="margin:0;" ng-submit="sync_rent_date()">
+                  <div style="height:0; width:0; overflow:hidden;">
+                    <input type="submit" />
+                  </div>                          
+
+                  <input type="text" class="input-medium" placeholder="เริ่ม" 
+                    ng-disabled = "resource.info.approved"
+                    ng-model="resource.info.rent_date"
                     moment="'DD/MM/**BB'"
-                    boot-datepicker="{language: 'th-th'}"
+                    typeahead="d.name as (d.label || d.name) 
+                      for d in utils.dateListAhead($viewValue) | filter:$viewValue"
                      />
-
-                  <label>memo : </label>
-                  <textarea rows="5" class="input-xxlarge" 
-                    ng-model="resource.info.legal_memo" 
-                    >
-                  </textarea>
+                  <span class="add-on btn" 
+                      ng-disabled = "resource.info.approved"
+                      ng-class="!resource.info.approved && !rent_date_isSynced() && 'btn-info'"
+                      ng-click="!resource.info.approved && sync_rent_date(true)"
+                      >
+                      &gt;
+                    </a>
+                  </span>
+                </form>
+              </div>
+              <span style="padding-left:4px;"></span>
+              <div class="input-prepend">
+                <span class="add-on">ถึงวันที่ : </span>
+                <input type="text" class="input-medium" placeholder="สิ้นสุด" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.info.rent_until"
+                  moment="'DD/MM/**BB'"
+                  typeahead="d.name as (d.label || d.name) 
+                    for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                   />
               </div>
 
-            </div>
+              <label>กำหนดตกแต่งสถานที่ : </label>
+              <input type="text" class="input-medium" placeholder="เริ่ม" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.decorate_date"
+                moment="'DD/MM/**BB'"
+                typeahead="d.name as (d.label || d.name) 
+                  for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                 />
+              <span style="padding-left:4px;"></span>
+              <div class="input-prepend">
+                <span class="add-on">ถึงวันที่ : </span>
+                <input type="text" class="input-medium" placeholder="สิ้นสุด" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.info.decorate_until"
+                  moment="'DD/MM/**BB'"
+                  boot-datepicker="{language: 'th-th'}"
+                   />
+              </div>
+
+              <label>กำหนดชำระค่าเช่า : </label>
+              <input type="text" class="input-medium" placeholder="เริ่ม" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.pay_date"
+                moment="'DD/MM/**BB'"
+                typeahead="d.name as (d.label || d.name) 
+                  for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                 />
+              <span style="padding-left:4px;"></span>
+              <div class="input-prepend">
+                <span class="add-on">ถึงวันที่ : </span>
+                <input type="text" class="input-medium" placeholder="สิ้นสุด" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="resource.info.pay_until"
+                  moment="'DD/MM/**BB'"
+                  typeahead="d.name as (d.label || d.name) 
+                    for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                   />
+              </div>
+
+              <label>กำหนดเปิดดำเนินงาน : </label>
+              <input type="text" class="input-medium" placeholder="เริ่ม" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.operate_date"
+                moment="'DD/MM/**BB'"
+                typeahead="d.name as (d.label || d.name) 
+                  for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                 />
+          </div>
+            
+          <div class="container-fluid" ng-show="__tabIdx==3" heading="อัตราค่าเช่า">
+
+              <label>อัตราค่าเช่า :  
+                <span ng-show="!resource.info.approved">
+                  <a href="" class="btn btn-small btn-danger" ng-click="inc_rent_rates()">เพิ่ม</a>
+                </span>
+                <span ng-show="rent_rates().length &gt; 0 && !resource.info.approved" >
+                  <a href="" class="btn btn-small btn-warning" ng-click="dec_rent_rates()">ลบ</a>
+                </span>
+              </label>
+              <div class="alert alert-info" ng-show="rent_rates().length">
+                <div ng-repeat="rate in rent_rates()">
+                  <div class="input-prepend">
+                    <span class="add-on">ข้อความ</span>
+                    <input type="text" class="input-large" ng-model="rate.description" />
+                  </div>
+                  <span style="padding-left:4px;"></span>
+                  <div class="input-prepend">
+                    <span class="add-on">อัตรา</span>
+                    <input type="text" class="input-medium" 
+                      ng-disabled = "resource.info.approved"
+                      ng-model="rate.value"
+                      numeral="'money'" 
+                       />
+                  </div>
+                </div>
+              </div>
+              
+              <label>อัตราค่าบริการ : 
+                <span ng-show="!resource.info.approved">
+                  <a href="" class="btn btn-small btn-danger" ng-click="inc_service_rates()">เพิ่ม</a>
+                </span>
+                <span ng-show="service_rates().length &gt; 0 && !resource.info.approved" >
+                  <a href="" class="btn btn-small btn-warning" ng-click="dec_service_rates()">ลบ</a>
+                </span>
+              </label>
+              <div class="alert alert-info" ng-show="service_rates().length">
+                <div ng-repeat="rate in service_rates()">
+                  <div class="input-prepend">
+                    <span class="add-on">ข้อความ</span>
+                    <input type="text" class="input-large" ng-model="rate.description" />
+                  </div>
+                  <span style="padding-left:4px;"></span>
+                  <div class="input-prepend">
+                    <span class="add-on">อัตรา</span>
+                    <input type="text" class="input-medium" 
+                      ng-disabled = "resource.info.approved"
+                      ng-model="rate.value"
+                      numeral="'money'" 
+                       />
+                  </div>
+                </div>
+              </div>
+              
+              <label>ค่าเช่าล่วงหน้า : </label>
+              <input type="text" class="input-medium" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.rental_deposit"
+                numeral="'money'" 
+                 />
+              
+              <label>เงินประกัน : </label>
+              <input type="text" class="input-medium" 
+                ng-disabled = "resource.info.approved"
+                ng-model="resource.info.insure_deposit"
+                numeral="'money'" 
+                 />
           </div>
 
-        </div>        
-        <!-- save/delete/cancel buttons -->
-        <div class="editnav-bottom" ng-include="'views/includes/edit-buttons.html'"></div>
-        
-        <div class="row-fluid"> <!-- footer -->
-            <div style="width=100%;height:60px;"></div> <!-- reserved foot space -->
+          <div class="container-fluid" ng-show="__tabIdx==4" heading="บันทึกแนบท้าย">
+
+              <div class="row-fluid">
+                <a href tabindex="-1" class="btn btn-small" 
+                  ng-class="__mdOpen && 'btn-warning'"
+                  ng-click="__mdOpen = !__mdOpen"
+                  >
+                  แก้ไข
+                </a>
+                <label class="checkbox inline">
+                  ใช้องค์ประกอบ :
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" ng-model="record().title_section" >
+                  title
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" ng-model="record().head_section" >
+                  หัว
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" ng-model="record().parties_section" >
+                  คู่สัญญา
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" ng-model="record().foot_section" >
+                  ท้าย(ลงนาม)
+                </label>                   
+              </div>
+
+              <div class="page-boundary">
+                <div class="print-page">
+                 <div ng-include="'views/tvs/contract-print-rec.html'"></div>
+                </div>
+              </div>
+          </div>
+
+          <div class="container-fluid" ng-show="__tabIdx==5" heading="ฝ่ายกฏหมาย">
+              <label>ครบกำหนด ท.ด.25 : </label>
+              <input type="text" class="input-medium"
+                ng-model="resource.info.td25_due"
+                moment="'DD/MM/**BB'"
+                typeahead="d.name as (d.label || d.name) 
+                  for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                 />
+          </div>
         </div>
-        
+  
+
+        <div ng-include="'views/includes/edit-footer.html'"> </div>
+       
   </div> <!-- container -->
   

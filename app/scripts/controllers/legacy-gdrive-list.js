@@ -36,19 +36,18 @@ angular.module('controllers.legacy-gdrive-list',['controllers.legacy-list', 'mod
 
           $scope.viewGDrive = function(data) {
 
-            if (!data.$temp) {
-                data.$temp = function () {}
-            }
+            var temp    = utils.temp('cabinets')
+              , shtemp  = utils.temp('shareCabinets')
 
-            if (!data.$temp.cabinets) {
+            if (!temp.get(data)) {
               GDrive.drawerList(data._name, listctrl.db.name).then(function(cabs){
-                data.$temp.cabinets = cabs || []
+                temp.set(data,cabs || [])
               })
             }
 
-            if (!data.$temp.shareCabinets) {
+            if (!shtemp.get(data)) {
               GDrive.drawerList(data._name, listctrl.db.name, '@shared').then(function(cabs){
-                data.$temp.shareCabinets = cabs || []
+                shtemp.set(data,cabs || [])
               })
             }
 
@@ -57,18 +56,9 @@ angular.module('controllers.legacy-gdrive-list',['controllers.legacy-list', 'mod
                       //, show   : true
                       , data   : data
                       , title  : data._name
-                      , description : data.info.detail
+                      , description : data.info && data.info.detail
                       })
 
-          }
-
-          function gdrives (data) {
-
-            if (!data.$temp) {
-              data.$temp = function () {}
-            }
-
-            data.$temp.gdrive = true
           }
 
           // check gdrive
@@ -78,8 +68,9 @@ angular.module('controllers.legacy-gdrive-list',['controllers.legacy-list', 'mod
             }
             return cabs
           }).then (function (cabs) {
+              var temp = utils.temp('gdrive')
               if (cabs && cabs.length) {
-                angular.forEach($scope.dataList, gdrives)
+                angular.forEach($scope.dataList,function (data) {temp.set(data,true)})
               }
             })
 

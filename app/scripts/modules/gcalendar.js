@@ -102,7 +102,9 @@ angular.module('modules.gcalendar', ['modules.google-api', 'modules.utils'])
       return self.eventList(cal, query, token).then(function (resp) {
               if (resp && (!max || items.length < max)) {
                 if (resp.items) {
-                  console.log (cal.summary, resp.items)
+                  angular.forEach(resp.items, function(item) {
+                    item.startDateTime = item.start.date || item.start.dateTime
+                  })
                   items.push.apply(items, resp.items)
                 }
                 if (resp.pageToken) {

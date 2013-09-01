@@ -1,0 +1,20 @@
+
+<p ng-hide="_params.hideFootMessage">
+  {{ _params.contractCalled || 'สัญญา' }}นี้ทำขึ้นเป็นสองฉบับ มีข้อความถูกต้องตรงกัน คู่สัญญาทั้งสองฝ่ายต่างได้อ่านและเข้าใจข้อความโดยตลอดแล้ว เห็นว่าถูกต้องตรงตามเจตนาทุกประการ จึงได้ลงลายมือชื่อไว้เป็นสำคัญต่อหน้าพยาน และต่างยึดถือไว้ฝ่ายละฉบับ
+</p>
+<p style="text-align:center;padding-top:2em;">
+  ลงชื่อ........................................................................ผู้ให้เช่า<br/>
+  ( <strong>{{ resource.info.signer1 }}</strong> ) <br/>
+  บริษัท ธัญวิลล์ จำกัด
+</p>
+
+<p style="text-align:center;padding-top:2em;">
+  ลงชื่อ..........................................................................ผู้เช่า<br/>
+  ( <strong>{{ resource.info.signer2 }}</strong> ) <br/>
+  <strong ng-show="tenants().length==1 && tenants()[0].name != resource.info.signer2">{{ tenants()[0].name }}</strong>
+</p>
+
+<p style="text-align:center;padding-top:2em;" ng-repeat="witness in witnesses()">
+  ลงชื่อ..........................................................................พยาน<br/>
+  ( <strong>{{ witness.name }}</strong> )
+</div>

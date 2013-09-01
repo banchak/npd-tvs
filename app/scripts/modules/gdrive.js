@@ -35,7 +35,7 @@ angular.module('modules.gdrive', ['modules.google-api', 'modules.utils'])
 
   this.makeQuery = function (query) {
 
-      var q = ['trashed = false', 'hidden = false']
+      var q = ['trashed = false']
 
       if (angular.isString(query)) {
         return query

@@ -2,9 +2,9 @@
 
 'use strict'
 
-angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modules.google-api'])
-  .controller('legacyImageListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'googleApi'
-  , function ($scope, legacyListDI, listctrl, $controller, $timeout, googleApi)
+angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modules.gdrive'])
+  .controller('legacyImageListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'GDrive', '$rootScope'
+  , function ($scope, legacyListDI, listctrl, $controller, $timeout, GDrive, $rootScope)
     {
 
       var success = function ( ){
@@ -31,7 +31,6 @@ angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modu
             var img  
 
             function _showFolder () {
-
               angular.forEach(data.meta.folders, function (folder) {
 
                 if (!folder.id || folder.links !== undefined) {
@@ -41,47 +40,42 @@ angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modu
                 }
 
                 folder.links = []
+                GDrive.folders({ parents : folder.id })
+                .then(function (resp) {
+                  var count = 0
 
-                googleApi.client.execute({
-                    path    : 'drive.children.list'
-                  , params  : {folderId : folder.id, q : 'trashed = false'}
-                  }, function (resp) {
+                  if (resp && resp.items) {
 
-                    if (!resp.items) {
+                    $rootScope.authorize().then(function () {
 
-                      $scope.imageViewer.show = true
-                      $scope.$apply()
-                    }
-                    else {
-                      var count = 0
+                      if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+                        var roles = $rootScope.authorizeData.user.roles
 
-                      angular.forEach(resp.items, function (item) {
+                        angular.forEach(resp.items, function (meta) {
 
-                        googleApi.client.execute({
-                            path    : 'drive.files.get'
-                          , params  : { fileId : item.id }
-                          }, function (meta) {
+                          if (meta && meta.alternateLink) {
 
-                            if (meta && meta.alternateLink && meta.mimeType.match(/folder/)) {
 
-                              if (googleApi.userHasRole(meta.title)) {
-
-                                folder.links.push({ link : meta.alternateLink, title : meta.title})
-                                $scope.imageViewer.show = true
-                                $scope.$apply()
-                              }
+                            if (roles.has(meta.title)) {
+                              folder.links.push({ link : meta.alternateLink, title : meta.title})
                             }
-                            count += 1
+                          }
+                          count += 1
 
-                            if (count == resp.items.length) {
+                          if (count == resp.items.length) {
 
-                              $scope.imageViewer.show = true
-                              $scope.$apply()
-                            }
-
-                          })
-                      }) 
-                    }
+                            $scope.imageViewer.show = true
+                          }                      
+                        })
+                      }
+                      else {
+                        $scope.imageViewer.show = true
+                      }
+                    })
+                  }
+                  else {
+                    $scope.imageViewer.show = true
+                  }
                 })
               })
             }
@@ -92,14 +86,14 @@ angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modu
                       , opened : true
                       , show   : !data.meta.folders
                       , title  : data._name
-                      , description : data.info.detail
+                      , description : data.info && data.info.detail
                       })
 
             $timeout(_showFolder, 2000)
           }
 
           $scope.images = function(data) {
-            var images, img, count = 0
+            var images, img
 
             if (!data.meta || !data.meta.images) {
 
@@ -114,10 +108,7 @@ angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modu
 
                 img.thumbnailLink = null
 
-                googleApi.client.execute( {
-                    path    : 'drive.files.get'
-                  , params  : {fileId : img.id}
-                  }, function (meta) {
+                GDrive.fileMeta(img.id).then(function (meta) {
 
                     if (meta.thumbnailLink && !meta.trashed) {
 

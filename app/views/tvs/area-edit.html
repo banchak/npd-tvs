@@ -1,88 +1,98 @@
   <div class="container-fluid" ng-init="typeaheadWait=150">
 
-        <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'">
-        </div>
+    <div ng-include="'views/includes/edit-header.html'"> </div>
         
+    <div><!-- head -->
+      <div class="container-fluid">
         <div class="row-fluid">
-            <h2 ng-bind="db.title"></h2>
-        </div>
-
-        <div class="row-fluid">
-
-          <label>ประเภทพื้นที่ : </label>
-          <select class="input-medium"
-            ng-model  ="resource._type" 
-            ng-options="c.name as c.name for c in db.database.BUILT_IN.areaTypes"
-          ></select>
-
-          <div ng-show="utils.AND(resource._type, resource._type != db.database.BUILT_IN.areaTypes[0].name)">
-            <label>งาน : </label>
-            <input type="text" class="input-medium" 
-              ng-model="resource.info.job" 
-              typeahead="itm for itm in selfList('info.job', $viewValue)"
-              typeahead-wait-ms="typeaheadWait"
-              />
+          <div class="span4">
+            <label>ประเภทพื้นที่ : </label>
+            <select class="input-medium"
+              ng-disabled = "!unlockEdit"
+              ng-model  ="resource._type" 
+              ng-options="c.name as c.name for c in db.database.BUILT_IN.areaTypes"
+              ></select>
           </div>
-
+          <div class="span4"
+            ng-show="utils.AND(resource._type, resource._type != db.database.BUILT_IN.areaTypes[0].name)">
+              <label>งาน : </label>
+              <input type="text" class="input-medium" 
+                ng-model="resource.info.job" 
+                typeahead="itm for itm in selfList('info.job', $viewValue)"
+                typeahead-wait-ms="typeaheadWait"
+                />
+          </div>
+        </div>
+        <div class="row-fluid">
           <div>
             <label>
               {{ utils.OR(utils.AND(resource._type, resource._type != db.database.BUILT_IN.areaTypes[0].name,'พื้นที่'),'ห้อง') }} : 
             </label>
             <div ng-class="{'input-append': resource._name}">
-              <input type="text" class="input-medium" ng-model="resource._name" />
-              <a href class="add-on" ng-show="resource._name" ng-click="room_to_floor_building()">
+              <input type="text" class="input-medium" 
+                ng-disabled = "!unlockEdit"
+                ng-model="resource._name" 
+                />
+              <span class="btn add-on" ng-show="resource._name" 
+                ng-click="room_to_floor_building()">
                 &gt;
-              </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-fluid"><!--tabs menu-->
+      <ul class="nav nav-tabs">
+        <li ng-class="!__tabIdx && 'active'">
+          <a href ng-click="__tabIdx=0">
+            ที่ตั้ง</a></li>
+        <li ng-class="__tabIdx==1 && 'active'">
+          <a href ng-click="__tabIdx=1">
+            ขนาดและอัตรา</a></li>
+      </ul>
+    </div>
+
+    <div class="row-fluid"> <!-- tabs body-->
+
+          <div class="container-fluid" ng-show="!__tabIdx"  heading="ที่ตั้ง">
+            <div>
+              <label>อาคาร : </label>
+              <input type="text" class="input-medium"
+                ng-model="resource.info.building" 
+                typeahead="itm for itm in selfList('info.building')"
+                typeahead-wait-ms="typeaheadWait"
+                />
+            </div>
+
+            <div>
+              <label>ชั้น : </label>
+              <input type="text" class="input-medium" ng-model="resource.info.floor" />
+            </div>
+
+            <div>
+              <label>โซน : </label>
+              <input type="text" class="input-medium" 
+                ng-model="resource.info.zone" 
+                typeahead="itm for itm in selfList('info.zone',$viewValue)"
+                typeahead-wait-ms="typeaheadWait"
+                />
             </div>
           </div>
 
-          <div class="row-fluid"> <!-- area body -->
-            <tabset>
-              <tab heading="ที่ตั้ง">
-                  <div>
-                    <label>อาคาร : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.building" 
-                      typeahead="itm for itm in selfList('info.building')"
-                      typeahead-wait-ms="typeaheadWait"
-                      />
-                  </div>
-
-                  <div>
-                    <label>ชั้น : </label>
-                    <input type="text" class="input-medium" ng-model="resource.info.floor" />
-                  </div>
-
-                  <div>
-                    <label>โซน : </label>
-                    <input type="text" class="input-medium" 
-                      ng-model="resource.info.zone" 
-                      typeahead="itm for itm in selfList('info.zone',$viewValue)"
-                      typeahead-wait-ms="typeaheadWait"
-                      />
-                  </div>
-              </tab>
-              
-              <tab heading="ขนาดและอัตรา">
-              
-                  <label>ขนาดพื้นที่ : </label>
-                  <input type="text" class="input-medium" ng-model="resource.info.size" placeholder="ตร.ม." />
-                  
-                  <label>อัตราต่อเดือน : </label>
-                  <input type="text" class="input-medium" ng-model="resource.info.rate" numeral="'money'" />
-                  
-              </tab>
-              
-            </tabset>
+          <div class="container-fluid" ng-show="__tabIdx==1"  heading="ขนาดและอัตรา">
+            <div>
+              <label>ขนาดพื้นที่ : </label>
+              <input type="text" class="input-medium" ng-model="resource.info.size" placeholder="ตร.ม." />
+            </div>
+            <div>
+              <label>อัตราต่อเดือน : </label>
+              <input type="text" class="input-medium" ng-model="resource.info.rate" numeral="'money'" />
+            </div>
           </div>
+    </div>
 
-        </div>
-
-        <!-- save/delete/cancel buttons -->
-        <div class="editnav-bottom" ng-include="'views/includes/edit-buttons.html'"></div>
-        
-        <div class="row-fluid"> <!-- footer -->
-            <div style="width=100%;height:60px;"></div> <!-- reserved foot space -->
-        </div>
+    <div ng-include="'views/includes/edit-footer.html'"> </div>
 
   </div>

@@ -17,7 +17,130 @@ angular.module('modules.utils', [])
           , $location : $location
           , $route    : $route
           , $rootScope: $rootScope
+          , format : { date : 'DD/MM/BBBB', dateTime: 'DD/MM/BBBB hh:mm', number : '0,0[.]00'}
           }
+
+      utils.temp = function (attr, obj) {
+        
+        if (obj) {
+          return utils.temp(attr).get(obj)
+        }
+
+        return {
+          get : function (data) {
+            return attr? (data.$temp && data.$temp[attr]) : data.$temp
+          }
+          ,set : function (data, val) {
+
+            if (!data.$temp) {
+              data.$temp = function () {}
+            }
+
+            data.$temp[attr] = val
+            
+          }
+        }
+      }
+
+      utils.dateListAhead = function (q) {
+        var mm, list, qmatch, mmatch, mstart, mval
+          , qregx = /^(\d*)\/?(\d*)\/?(\d*)$/
+
+        function mmFormat (mm, alt) {
+
+          return mm.format((alt && 'D/M/BBBB') || utils.format.date)
+        }
+
+        mm = mmFormat(moment())
+
+        qmatch = q.match(qregx)
+        if (qmatch && (qmatch[1] || qmatch[2] || qmatch[3])) {
+          list = []
+          mmatch = mm.match(qregx)
+
+          if (!qmatch[1]) {
+
+            // list each day in month
+            qmatch[2] = qmatch[2] || mmatch[2]
+            qmatch[3] = qmatch[3] || mmatch[3]
+            mstart = moment(mmatch[1] + '/' + qmatch[2] + '/' + qmatch[3] ,'DD/MM/**BB')
+            if (!mstart.isValid()) {
+              mstart = moment('1/' + qmatch[2] + '/' + qmatch[3] ,'DD/MM/**BB')
+              mstart.endOf('month')
+            }
+
+            for (var d=0; d<=40; d++) {
+              mval = moment(mstart)
+              mval.subtract('days',d)
+              if (mval.isValid()) {
+                list.push({ name : mmFormat(mval), label : mmFormat(mval,true)})
+              }
+            }
+          }
+          else {
+            if (!qmatch[2]) {
+              // list day in each month
+              qmatch[3] = qmatch[3] || mmatch[3]
+              mstart = moment('1/' + mmatch[2] + '/' + qmatch[3], 'DD/MM/**BB')
+              if (mstart.isValid()) {
+
+                for (var m=0; m<=12; m++) {
+
+                  mval = moment(mstart)
+                  mval.subtract('months',m)
+                  mval.date(Number(qmatch[1]))
+                  if (mval.isValid()) {
+                    list.push({ name : mmFormat(mval), label : mmFormat(mval,true)})
+                  }
+                }
+              }
+            }
+            else {
+              if (!qmatch[3]) {
+                // list day in each year
+                mstart = moment(qmatch[1]+'/'+qmatch[2]+'/'+mmatch[3],'DD/MM/**BB')
+                if (mstart.isValid()) {
+                  for (var y=0; y<10; y++) {
+
+                    mval = moment(mstart)
+                    mval.subtract('years',y)
+                    if (mval.isValid()) {
+                      list.push({ name : mmFormat(mval), label : mmFormat(mval,true)})
+                    }
+
+                  }
+                }
+              }
+            }
+          }
+          return list
+        }
+
+        if (!utils.dateListAhead.cache) {
+
+          utils.dateListAhead.cache = {}
+        }
+
+        if (!utils.dateListAhead.cache[mm]) {
+
+          utils.dateListAhead.cache[mm] = [
+              { name : mm, label : '@วันนี้' }
+            , { name : mmFormat(moment().add('days',-1)), label : '@@เมื่อวานนี้' }
+            , { name : mmFormat(moment().add('days',1)), label : '@@#พรุ่งนี้' }
+            , { name : mmFormat(moment().startOf('week')), label : '@@@ต้นสัปดาห์นี้' }
+            , { name : mmFormat(moment().endOf('week')), label : '@@@##ปลายสัปดาห์นี้' }
+            , { name : mmFormat(moment().startOf('month')), label : '@@@@ต้นเดือนนี้' }
+            , { name : mmFormat(moment().endOf('month')), label : '@@@@###สิ้นเดือนนี้' }
+            , { name : mmFormat(moment().startOf('year')), label : '@@@@@ต้นปีนี้' }
+            , { name : mmFormat(moment().endOf('year')), label : '@@@@@####สิ้นปีนี้' }
+            ]
+        }
+        return utils.dateListAhead.cache[mm]
+      }
+
+      utils.textLines = function(text) {
+        return (text || '').split(/\r\n|\r|\n/)
+      }
 
       utils.lookup = function (data, attr) {
         /*if (old_lookup(data,attr) != (attr && $parse(attr)(data)))
@@ -80,11 +203,16 @@ angular.module('modules.utils', [])
 
           // default formatter for some datatype
           if (angular.isNumber(v)) {
-            return (v && numeral(v).format('0,0[.]00')) || ''
+            return (v && numeral(v).format(utils.format.number)) || ''
           }
 
-          if (angular.isString(v) && v.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            return moment(v).format('DD/MM/YYYY')
+          if (angular.isDate(v) 
+            || moment.isMoment(v) 
+            || (angular.isString(v) && v.match(/^\d{4}-\d{2}-\d{2}$/))) {
+              return moment(v).format(utils.format.date)
+          }
+          else if (angular.isString(v) && v.match(/^\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}/)) {
+              return moment(v).format(utils.format.dateTime)
           }
           else if (angular.isObject(v)) {
             return JSON.stringify(v,undefined,2)

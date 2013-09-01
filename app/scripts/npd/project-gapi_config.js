@@ -44,7 +44,7 @@ angular.module('npd.project')
           }
 
           if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/)) {
-              user.roles = user.roles.concat( ['STAFF', 'DEVELOPER'])
+              user.roles = user.roles.concat( ['STAFF', 'MANAGER', 'DEVELOPER'])
             }
 
           if (email.match(/panida66\@gmail\.com/)){ 

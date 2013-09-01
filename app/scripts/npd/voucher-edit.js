@@ -3,8 +3,8 @@
 'use strict'
 
 angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
-  .controller('voucherEditCtrl', ['$scope', 'legacyEditDI', '$controller','Database', 'googleApi'
-  , function ($scope, legacyEditDI, $controller, Database, googleApi)
+  .controller('voucherEditCtrl', ['$scope', 'legacyEditDI', '$controller','Database', 'GDrive', '$filter'
+  , function ($scope, legacyEditDI, $controller, Database, GDrive, $filter)
     {
       var db    = new Database.legacy('Voucher')
         , utils = legacyEditDI.utils
@@ -32,10 +32,7 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
 
               img.thumbnailLink = null
 
-              googleApi.client.execute( {
-                  path    : 'drive.files.get'
-                , params  : {fileId : img.id}
-                }, function (meta) {
+              GDrive.fileMeta(img.id).then( function (meta) {
 
                   if (meta.thumbnailLink && !meta.trashed) {
 
@@ -46,6 +43,16 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
             }
 
           })
+        }
+      }
+
+      function keepItemPrice(item) {
+        if (!item.$temp) {
+          item.$temp = function () {}
+        }
+        item.$temp.name = item.name
+        if (item.price) {
+          item.$temp.price = item.price
         }
       }
 
@@ -68,11 +75,20 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
             item.$temp = function () {}
             item.$temp.data  = data
             syncImage(data)
+            keepItemPrice(item)
             $scope.resource.meta.takenItems.push(item)
           })
         })
 
       }
+
+      function oldPriceStr (item) {
+
+        if (item.$temp.price) {
+          return moment().format('DD/MM/BBBB') + ' = ' + numeral(item.$temp.price).format('0,0[.]00')
+        }
+      }
+
       var success = function ( ) {
           var services = {
               formType : function () {
@@ -183,6 +199,7 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
                   syncTakenItems()
                 })
               }
+
             , itemSync : function (item, force) {
                 var promise
 
@@ -193,7 +210,40 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
                   syncState(data)
                   syncImage(data)
                 })
+              }
 
+            , savePriceStr : function (item) {
+                var ps = oldPriceStr(item)
+
+                if (ps && (!item.remark || item.remark.indexOf(ps)==-1)) {
+                  item.remark = ps +'\n' + (item.remark || '')
+                }
+              }
+
+            , priceUnsaved : function (item) {
+                if (item.$temp.price && item.price != item.$temp.price) {
+
+                  return !item.remark || (item.remark.indexOf(oldPriceStr(item))==-1)
+                }
+              }
+
+            , takenSelect : function(clear) {
+                var select = $scope.canSelect()
+
+                if (select) {
+                  select.selected = true
+                  if (clear && select.name == $scope.selectName) {
+                    $scope.selectName = ''
+                  }
+                }
+              }
+
+            , canSelect : function () {
+                if ($scope.selectName) {
+                  var select = $filter('filter')($scope.takenItems(),$scope.selectName)
+
+                  return select.length==1 && !select[0].selected && select[0]
+                }
               }
             }
 
@@ -217,12 +267,14 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
           else {
             angular.forEach($scope.items(), function(item) {
               $scope.itemSync(item, true)
+              keepItemPrice(item)
             })
           }
 
           if ($scope.takenItems().length) {
             angular.forEach($scope.takenItems(), function(item) {
               $scope.itemSync(item, true)
+              keepItemPrice(item)
             })
 
           }

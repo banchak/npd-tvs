@@ -9,8 +9,15 @@
     </div>
     
     <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
-      <li ng-class="printForm=='r1' && 'active'"><a href ng-click="printForm='r1'">สัญญาเช่า</a></li>
-      <li ng-class="printForm=='s1' && 'active'"><a href ng-click="printForm='s1'">สัญญาบริการ</a></li>
+      <li ng-class="printForm=='r1' && 'active'">
+        <a href ng-click="printForm='r1'">
+          สัญญาเช่า</a></li>
+      <li ng-class="printForm=='s1' && 'active'">
+        <a href ng-click="printForm='s1'">
+          สัญญาบริการ</a></li>
+      <li ng-class="printForm=='rec' && 'active'" ng-show="record().text">
+        <a href ng-click="printForm='rec'">
+          บันทึกแนบท้าย</a></li>
     </ul>
     <div class="page-boundary">
       <div class="print-page" ng-show="printForm">

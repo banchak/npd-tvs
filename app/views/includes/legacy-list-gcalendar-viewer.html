@@ -1,0 +1,55 @@
+
+<div modal="gcalendarViewer.opened" close="gcalendarViewer.close()" options="gcalendarViewer.options">
+    <div class="modal-header">
+        <h3 ng-bind="gcalendarViewer.title"></h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row-fluid" style="margin-bottom:1em;">
+        <div class="form-inline">
+          <div class="pull-right">
+            <input class="input-large" placeholder="ค้นหา" 
+              ng-model="_eventFilter"  
+              />
+          </div>
+          <a target="_blank" class="btn btn-small btn-danger"
+            ng-href="{{eventComposeUrl(gcalendarViewer.title, _calFilter)}}" 
+            >
+            เพิ่มนัดหมาย
+            </a>
+          <select class="input-medium"
+            ng-model="_calFilter"
+            ng-show="filterCalendars" 
+            ng-options="cal.email as cal.name for cal in filterCalendars | orderBy : 'name'"
+            ></select>
+        </div>
+      </div>
+
+      <!-- div class="row-fluid">
+          <ul class="nav nav-tabs" ng-init="_calFilter=''">
+            <li ng-repeat="cal in calendars" ng-class="(_calFilter==cal.email) && 'active'">
+              <a href ng-click="$parent._calFilter=cal.email" ng-bind="cal.name"></a></li>
+            <li ng-class="!_calFilter && 'active'">
+              <a href ng-click="_calFilter=''">
+                ทั้งหมด
+                </a></li>
+          </ul>
+      </div -->
+
+      <div ng-repeat="ev in gcalendarViewer.data.$temp.events | filter : {'organizer.email' : _calFilter || ''} | filter: _eventFilter | orderBy: 'start.date || start.dateTime' : 'reverse'"
+        >
+        {{ utils.formatValue(ev.start.date || ev.start.dateTime) }} 
+        <a ng-href="{{ ev.htmlLink }}" target="_blank">{{ ev.summary }}</a>
+        ({{ ev.organizer.displayName }})
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <span ng-hide="gcalendarViewer.data.$temp.events != null">
+        <img src="images/spinner.gif" />
+      </span>
+      <button class="btn btn-warning cancel" ng-click="gcalendarViewer.close()">Close</button>
+    </div>
+
+</div>
+<div class="modal-backdrop" ng-show="gcalendarViewer.opened" ng-click="gcalendarViewer.close()"></div>

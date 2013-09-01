@@ -1,90 +1,124 @@
-  <div class="container-fluid" ng-init="typeaheadWait=150">
+  <div class="container-fluid">
 
-        <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'">
-        </div>
-        
-        <div class="row-fluid">
-            <h2 ng-bind="db.title"></h2>
-        </div>
+        <div ng-include="'views/includes/edit-header.html'"> </div>
 
-        <div class="row-fluid">
-          <div class="span3">
-            <label>ประเภทบุคคล : </label>
-            <select class="input-medium"
-              ng-model  ="resource._type" 
-              ng-options="c.name as c.name for c in db.database.BUILT_IN.personTypes"
-            ></select>
+        <div> <!--head-->
+          <div class="row-fluid">
+            <div class="span4">
+              <label>ประเภทบุคคล : </label>
+              <select class="input-medium"
+                ng-model  ="resource._type" 
+                ng-options="c.name as c.name for c in db.database.BUILT_IN.personTypes"
+              ></select>
+            </div>
+
+            <div class="span4">
+              <label>ความสัมพันธ์ :</label>
+              <div class="btn-group">
+                <button class="btn" 
+                  xng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                  ng-class="resource.info.is_supplier && 'btn-success'" 
+                  ng-click="resource.info.is_supplier = !resource.info.is_supplier"
+                  >
+                  {{ ((resource.info.is_supplier && '&radic; ') || '') + 'เป็นแหล่งซื้อ' }}
+                </button>
+                <button class="btn" 
+                  xng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                  ng-class="resource.info.is_broker && 'btn-inverse'" 
+                  ng-click="resource.info.is_broker = !resource.info.is_broker">
+                  {{ ((resource.info.is_broker && '&radic; ') || '') + 'เป็นตัวแทนขาย' }}
+                </button>
+              </div>
+            </div>
           </div>
 
+          <div class="row-fluid">
+            <div class="span4">
+              <label>
+                ชื่อ : 
+                <span>
+                  <a href class="btn btn-small" ng-class="resource.info.memo && 'btn-info'" ng-click="toggle_memo = !toggle_memo">memo</a>
+                </span>
+              </label>
+              <input type="text" class="input-large" 
+                ng-model="resource._name" 
+                />
+            </div>
 
-          <div class="span5">
-            <label>คำนำหน้า[:ลงท้าย] : </label>
-            <input type="text" class="input-large" 
-              ng-model="resource.info.prefix" 
-              typeahead="itm for itm in selfList('info.prefix', $viewValue)"
-              typeahead-wait-ms="typeaheadWait"
-              />
+
+            <div class="span4">
+              <label>คำนำหน้า[:ลงท้าย] : </label>
+              <input type="text" class="input-large" 
+                ng-model="resource.info.prefix" 
+                typeahead="itm for itm in selfList('info.prefix', $viewValue)"
+                typeahead-wait-ms="typeaheadWait"
+                />
+            </div>
+          </div>
+
+          <div class="row-fluid">
+          </div>
+
+          <div ng-show="toggle_memo">
+            <div  class="alert alert-info">
+                <textarea rows="3" class="input-xxlarge" 
+                  ng-model="resource.info.memo" placeholder="บันทึก"
+                  ></textarea>
+            </div>
           </div>
         </div>
 
-        <div class="row-fluid">
-          <div>
-            <label>ชื่อ : </label>
-            <input type="text" class="input-xxlarge" ng-model="resource._name" />
-          </div>
-
-        <div class="row-fluid">
-          <div>
-            <label>เลขสำคัญ : </label>
-            <input type="text" class="input-large" placeholder="บัตรประชาชน/เลขนิติบุคคล" ng-model="resource.info.person_id" />
-          </div>
-        </div>
-
-        <div class="row-fluid"> <!-- body -->
-
+        <div class="row-fluid"> <!--tabs menu-->
           <ul class="nav nav-tabs">
             <li ng-class="!__tabIdx && 'active'">
               <a href ng-click="__tabIdx=0">
-                โทรศัพท์และอื่นๆ</a></li>
+                โทรศัพท์และสื่อสาร</a></li>
             <li ng-class="__tabIdx==1 && 'active'">
               <a href ng-click="__tabIdx=1">
-                ที่อยู่</a></li>
+                ชื่อ-ที่อยู่</a></li>
+            <li ng-class="__tabIdx==2 && 'active'" ng-show="resource.info.is_broker">
+              <a href ng-click="__tabIdx=2">
+                ตัวแทนขาย</a></li>
           </ul>
+        </div>
 
-          <div ng-show="!__tabIdx" heading="โทรศัพท์และอื่นๆ">
+        <div class="row-fluid"> <!--tabs body-->
 
+          <div class="container-fluid" ng-show="!__tabIdx" heading="โทรศัพท์และสื่อสาร">
             <div class="container-fluid">
               <div class="row-fluid">
                 <label>
                   โทรศัพท์ :
                   <a href class="btn btn-small btn-danger" ng-click="resource$entry.add(phones())">
-                    เพิ่ม
-                  </a>
+                    เพิ่ม</a>
                 </label>
 
                 <div class="alert alert-info" ng-show="phones().length">
                   <div class="row-fluid" ng-repeat="phone in phones()">
+                    <hr ng-show="$index" />
                     <div class="pull-right">
-                      <a class="btn btn-small btn-warning" href ng-click="resource$entry.remove(phones(),$index)">
-                        ลบ
-                      </a>
+                      <a href tabindex=-1 class="btn btn-small btn-warning" 
+                        ng-click="resource$entry.remove(phones(),$index)">
+                        ลบ</a>
                     </div>
 
-                    <div class="span3">
-                      <input type="text" class="input-medium" placeholder="ประเภท"
-                        ng-model="phone.type" 
-                        typeahead="itm for itm in selfList('meta.phones.type', $viewValue)"
-                        typeahead-wait-ms="typeaheadWait"
-                        />
-                    </div>
+                    <input type="text" class="input-medium"
+                      placeholder="มือถือ,ที่บ้าน,..."
+                      ng-model="phone.type" 
+                      typeahead="itm for itm in selfList('meta.phones.type', $viewValue)"
+                      typeahead-wait-ms="typeaheadWait"
+                      />
 
-                    <div class="input-prepend span6">
-                      <span class="add-on span3">หมายเลข</span>
+                    <div class="input-prepend">
+                      <span class="add-on">หมายเลข</span>
                       <input type="text" class="input-large" ng-model="phone.id" />
                     </div>
                   </div>
                 </div>
               </div>
+
+              <div ng-hide="phones().length">&nbsp;</div>
+
 
               <div class="row-fluid">                  
                 <label>
@@ -96,21 +130,21 @@
 
                 <div class="alert" ng-show="econtacts().length">
                   <div class="row-fluid" ng-repeat="contact in econtacts()">
+                    <hr ng-show="$index" />
                     <div class="pull-right">
-                      <a class="btn btn-small btn-warning" href ng-click="resource$entry.remove(econtacts(),$index)">
-                        ลบ
-                      </a>
+                      <a href tabindex="-1" class="btn btn-small btn-warning" 
+                        ng-click="resource$entry.remove(econtacts(),$index)">
+                        ลบ</a>
                     </div>
 
-                    <div class="span3">
-                      <input type="text" class="input-medium" placeholder="ประเภท"
-                        ng-model="contact.type" 
-                        typeahead="itm for itm in selfList('meta.econtacts.type', $viewValue)"
-                        typeahead-wait-ms="typeaheadWait"
-                        />
-                    </div>
+                    <input type="text" class="input-medium" placeholder="ประเภท"
+                      placeholder="fax,email,..."
+                      ng-model="contact.type" 
+                      typeahead="itm for itm in selfList('meta.econtacts.type', $viewValue)"
+                      typeahead-wait-ms="typeaheadWait"
+                      />
 
-                    <div class="input-prepend span6">
+                    <div class="input-prepend">
                       <span class="add-on">id</span>
                       <input type="text" class="input-large" ng-model="contact.id" />
                     </div>
@@ -121,11 +155,26 @@
             </div>
           </div> <!-- tab -->
 
-          <div ng-show="__tabIdx==1" heading="ที่อยู่">
+          <div class="container-fluid" ng-show="__tabIdx==1" heading="ชื่อ-ที่อยู่">
 
             <div class="container-fluid">
 
-              <div class="row-fluid">                  
+              <div class="row-fluid">
+                <div>
+                  <label>เลขสำคัญ : </label>
+                  <input type="text" class="input-large" placeholder="บัตรประชาชน/เลขนิติบุคคล" ng-model="resource.info.person_id" />
+                </div>
+              </div>
+
+              <div class="row-fluid">
+                <div>
+                  <label>ชื่อเต็ม : </label>
+                  <input type="text" class="input-xxlarge" ng-model="resource.info.full_name" />
+                </div>
+
+              </div>
+
+              <div class="row-fluid">     
                 <label>
                   ที่อยู่ :
                   <a href class="btn btn-small btn-danger" ng-click="resource$entry.add(locations())">
@@ -141,7 +190,8 @@
                   </div>
                   <div class="row-fluid">
                     <div>
-                      <input type="text" class="input-medium" placeholder="ประเภท"
+                      <input type="text" class="input-medium"
+                        placeholder="ที่บ้าน,ที่ทำงาน,..."
                         ng-model="loc.type" 
                         typeahead="itm for itm in selfList('meta.locations.type', $viewValue)"
                         typeahead-wait-ms="typeaheadWait"
@@ -185,13 +235,104 @@
             </div>
           </div> <!-- tab -->
 
+          <div class="container-fluid" ng-show="__tabIdx==2" heading="ตัวแทนขาย" ng-show="resource.info.is_broker">
+            <div class="container-fluid">
+              <div class="row-fluid">
+                <label>เงื่อนไข :</label>
+                <textarea rows="2" class="input-xxlarge" 
+                  ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                  ng-model="broker().cond" 
+                  ></textarea>
+              </div>
+
+              <div class="row-fluid">
+                <div class="span4">
+                  <label>เครดิต(วงเงิน) :</label>
+                  <input type="text" class="input-medium" 
+                    ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                    ng-model="broker().credit"
+                    numeral="'money'" 
+                     />
+                </div>
+                <div class="span4">
+                  <label>ระยะเวลาถือของ :</label>
+                  <input type="text" class="input-medium" 
+                    ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                    ng-model="broker().hold_days"
+                    numeral 
+                     />
+                </div>
+              </div>
+
+              <div class="row-fluid">
+                <label>
+                  หลักประกัน :
+                  <a href class="btn btn-small btn-danger" 
+                    ng-hide="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                    ng-click="resource$entry.add(deposits())">
+                    เพิ่ม</a>
+                </label>
+                <input type="text" class="input-medium" disabled
+                  ng-model="calc.deposit"
+                  numeral="'money'" 
+                   />
+
+                <div class="alert alert-info" ng-show="deposits().length">
+                  <div class="row-fluid" ng-repeat="deposit in deposits()">
+                    <hr ng-show="$index" />
+                    <div class="pull-right"
+                      ng-hide="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                      >
+                      <a href tabindex="-1" class="btn btn-small btn-warning" 
+                        ng-click="resource$entry.remove(deposits(),$index)">
+                        ลบ</a>
+                    </div>
+
+                    <div class="input-prepend">
+                      <span class="add-on">วันที่</span>
+                      <input type="text" class="input-medium" 
+                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        moment="'DD/MM/**BB'"
+                        ng-model="deposit.date" 
+                        typeahead="d.name as (d.label || d.name) 
+                          for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                        />
+                    </div>
+
+                    <div class="input-prepend">
+                      <span class="add-on">รายการ</span>
+                      <input type="text" class="input-large"
+                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-model="deposit.type" 
+                        typeahead="itm for itm in selfList('meta.deposits.type', $viewValue)"
+                        typeahead-wait-ms="typeaheadWait"
+                        />
+                    </div>
+
+                    <div class="input-prepend">
+                      <span class="add-on">จำนวนเงิน</span>
+                      <input type="text" class="input-medium" 
+                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-model="deposit.amount" 
+                        numeral="money" />
+                    </div>
+
+                    <div class="input-prepend">
+                      <span class="add-on">ผู้รับฝาก</span>
+                      <input type="text" class="input-medium"
+                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-model="deposit.type" 
+                        typeahead="itm for itm in selfList('meta.deposits.person', $viewValue)"
+                        typeahead-wait-ms="typeaheadWait"
+                        />
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+          </div>
         </div>
 
-        <!-- save/delete/cancel buttons -->
-        <div class="editnav-bottom" ng-include="'views/includes/edit-buttons.html'"></div>
-        
-        <div class="row-fluid"> <!-- footer -->
-            <div style="width=100%;height:60px;"></div> <!-- reserved foot space -->
-        </div>
+        <div ng-include="'views/includes/edit-footer.html'"> </div>
 
   </div>

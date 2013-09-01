@@ -202,15 +202,16 @@ div.state-taken {
   clear: both;
 }
 
+.paragraph .indent {
+  text-indent: 4em;
+}
+
+
 .paragraph-center {
   margin-top : 1em;
   text-align : center;
   display: block;
   clear: both;
-}
-
-div.paragraph {
-  margin-top : 1em;
 }
 
 .clear-fix
@@ -283,6 +284,7 @@ tr.dotted td {
 @media screen {
   .page-boundary
   {
+    margin-top:1em;
     border:thin dotted; 
     padding:3em 4em; 
     display:inline-block;

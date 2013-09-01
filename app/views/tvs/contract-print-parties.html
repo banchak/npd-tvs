@@ -1,0 +1,22 @@
+
+<div class="paragraph-center" ng-hide="_params.hidePartiesOpenMessage || _params.hidePartiesMessage">
+  {{ _params.contractCalled || 'สัญญา' }}นี้ทำขึ้นระหว่าง
+</div>
+<p>
+  บริษัท ธัญวิลล์ จำกัด 
+  โดย <strong>{{ resource.info.signer1 }}</strong> กรรมการผู้รับมอบอำนาจกระทำการแทนบริษัท 
+  สำนักงานใหญ่เลขที่ 52 อาคารธนิยะพลาซา ชั้น 9 เอ็ม ถนนสีลม แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 
+  ซึ่งต่อไปนี้ใน{{ _params.contractCalled || 'สัญญา' }}นี้จะเรียกว่า 
+  {{ _params.renterCalled || '"ผู้ให้เช่า"'}} ฝ่ายหนึ่ง
+</p>
+<p>
+  กับ
+</p>
+<p>
+  <strong markdown-bind="resource.display.tenant" markdown-inline="true"></strong>
+  ซึ่งต่อไปใน{{ _params.contractCalled || 'สัญญา'}}นี้จะเรียกว่า 
+  {{ _params.tenantCalled || '"ผู้เช่า"' }} อีกฝ่ายหนึ่ง
+</p>
+<p ng-hide="_params.hidePartiesCloseMessage || _params.hidePartiesMessage">
+  ทั้งสองฝ่ายตกลงทำ{{ _params.contractCalled || 'สัญญา' }}กันโดยมีข้อความดังต่อไปนี้
+</p>

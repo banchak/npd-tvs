@@ -44,9 +44,8 @@ angular.module('tvs.database', ['modules.legacy-database'])
 
     })
 
-  .value(
-    'COLLECTIONS'
-  , {
+  .service('COLLECTIONS',[ function () {
+    return {
       Contract : 
       {
         name    : 'contracts'
@@ -65,6 +64,31 @@ angular.module('tvs.database', ['modules.legacy-database'])
         , { name : 'display.area', label : 'พื้นที่เช่า'}
         , { name : 'display.tenant', label : 'คู่สัญญา' }
         ]
+      , orders :
+        [
+          { name : '_id',                 label : 'ลำดับข้อมูล'}
+        , { name : '_name',               label : 'เลขที่'}
+        , { name : 'info.issue_date',     label : 'วันที่ทำสัญญา'}
+        , { name : 'info.rent_date',      label : 'วันที่เริ่มสัญญา'}
+        , { name : 'info.rent_until',     label : 'วันที่หมดอายุสัญญา'}
+        ]
+      , queries :
+        [
+          { name : '@y1', label : '@1 ปี', value : '@_type=1 ปี'}
+        , { name : '@y3', label : '@3 ปี', value : '@_type=3 ปี'}
+        , { name : '@y15',label : '@15 ปี', value : '@_type=15 ปี'}
+        , { name : '@yo', label : '@อื่นๆ', value : 'อื่นๆ'}
+        ]
+      , boundList : function () {
+                return [ 
+                        { name : '@_type=1 ปี', label : '1 ปี'}
+                      , { name : '@_type=3 ปี',    label : '3 ปี'}
+                      , { name : '@_type=15 ปี',    label : '15 ปี'}
+                      , { name : '@_type=อื่นๆ',    label : 'อื่นๆ'}
+                      , { label : 'ทั้งหมด'}
+                      ]
+        }
+
       }
 
     , Area : 
@@ -112,8 +136,8 @@ angular.module('tvs.database', ['modules.legacy-database'])
           { name : '_type',       label : 'ชนิดอุปกรณ์'}
         ]
       }
+    }
 
-
-    })
+  }])
 
 }).call(this);

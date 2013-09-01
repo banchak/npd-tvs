@@ -10,8 +10,11 @@
             <span ng-show="!adminView.actions">
               <a class="btn btn-small" ng-href="#{{ basepath }}/edit/{{ data.$id() }}">แก้ไข</a>
             </span>
-            <span ng-show="data.$temp.gdrive">
+            <span ng-show="utils.temp('gdrive',data)">
               <a class="btn btn-small" ng-click="viewGDrive(data)">ไฟล์แนบ</a>
+            </span>
+            <span ng-show="utils.temp('gcalendar',data)">
+              <a class="btn btn-small" ng-click="viewGCalendar(data)">ปฏิทิน</a>
             </span>
           </span>
         </h3>
@@ -29,7 +32,7 @@
         <div>
           <dl ng-class="ifSingleShow('table-display','')" ng-init="dtToggles={}">
 
-            <div ng-repeat="fields in [data.$temp.displayItems, data.$temp.singleShowFields]">
+            <div ng-repeat="fields in [utils.temp('displayItems',data),utils.temp('singleShowFields', data)]">
 
               <div 
                 ng-repeat="fld in fields" 

@@ -3,14 +3,13 @@
 angular.module('controllers.legacy-search',['modules.utils'])
 
   .factory('legacySearchDI',['$routeParams', '$q', 'utils'
-  , function($routeParams, $q, utils, GCalendar)
+  , function($routeParams, $q, utils)
     {
 
       return {
             $routeParams  : $routeParams
           , $q            : $q
           , utils         : utils
-          , GCalendar     : GCalendar
           }
     }
   ])

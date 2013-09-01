@@ -1,26 +1,6 @@
   <div class="container-fluid">
 
-        <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'"> </div>
-
-        <div class="row-fluid">
-          <div class="pull-left">
-            <a href tabindex="-1" class="label label-inverse"  title="unlock"
-              ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
-              ng-click="unlockEdit = !unlockEdit">
-              &part;
-            </a>
-          </div>
-          <h2>
-            {{resource._type || db.title}}
-            <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
-              ng-class="resource.info.approved && 'btn-success'" 
-              ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
-              ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
-              {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
-            </button>
-          </h2>
-
-        </div>
+        <div ng-include="'views/includes/edit-header.html'"> </div>
 
         <div class="row-fluid">
           <div class="span4">
@@ -41,7 +21,8 @@
               ng-disabled = "resource.info.approved"
               ng-model="resource.info.issue_date" 
               moment="'DD/MM/**BB'"
-              boot-datepicker="{language: 'th-th'}"
+              typeahead="d.name as (d.label || d.name) 
+                for d in utils.dateListAhead($viewValue) | filter:$viewValue"
               />
           </div>
 
@@ -68,39 +49,31 @@
                 ค้างยืม</a></li>
           </ul>
 
-          <div ng-show="!__tabIdx">
+          <div class="container-fluid" ng-show="!__tabIdx">
 
             <div class="row-fluid">
                 <label>
                   ชื่อ :
-                  <span class="label label-warning" ng-show="takenItems().length">
+                  <span class="text-error" ng-show="takenItems().length">
                     ค้างยืมรวม {{ takenItems().length }} รายการ  
                     <strong ng-show="utils.sum(takenItems(),'price')"> 
                       {{utils.sum(takenItems(),'price') | numeral}} บาท 
                     </strong>
                   </span>
                 </label>
-                  <div class="input-append">
-                    <form style="margin:0" ng-submit="personSync(person())">
-                      <div style="height:0; width:0; overflow:hidden;">
-                        <input tabindex="-1" type="submit" />
-                      </div>
-                      <input type="text" class="input-large" 
-                        ng-disabled="resource.info.approved"
-                        ng-model="person().name" 
-                        typeahead="itm for itm in selfList('Person/_name', $viewValue)"
-                        typeahead-wait-ms="typeaheadWait"
-                        />
-                      <span class="add-on btn" 
-                        ng-disabled="resource.info.approved"
-                        ng-class="!isSynced(person()) && 'btn-info'"
-                        ng-click="personSync(person(),true)"
-                        >
-                        &crarr;
-                      </span>
-                  </form>
-                  </div>
+                <div class="input-append">
+                  <form style="margin:0;padding:0;display:inline;" ng-submit="personSync(person())">
+                    <input type="submit" tabindex="-1" 
+                      style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+                    <input type="text" class="input-large" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="person().name" 
+                      typeahead="itm for itm in selfList('Person/_name', $viewValue)"
+                      typeahead-wait-ms="typeaheadWait"
+                      />
 
+                  </form>
+                </div>
             </div>
 
             <div class="row-fluid">
@@ -134,20 +107,20 @@
             </div>
           </div><!--/tab-->
 
-          <div ng-show="__tabIdx==1" heading="รายการ">
+          <div class="container-fluid" ng-show="__tabIdx==1" heading="รายการ">
             <h5>{{ person().name }}</h5>
+            <div class="row-fluid" style="margin-bottom:1em;">
+                <span ng-hide="resource.info.approved">
+                  <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
+                </span>
+                <span class="alert alert-info" ng-show="items().length">
+                  รายการใหม่ {{ items().length }} รายการ 
+                  <strong ng-show="utils.sum(items(),'price')">
+                    {{utils.sum(items(),'price') | numeral}} บาท
+                  </strong>                  
+                </span>
+            </div>
             <div class="row-fluid">
-              <div>
-                  <span class="alert alert-info">
-                    รายการใหม่ {{ items().length }} รายการ 
-                    <strong ng-show="utils.sum(takenItems(),'price')">
-                      {{utils.sum(items(),'price') | numeral}} บาท
-                    </strong>                  
-                    <span ng-hide="resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
-                    </span>
-                  </span>
-              </div>
               <div class="alert alert-info" ng-show="items().length">
                 <div ng-repeat="item in items()">
                   <hr ng-show="$index" />
@@ -171,17 +144,18 @@
 
                       <div>
                         <div>
-                          <form style="margin:0" ng-submit="itemSync(item)">
-                            <div style="height:0; width:0; overflow:hidden;">
-                              <input tabindex="-1" type="submit" />
-                            </div>
+
+                          <div>
                             <div>
-                              <div>
-                                <div class="input-append">
-                                  <span class="label" style="margin-right:2px;">
-                                    {{ $index + 1 }}
-                                  </span>
-                                </div>
+                              <div class="input-append">
+                                <span class="label" style="margin-right:2px;">
+                                  {{ $index + 1 }}
+                                </span>
+                              </div>
+
+                              <form style="margin:0;display:inline;" ng-submit="itemSync(item)">
+                                <input type="submit" tabindex="-1" 
+                                  style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
                                 <div class="input-prepend input-append">
                                   <span class="add-on">รหัส</span>
                                   <input type="text" class="input-medium" 
@@ -193,25 +167,39 @@
                                     ng-click="itemSync(item,true)"
                                     >
                                     &crarr;
-                                    </span>
+                                  </span>
                                 </div>
-                                <div class="input-prepend" ng-show="resource._type=='คืน'">
-                                  <span class="add-on">น้ำหนัก</span>
-                                  <input type="text" class="input-small" 
-                                    ng-model="item.weight"
-                                     />
-                                </div>
-                                <div class="input-prepend">
+                              </form>
+
+                              <div class="input-prepend" ng-show="resource._type=='คืน'">
+                                <span class="add-on">น้ำหนัก</span>
+                                <input type="text" class="input-small" 
+                                  ng-model="item.weight"
+                                   />
+                              </div>
+
+                              <form style="margin:0;display:inline;" ng-submit="savePriceStr(item)">
+                                <input type="submit" tabindex="-1" 
+                                  style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+                                <div class="input-prepend" ng-class="priceUnsaved(item) && 'input-append'">
                                   <span class="add-on">ราคา</span>
                                   <input type="text" class="input-medium" 
                                     ng-disabled="resource.info.approved"
                                     ng-model="item.price"
                                     numeral="'money'" 
                                      />
+                                  <span class="add-on btn btn-info" 
+                                    title="{{ item.$temp.price | numeral }}"
+                                    ng-show="priceUnsaved(item)" 
+                                    ng-click="savePriceStr(item)"
+                                    >
+                                    &raquo;
+                                  </span>
                                 </div>
-                              </div>
+                              </form>
+
                             </div>
-                          </form>
+                          </div>
 
                           <div class="text-error">
                             {{ item.$temp.data.error }}
@@ -230,7 +218,7 @@
 
                         <div ng-show="authorizeData.user.roles.has('MANAGER','ADMIN')"> 
                           <div style="margin:2px 0;">
-                            <textarea rows="1" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
+                            <textarea rows="{{ utils.textLines(item.remark).length }}" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
                               ng-model="item.remark">
                             </textarea>
                           </div>
@@ -269,35 +257,91 @@
                   </div>
                 </div>
               </div>
-              <div ng-show="items().length">
-                  <span class="alert alert-info">
-                    รายการใหม่ {{ items().length }} รายการ 
-                    <strong ng-show="utils.sum(takenItems(),'price')">
-                      {{utils.sum(items(),'price') | numeral}} บาท
-                    </strong>                  
-                    <span ng-hide="resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
-                    </span>
-                  </span>
-              </div>
             </div>
+
+            <div class="row-fluid" style="margin-bottom:1em;" ng-show="items().length">
+                <span ng-hide="resource.info.approved">
+                  <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
+                </span>
+                <span class="alert alert-info" ng-show="items().length">
+                  รายการใหม่ {{ items().length }} รายการ 
+                  <strong ng-show="utils.sum(items(),'price')">
+                    {{utils.sum(items(),'price') | numeral}} บาท
+                  </strong>                  
+                </span>
+            </div>
+
           </div><!-- /tab -->
 
-          <div ng-show="__tabIdx==2" heading="ค้างยืม">
+          <div class="container-fluid" ng-show="__tabIdx==2" heading="ค้างยืม">
             <h5>{{ person().name }}</h5>
-            <div class="row-fluid">
-              <div ng-show="takenItems().length">
-                <div>
-                  <span class="alert">
-                    ค้างยืม {{ takenItems().length }} รายการ  
+            <div class="row-fluid" style="margin-bottom:1em;">
+                <span ng-hide="resource.info.approved">
+                  <form style="margin:0;padding:0;display:inline;" ng-submit="resource._type!='ยืม' && takenSelect(true)">
+                    <input type="submit" tabindex="-1" 
+                      style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+                    <span class="input-prepend" style="padding-top:8px;" ng-class="canSelect() && 'input-append'">
+                      <span class="add-on">ใส่รหัส</span>
+                      <input type="text" class="input-medium" 
+                        ng-model="selectName" />
+                      <span class="add-on btn btn-small btn-info" 
+                        ng-show="resource._type!='ยืม' && canSelect()"
+                        ng-click="takenSelect()"
+                        >
+                        &crarr;
+                      </span>
+                    </span>
+                  </form>
+                </span>
+                <!-- span class="alert alert-warning" ng-show="unselectedItems().length">
+                  ค้างยืม {{ unselectedItems().length }} รายการ  
+                  <strong ng-show="utils.sum(unselectedItems(),'price')">
+                    {{utils.sum(unselectedItems(),'price') | numeral}} บาท
+                  </strong>
+                </span>
+                <span class="alert alert-info" ng-show="selectedItems().length">
+                  ตัดยืม {{ selectedItems().length }} รายการ  
+                  <strong ng-show="utils.sum(selectedItems(),'price')">
+                    {{utils.sum(selectedItems(),'price') | numeral}} บาท
+                  </strong>
+                </span -->
+            </div>
+            <div>
+              <ul class="nav nav-tabs" ng-show="resource._type!='ยืม'">
+                <li ng-class="__takenIdx==1 && 'active'">
+                  <a href ng-click="__takenIdx=1">
+                    [ ค้างยืม {{ unselectedItems().length }} รายการ  
+                    <strong ng-show="utils.sum(unselectedItems(),'price')">
+                      {{utils.sum(unselectedItems(),'price') | numeral}} บาท
+                    </strong> ]
+                  </a>
+                </li>
+                <li ng-class="__takenIdx==2 && 'active'">
+                  <a href ng-click="__takenIdx=2">
+                    [ ตัดยืม {{ selectedItems().length }} รายการ  
+                    <strong ng-show="utils.sum(selectedItems(),'price')">
+                      {{utils.sum(selectedItems(),'price') | numeral}} บาท
+                    </strong> ]
+                  </a>
+                </li>
+                <li ng-class="!__takenIdx && 'active'">
+                  <a href ng-click="__takenIdx=0">
+                    [ รวมกัน {{ takenItems().length }} รายการ  
                     <strong ng-show="utils.sum(takenItems(),'price')">
                       {{utils.sum(takenItems(),'price') | numeral}} บาท
-                    </strong>
-                  </span>
-                </div>
+                    </strong> ]
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="row-fluid">
+              <div ng-show="takenItems().length">
 
                 <div class="alert">
-                  <div ng-repeat="item in takenItems()"  ng-class="item.selected && 'alert-info'">
+                  <div ng-repeat="item in takenItems() | filter:selectName"  
+                    ng-show="!__takenIdx || (__takenIdx==1 && !item.selected) || (__takenIdx==2 && item.selected)"
+                    ng-class="item.selected && 'alert-info'"
+                    >
                     <div class="media" style="margin:4px;">
                       <div class="media-object pull-right span2" 
                         ng-show="item.$temp.data.meta.images[0].thumbnailLink"
@@ -308,8 +352,8 @@
                       </div>
                       <div>
                         <div>
-                          <div class="input-append">
-                            <label> 
+                          <div class="input-append" ng-show="resource._type!='ยืม'">
+                            <label class="checkbox"> 
                               <input type="checkbox" 
                                 ng-disabled="resource.info.approved"
                                 ng-model="item.selected" />
@@ -324,17 +368,29 @@
                               ng-model="item.name" />
                           </div>
 
-                          <div class="input-prepend">
-                            <span class="add-on">ราคา</span>
-                            <input type="text" class="input-medium" 
-                              ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
-                              ng-model="item.price"
-                              numeral="'money'" 
-                               />
-                          </div>
+                          <form style="margin:0;display:inline;" ng-submit="savePriceStr(item)">
+                            <input type="submit" tabindex="-1" 
+                              style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+
+                            <div class="input-prepend" ng-class="priceUnsaved(item) && 'input-append'">
+                              <span class="add-on">ราคา</span>
+                              <input type="text" class="input-medium" 
+                                ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                                ng-model="item.price"
+                                numeral="'money'" 
+                                 />
+                              <span class="add-on btn btn-info" 
+                                title="{{ item.$temp.price | numeral }}"
+                                ng-show="priceUnsaved(item)" 
+                                ng-click="savePriceStr(item)"
+                                >
+                                &raquo;
+                              </span>
+                            </div>
+                          </form>
 
                           <div class="input-prepend">
-                            <span style="padding:0 1em;;" ng-show="item.$temp.data.info.taking.date">
+                            <span style="padding:0 1em;" ng-show="item.$temp.data.info.taking.date">
                               วันที่ยืม: {{ item.$temp.data.info.taking.date | moment }}</span>
                           </div>
                         </div>
@@ -349,7 +405,9 @@
                         </div>
                         <div ng-show="authorizeData.user.roles.has('MANAGER','ADMIN')"> 
                           <div style="margin:2px 0;">
-                            <textarea rows="1" class="input-xlarge" placeholder="หมายเหตุ" ng-show="item.name && item.$temp.synced"
+                            <textarea rows="{{ utils.textLines(item.remark).length }}" class="input-xlarge" 
+                              placeholder="หมายเหตุ" 
+                              ng-show="item.name && item.$temp.synced"
                               ng-model="item.remark">
                             </textarea>
                           </div>
@@ -396,11 +454,6 @@
         </div>
 
 
-        <!-- save/delete/cancel buttons -->
-        <div class="editnav-bottom" ng-include="'views/includes/edit-buttons.html'"></div>
-        
-        <div class="row-fluid"> <!-- footer -->
-            <div style="width=100%;height:60px;"></div> <!-- reserved foot space -->
-        </div>
+        <div ng-include="'views/includes/edit-footer.html'"> </div>
 
   </div>

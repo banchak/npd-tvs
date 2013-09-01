@@ -10,6 +10,8 @@ angular.module('tvs.project', [
   , 'controllers.app-auth'
   , 'controllers.legacy-image-list'
   , 'controllers.legacy-gdrive-list'
+  , 'controllers.legacy-gcalendar-list'
+  , 'directives.markdown'
 
   ])
 
@@ -17,7 +19,7 @@ angular.module('tvs.project', [
   , function ($rootScope) {
       this.appMenu  = {
         title         : 'Thanya'
-      , version       : '0.5.0.0 2013-08-26 jsat66@gmail.com'
+      , version       : '0.5.3.0 2013-9-1 jsat66@gmail.com'
       , menus: [
           'Contract','Tenant','Area','Equipment','DataLink'
         ]
@@ -28,6 +30,7 @@ angular.module('tvs.project', [
           provider.controller = 'legacyGDriveListCtrl'
         }
       , listctrl : function (listctrl, ctrl) {
+          listctrl.gdriveCtrlBase = 'legacyGCalendarListCtrl'
           listctrl.adminView = true
           if (ctrl.name=='contracts') {
             listctrl.adminView = {

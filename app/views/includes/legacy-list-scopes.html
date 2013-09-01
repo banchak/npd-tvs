@@ -18,7 +18,7 @@
             <input type="text" name="scope" class="span12" rows="2" 
               ng-model="dataScope" 
               placeholder="scope" 
-              typeahead="scope.name as (scope.label || scope.name) for scope in db.queries | filter:$viewValue"
+              typeahead="scope.name as (scope.label || scope.name) for scope in (db.queries || []) | filter:$viewValue"
               />
             <div class="row-fluid">
               <div class="span6" ng-show="scopes.length || dataScope">

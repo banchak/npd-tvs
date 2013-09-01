@@ -7,18 +7,20 @@ angular.module('npd.project', [
   , 'controllers.app-auth'
   , 'controllers.legacy-image-list'
   , 'controllers.legacy-gdrive-list'
+  , 'controllers.legacy-gcalendar-list'
   , 'npd.image-sync'
   , 'npd.product-edit'
   , 'npd.person-edit'
   , 'npd.voucher-edit'
+  , 'modules.utils'
   ])
 
-  .service('APP_CONFIG', ['$rootScope'
-  , function ($rootScope) {
+  .service('APP_CONFIG', ['$rootScope', 'utils'
+  , function ($rootScope, utils) {
 
       this.appMenu  = {
           title         : 'Npd3'
-        , version       : '0.5.0.0 2013-08-26 jsat66@gmail.com'
+        , version       : '0.5.3.0 2013-9-1 jsat66@gmail.com'
         , menus         : [
             'Product', 'Person', 'Voucher'
           ]
@@ -33,10 +35,11 @@ angular.module('npd.project', [
 
         , listctrl : function (listctrl, ctrl) {
 
+            listctrl.gdriveCtrlBase = 'legacyGCalendarListCtrl'
+
             if (ctrl.name == 'products') {
 
-              listctrl.gdriveCtrlBase = 'legacyImageListCtrl'
-
+              listctrl.gcalendarCtrlBase = 'legacyImageListCtrl'
             }
 
             //listctrl.adminView = true
@@ -75,19 +78,16 @@ angular.module('npd.project', [
 
 
                 angular.forEach(scope.dataList, function(data) {
-
-                  if (!data.$temp) {
-                    data.$temp = function () {}
-                  }
+                  var state = utils.temp('state')
 
                   if (data.info.selling) {
-                    data.$temp.state = 'sold'
+                    state.set(data,'sold')
                   }
                   else if (data.info.taking && data.info.taking.person) {
-                    data.$temp.state = 'taken'
+                    state.set(data, 'taken')
                   }
                   else if (data.info.keeping) {
-                    data.$temp.state = 'kept'
+                    state.set(data, 'kept')
                   }
                 })
               }
@@ -95,14 +95,11 @@ angular.module('npd.project', [
               listctrl.singleShowFields = function (data) {
 
                 var item
+                  , showFields = utils.temp('singleShowFields')
 
-                if (!data.$temp) {
-                  data.$temp = function () {}
-                }
+                if (!showFields.get(data)) {
 
-                if (!data.$temp.singleShowFields) {
-
-                  data.$temp.singleShowFields = []
+                  showFields.set(data, [])
 
                   item = { label : 'สถานะ' }
   
@@ -120,19 +117,19 @@ angular.module('npd.project', [
                   }
 
                   if (item.value) {
-                    data.$temp.singleShowFields.push(item)
+                    showFields.get(data).push(item)
                   }
 
                   if (data.info.condition) {
-                    data.$temp.singleShowFields.push({ label : 'สภาพ', value : data.info.condition } )
+                    showFields.get(data).push({ label : 'สภาพ', value : data.info.condition } )
                   }
 
                   if (data.info.weight) {
-                    data.$temp.singleShowFields.push({ label : 'น้ำหนัก', value : data.info.weight } )
+                    showFields.get(data).push({ label : 'น้ำหนัก', value : data.info.weight } )
                   }
  
                   if (data.info.gold_weight) {
-                    data.$temp.singleShowFields.push({ label : 'นน.ทอง', value : data.info.gold_weight } )
+                    showFields.get(data).push({ label : 'นน.ทอง', value : data.info.gold_weight } )
                   }
 
 
@@ -140,7 +137,7 @@ angular.module('npd.project', [
                     if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
 
                       var roles = $rootScope.authorizeData.user.roles
-
+                        , showFields = utils.temp('singleShowFields')
 
                       if (roles && roles.has('STAFF', 'MANAGER', 'ADMIN')) {
 
@@ -164,7 +161,7 @@ angular.module('npd.project', [
                               item.subfields.push({ label : 'ราคาประเมิน', value : data.info.lowest_price } )
                             }
                           }
-                          data.$temp.singleShowFields.push(item)
+                          showFields.get(data).push(item)
                         }
                       }
 
@@ -194,7 +191,7 @@ angular.module('npd.project', [
                             }
                           }
 
-                          data.$temp.singleShowFields.push(item)
+                          showFields.get(data).push(item)
                         }
 
                         if (data.info.taking && data.info.taking.person) {
@@ -215,7 +212,7 @@ angular.module('npd.project', [
                               item.subfields.push({ label : 'ราคายืม', value : data.info.taking.price})
                             }
                           }
-                          data.$temp.singleShowFields.push(item)
+                          showFields.get(data).push(item)
                         }
                       }
 
@@ -252,20 +249,20 @@ angular.module('npd.project', [
                           if (data.info.memo) {
                             item.subfields.push ({ label : 'หมายเหตุ', value : data.info.memo})
                           }
-                          data.$temp.singleShowFields.push(item)
+                          showFields.get(data).push(item)
                         }
                       }
 
                       if (roles && roles.has('STAFF.IT', 'DEVELOPER')) {
                         item = { label : 'developer'}
                         item.subfields = [{ label : 'raw data', value : data }]
-                        data.$temp.singleShowFields.push(item)
+                        showFields.get(data).push(item)
                       }
                     }
                   })
                 }
 
-                return data.$temp.singleShowFields
+                return showFields.get(data)
               }
             }
           }

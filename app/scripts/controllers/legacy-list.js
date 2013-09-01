@@ -243,8 +243,7 @@ angular.module('controllers.legacy-list',['modules.utils'])
         if (bound) {
           newpath += '/view/' + bound
         }
-
-        url = url.replace(utils.$location.path(),encodeURI(newpath))
+        url = url.replace(encodeURI(utils.$location.path()),encodeURI(newpath))
         return '#'+ url
       }
 
@@ -346,15 +345,13 @@ angular.module('controllers.legacy-list',['modules.utils'])
 
       $scope.singleShowFields = function(data) {
 
-        if (!data.$temp) {
-          data.$temp = function () {}
+        var temp = utils.temp('singleShowFields')
+
+        if (!temp.get(data)) {
+          temp.set(data, [ { label : 'dump data', value: JSON.stringify(data,undefined,2) } ])
         }
 
-        if (!data.$temp.singleShowFields) {
-          data.$temp.singleShowFields = [ { label : 'dump data', value: JSON.stringify(data,undefined,2) } ]
-        }
-
-        return data.$temp.singleShowFields
+        return temp.get(data)
       }
 
       if (listctrl.singleShowFields || listctrl.db.singleShowFields)  {
@@ -434,19 +431,16 @@ angular.module('controllers.legacy-list',['modules.utils'])
       $scope.describe = function(data) {
 
         var flds  =  $scope.descFields(data)
+          , temp  = utils.temp('displayItems')
 
-        if (!data.$temp) {
-          data.$temp = function (){}
-        }
-
-        data.$temp.displayItems = []
+        temp.set(data, [])
         angular.forEach(flds, function(fld) {
 
             var item = $scope.describeItem(fld, utils.lookup(data,fld.name || fld))
 
             if (item) {
 
-              data.$temp.displayItems.push(item)
+              temp.get(data).push(item)
             }
 
           })

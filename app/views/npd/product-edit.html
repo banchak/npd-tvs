@@ -1,26 +1,6 @@
   <div class="container-fluid">
 
-        <div class="editnav-top" ng-include="'views/includes/edit-buttons.html'"> </div>
-        <div class="row-fluid">
-          <div class="pull-left">
-            <a href tabindex="-1" class="label label-inverse"  title="unlock"
-              ng-show="!unlockEdit && authorizeData.user.roles.has('ADMIN','DEVELOPER')" 
-              ng-click="unlockEdit = !unlockEdit">
-              &part;
-            </a>
-          </div>
-          <h2>
-            {{ db.title }}
-            <button tabindex="-1" class="btn" title="{{resource.info.approved || ''}}"
-              ng-class="resource.info.approved && 'btn-success'" 
-              ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
-              ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email">
-              {{ ((resource.info.approved && '&radic; Approved') || 'Approve') }}
-            </button>
-          </h2>
-        </div>
-
-        <div style="clear:both;">&nbsp;</div>
+        <div ng-include="'views/includes/edit-header.html'"> </div>
 
         <div class="row-fluid">
           <div class="media">
@@ -132,10 +112,6 @@
                 </div>
 
                 <div class="row-fluid">
-                  <hr />
-                </div>
-
-                <div class="row-fluid">
                   <div class="span4">
                     <label>น้ำหนักรวม : </label>
                     <input type="text" class="input-medium"
@@ -148,148 +124,289 @@
                     <label>สภาพ : </label>
                     <input type="text" class="input-medium"
                       ng-model="resource.info.cond" 
+                      typeahead="itm for itm in selfList('info.cond',$viewValue)"
+                      typeahead-wait-ms="typeaheadWait"
                       />
                   </div>
                 </div>
 
                 <div class="row-fluid">
-                  <div class="span4">
-                    <label>brand : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.brand" 
-                      />
+                  <div class="btn-toolbar">
+                    <div class="btn-group">
+                      <a href class="btn"
+                        ng-class="(__showMore && 'btn-info')"
+                        ng-click="__showMore = !__showMore">
+                        ดูเพิ่มเติม &raquo;
+                      </a>
+                    </div>
+
+                      <div class="btn-group" ng-show="__showMore">
+                        <a href class="btn" 
+                          ng-class="(__moreMetal && 'btn-warning')" 
+                          ng-click="__moreMetal = !__moreMetal">
+                          ตัวเรือน
+                        </a>
+                        <a href class="btn" 
+                          ng-class="(__moreGems && 'btn-warning')" 
+                          ng-click="__moreGems = !__moreGems">
+                          อัญมณี
+                        </a>
+                        <a href class="btn" 
+                          ng-class="(__moreWatch && 'btn-warning')" 
+                          ng-click="__moreWatch = !__moreWatch">
+                          นาฬิกา
+                        </a>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="span4">
-                    <label>model : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.model" 
-                      />
-                  </div>
-                </div>
+                  <div ng-show="__showMore">
+                    <div class="container-fluid">
+                      <div class="row-fluid">
+                        <div class="span4">
+                          <label>ยี่ห้อ : </label>
+                          <input type="text" class="input-medium"
+                            ng-model="resource.info.brand" 
+                            typeahead="itm for itm in selfList('info.brand',$viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
 
-                <div class="row-fluid">
-                  <div class="span4">
-                    <label>serial : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.serial" 
-                      />
-                  </div>
-                </div>
-
-                <div class="row-fluid">
-                  <div class="span4">
-                    <label>warranty : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.warranty" 
-                      />
-                  </div>
-                </div>
-
-                <div class="row-fluid">
-                  <div class="span10">
-                    <label>ตัวเรือน : </label>
-                    <input type="text" class="input-xxlarge"
-                      ng-model="resource.info.body" 
-                      />
-                  </div>
-
-                </div>
-
-                <div class="row-fluid">
-                  <div class="span4">
-                    <label>นน.ทอง : </label>
-                    <input type="text" class="input-medium"
-                      ng-disabled="resource.info.approved"
-                      ng-model="resource.info.gold_weight" 
-                      />
-                  </div>
-                </div>
-
-                <div class="row-fluid">
-                  <div class="span4">
-                    <label>สายนาฬิกา : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.watchband" 
-                      />
-                  </div>
-
-                  <div class="span4">
-                    <label>หน้าปัดนาฬิกา : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.dial_size" 
-                      />
-                  </div>
-                </div>
-
-                <div class="row-fluid">
-                  <div class="span4">
-                    <label>เบอร์แหวน : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.ring_size" 
-                      />
-                  </div>
-                </div>
-
-                <div class="row-fluid">
-                  <div class="span4">
-                    <label>ความยาวสร้อย : </label>
-                    <input type="text" class="input-medium"
-                      ng-model="resource.info.lace_size" 
-                      />
-                  </div>
-                </div>
-
-                <div class="row-fluid">
-                  <label>
-                    อัญมณี : 
-                    <span ng-hide="resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(gems())">เพิ่ม</a>
-                    </span>
-                  </label>
-
-                  <div class="alert alert-info" ng-show="gems().length">
-                    <div ng-repeat="gem in gems()">
-
-                      <div class="pull-right" ng-hide="resource.info.approved">
-                        [ <a tabindex="-1" class="btn btn-small btn-warning" href 
-                          ng-click="resource$entry.remove(gems(),$index)"
-                          >
-                          ลบ
-                          </a> ]
+                        <div class="span4">
+                          <label>serial : </label>
+                          <input type="text" class="input-medium"
+                            ng-model="resource.info.serial" 
+                            />
+                        </div>
                       </div>
 
-                      <div class="input-prepend">
-                        <span class="add-on">ชนิด</span>
-                        <input type="text" class="input-medium" 
-                          ng-disabled="resource.info.approved"
-                          ng-model="gem.type" />
-                      </div>
-
-                      <div class="input-prepend">
-                        <span class="add-on">น้ำหนัก</span>
-                        <input type="text" class="input-small" 
-                          ng-disabled="resource.info.approved"
-                          ng-model="gem.weight" 
-                          numeral="'money'" />
-                      </div>
-
-                      <div class="input-prepend">
-                        <span class="add-on">จำนวน</span>
-                        <input type="text" class="input-small" 
-                          ng-disabled="resource.info.approved"
-                          ng-model="gem.qty" 
-                          numeral="'qty'" />
-                      </div>
-
-                      <div class="input-prepend">
-                        <span class="add-on">cert</span>
-                        <input type="text" class="input-medium" ng-model="gem.cert" />
+                      <div class="row-fluid">
+                        <div class="span4">
+                          <label>warranty : </label>
+                          <input type="text" class="input-medium"
+                            ng-model="resource.info.warranty" 
+                            typeahead="itm for itm in selfList('info.warranty',$viewValue)"
+                            typeahead-wait-ms="typeaheadWait"
+                            />
+                        </div>
                       </div>
                     </div>
 
+                    <div class="alert" ng-show="__moreMetal">
+                      <div class="container-fluid">
+                        <label>
+                          ตัวเรือน
+                        </label>
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">เนื้อโลหะ</span>
+                            <input type="text" class="input-medium"
+                              ng-model="metal().type"
+                              typeahead="itm for itm in selfList('info.metal.type',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">สีตัวเรือน</span>
+                            <input type="text" class="input-medium"
+                              ng-model="metal().color"
+                              typeahead="itm for itm in selfList('info.metal.type',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+                        </div>
+                        
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">นน.ทอง</span>
+                            <input type="text" class="input-small"
+                              ng-disabled="resource.info.approved"
+                              ng-model="metal().gold_weight" 
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">%ทอง</span>
+                            <input type="text" class="input-small"
+                              ng-disabled="resource.info.approved"
+                              ng-model="metal().gold_percent" 
+                              typeahead="itm for itm in selfList('info.metal.gold_percent',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+                        </div>
+
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">เบอร์แหวน</span>
+                            <input type="text" class="input-medium"
+                              ng-model="metal().ring_size" 
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">ความยาว</span>
+                            <input type="text" class="input-medium"
+                              ng-model="metal().lace_length" 
+                              />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="alert" ng-show="__moreGems">
+                      <div class="container-fluid">
+                        <div class="row-fluid">
+                          <label>
+                            อัญมณี
+                            <span ng-hide="resource.info.approved">
+                              <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(gems())">เพิ่ม</a>
+                            </span>
+                          </label>
+
+                          <div class="alert" ng-show="gems().length">
+                            <div ng-repeat="gem in gems()">
+                              <hr ng-show="$index" />
+                              <div class="pull-right" ng-hide="resource.info.approved">
+                                [ <a tabindex="-1" class="btn btn-small btn-warning" href 
+                                  ng-click="resource$entry.remove(gems(),$index)"
+                                  >
+                                  ลบ
+                                  </a> ]
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">ชนิด</span>
+                                <input type="text" class="input-medium"
+                                  ng-disabled="resource.info.approved"
+                                  ng-model="gem.type" 
+                                  typeahead="itm for itm in selfList('meta.gems.type',$viewValue)"
+                                  typeahead-wait-ms="typeaheadWait"
+                                  />
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">สี</span>
+                                <input type="text" class="input-small"
+                                  ng-model="gem.color"
+                                  typeahead="itm for itm in selfList('meta.gems.color',$viewValue)"
+                                  typeahead-wait-ms="typeaheadWait"
+                                  />
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">น้ำหนัก</span>
+                                <input type="text" class="input-small" 
+                                  ng-disabled="resource.info.approved"
+                                  ng-model="gem.weight" 
+                                  numeral="'money'" />
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">จำนวน</span>
+                                <input type="text" class="input-small" 
+                                  ng-disabled="resource.info.approved"
+                                  ng-model="gem.qty" 
+                                  numeral="'qty'" />
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">cert</span>
+                                <input type="text" class="input-medium" ng-model="gem.cert" />
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="alert" ng-show="__moreWatch">
+                      <div class="container-fluid">
+                        <label>
+                          นาฬิกา
+                        </label>
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">ยี่ห้อ</span>
+                            <input type="text" class="input-medium"
+                              ng-model="resource.info.brand" 
+                              typeahead="itm for itm in selfList('info.brand',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">serial</span>
+                            <input type="text" class="input-medium"
+                              ng-model="resource.info.serial" 
+                              />
+                          </div>
+                        </div>
+
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">model</span>
+                            <input type="text" class="input-medium"
+                              ng-model="watch().model" 
+                              typeahead="itm for itm in selfList('info.watch.model',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">warranty</span>
+                            <input type="text" class="input-medium"
+                              ng-model="resource.info.warranty" 
+                              typeahead="itm for itm in selfList('info.warranty',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+                        </div>
+
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">ชนิดสาย</span>
+                            <input type="text" class="input-medium"
+                              ng-model="watch().band_type" 
+                              typeahead="itm for itm in selfList('info.watch.band_type',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">จำนวนข้อ</span>
+                            <input type="text" class="input-medium"
+                              ng-model="watch().band_joint" 
+                              />
+                          </div>
+                        </div>
+
+                        <div class="row-fluid">
+                          <div class="input-prepend span4">
+                            <span class="add-on">ขนาดหน้าปัด</span>
+                            <input type="text" class="input-medium"
+                              ng-model="watch().dial_size" 
+                              typeahead="itm for itm in selfList('info.watch.dial_size',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+
+                          <div class="input-prepend span4">
+                            <span class="add-on">สีหน้าปัด</span>
+                            <input type="text" class="input-medium"
+                              ng-model="watch().color"
+                              typeahead="itm for itm in selfList('info.watch.color',$viewValue)"
+                              typeahead-wait-ms="typeaheadWait"
+                              />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
             </div>
             
             <div ng-show="__tabIdx==1" heading="ซื้อ">
@@ -300,7 +417,8 @@
                     ng-disabled="resource.info.approved"
                     ng-model="resource.info.buying.date" 
                     moment="'DD/MM/**BB'"
-                    boot-datepicker="{language: 'th-th'}"
+                    typeahead="d.name as (d.label || d.name) 
+                      for d in utils.dateListAhead($viewValue) | filter:$viewValue"
                     />
                 </div>
 
@@ -468,7 +586,6 @@
                       />
                   </div>
                 </div>
-
             </div>
 
             <div ng-show="__tabIdx==2" heading="ปรับปรุง">
@@ -585,7 +702,8 @@
                         ng-disabled="!unlockEdit"
                         ng-model="keeping().date" 
                         moment="'DD/MM/**BB'"
-                        boot-datepicker="{language: 'th-th'}"
+                        typeahead="d.name as (d.label || d.name) 
+                          for d in utils.dateListAhead($viewValue) | filter:$viewValue"
                         />
                     </div>
                   </div>
@@ -609,7 +727,8 @@
                         ng-disabled="!unlockEdit"
                         ng-model="taking().date" 
                         moment="'DD/MM/**BB'"
-                        boot-datepicker="{language: 'th-th'}"
+                        typeahead="d.name as (d.label || d.name) 
+                          for d in utils.dateListAhead($viewValue) | filter:$viewValue"
                         />
                     </div>
 
@@ -655,7 +774,8 @@
                         ng-disabled="!unlockEdit"
                         ng-model="selling().date" 
                         moment="'DD/MM/**BB'"
-                        boot-datepicker="{language: 'th-th'}"
+                        typeahead="d.name as (d.label || d.name) 
+                          for d in utils.dateListAhead($viewValue) | filter:$viewValue"
                         />
                     </div>
 
@@ -675,11 +795,7 @@
         </div>
 
 
-        <!-- save/delete/cancel buttons -->
-        <div class="editnav-bottom" ng-include="'views/includes/edit-buttons.html'"></div>
-        
-        <div class="row-fluid"> <!-- footer -->
-            <div style="width=100%;height:60px;"></div> <!-- reserved foot space -->
-        </div>
+        <div ng-include="'views/includes/edit-footer.html'"> </div>
+
 
   </div>

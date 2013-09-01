@@ -1,13 +1,13 @@
 
 <div class="row-fluid">
 
-  <div class="span3">
+  <div class="span2">
     <div class="three-d">
         <h2 class="text-center">ฮ. เ<img src="images/W10-0088x32.jpg" style="margin-left:5px;"/>ง เฮง</h2>
     </div>
   </div>
 
-  <div class="span7" >
+  <div class="span8" >
     <div ng-hide="authorizeData.user">
       <div style="margin:20px;" ng-controller="appAuthCtrl">
         <div ng-show="authorizeData.ready">
@@ -28,7 +28,6 @@
 
     <div ng-show="authorizeData.user">
       <div ng-include="'views/npd/search-result.html'"></div>
-      
     </div>
   </div>
 </div>

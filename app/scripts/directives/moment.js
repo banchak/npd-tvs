@@ -46,6 +46,7 @@ angular.module('directives.moment', [])
 
                       ctrl.$viewValue = viewValue
 
+
                       ctrl.$render()
                   })
 
@@ -92,6 +93,8 @@ angular.module('directives.moment', [])
                     var 
                       mdate = moment(viewValue, config.inputFormat, config.lang)
 
+                    console.log('parser', viewValue)
+
                     if (mdate && mdate.isValid()) 
                     {
                       //mdate = moment(mdate.format(storeFormat))
@@ -109,7 +112,7 @@ angular.module('directives.moment', [])
 
                     // in all other cases it is invalid, return undefined (no model update)
                     ctrl.$setValidity('moment', false)
-                    return undefined
+                    return viewValue
                   })
 
                 ctrl.$formatters.unshift(
@@ -117,16 +120,18 @@ angular.module('directives.moment', [])
                   {
                     if (modelValue)
                     {
-                      var mdate = moment(modelValue)
+                      if (modelValue.match(/\d+[-\/]\d+[-\/]\d+/)) {
+                        var mdate = moment(modelValue)
 
-                      if (mdate)
-                      {
-                        if (config.lang)
-                          mdate.lang(config.lang)
+                        if (mdate.isValid())
+                        {
+                          if (config.lang)
+                            mdate.lang(config.lang)
 
-                        return mdate.format(config.viewFormat)
+                          return mdate.format(config.viewFormat)
+                        }
                       }
-                      return mdate
+                      //return undefined //modelValue
                     }
 
                 })

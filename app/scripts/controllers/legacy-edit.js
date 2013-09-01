@@ -67,34 +67,32 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
 
       $scope.isSynced
       = function (item, name) {
+          var temp = utils.temp('synced')
+
           if (!item) {
             return
           }
-          if (!item.$temp) {
-            item.$temp = function (){}
-          }
 
           name = name || 'name'
-          if (angular.isUndefined(item.$temp.synced)) {
-            item.$temp.synced = item[name] || ''
+          if (angular.isUndefined(temp.get(item))) {
+            temp.set(item, item[name] || '')
             return true
           }
-          return (item.$temp.synced||null) == (item[name] || null)
+          return (temp.get(item) || null) == (item[name] || null)
         }
             
     , $scope.xdataSync 
       = function (item, name, srcname, force, xquery) {
           var qry, promise, srcdb
+            , tempsynced  = utils.temp('synced')
+            , tempdata    = utils.temp('data')
 
           name = name || 'name'
 
-          if (!item.$temp) {
-            item.$temp = function (){}
-          }
-
           if (!item[name]) {
-            item.$temp.synced = item[name]
-            item.$temp.data = null
+            tempsynced.set(item, item[name])
+
+            tempdata.set(item, null)
             return $q.when(null)
           }
 
@@ -102,8 +100,8 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
             return $q.when(null)
           }
 
-          item.$temp.synced = item[name]
-          item.$temp.data = null
+          tempsynced.set(item, item[name])
+          tempdata.set(item, null)
 
           if (srcname.indexOf('/')>=0) {
             srcname = srcname.split('/')
@@ -139,13 +137,13 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
             }
 
             if (datalist.length>1) {
-              item.$temp.data = { error : "found more than 1 result." }
+              tempdata.set(item, { error : "found more than 1 result." })
               return
             }
 
             data = angular.extend({},datalist[0])
-            item.$temp.data = data
-            item.$temp.synced = item[name] = data[srcname]
+            tempdata.set(item, data)
+            tempsynced.set(item, item[name] = data[srcname])
             return data
           })
 
