@@ -523,6 +523,31 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
                   }
                 }
 
+              , beforeSave : function (savedata) {
+
+                  if (!savedata._id || savedata._name.match(/\*$/)) {
+                    var xx = ''
+                      , yy = moment(savedata.info.issue_date).format('BBBB')
+                      , sep = '/'
+                      , pattern = utils.runningPattern(savedata._name, xx, yy, sep, 4)
+                  
+                    if (pattern) {
+
+                      return $scope.db.getHighest('_name', pattern.join('')).then(function(data) {
+                        console.log(pattern,data)
+                        if (data && data.length) {
+                          savedata._name = utils.runningNext(data[0]._name)
+                        }
+                        else {
+                          savedata._name = xx +  yy + sep + '0001'
+                        }
+                        console.log('beforeSave',savedata)
+                        return savedata
+                      })
+                    }      
+                  }
+                  return savedata
+                }
               }
 
           // entry for view
@@ -565,6 +590,13 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
 
           $scope.meta_tenant_render(false)
           $scope.meta_area_render(false)
+
+          if (!$scope.resource._name) {
+            $scope.resource._name = '*'
+          }
+          if (!$scope.resource.info.issue_date) {
+            $scope.resource.info.issue_date = moment().format('YYYY-MM-DD')
+          }
 
           $scope.$watch('tenants()',$scope.meta_tenant_render,true)
           $scope.$watch('tenant_signers()',$scope.meta_tenant_render,true)

@@ -68,8 +68,9 @@
               ng-class="__tabIdx==3 && 'active'"
               ng-show="authorizeData.user.roles.has('OFFICER', 'MANAGER', 'ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
               <a href ng-click="__tabIdx=3">
+                {{ 'ที่เก็บ/ยืม/ขาย' }} 
                 <span ng-class="{sold : 'label label-important', taken : 'label label-info'}[getState()]">
-                  {{ getState() || 'ที่เก็บ/ยืม/ขาย' }} 
+                  {{ getState() }} 
                 </span>              
               </a></li>
           </ul>
@@ -714,7 +715,7 @@
                   <input type="text" class="input-xlarge" 
                     ng-disabled="!unlockEdit"
                     ng-model="taking().person"
-                    typeahead="itm for itm in selfList('info.taking.person',$viewValue)"
+                    typeahead="itm for itm in selfList(selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
                     />
                 </div>
@@ -761,7 +762,7 @@
                   <input type="text" class="input-xlarge" 
                     ng-disabled="!unlockEdit"
                     ng-model="selling().person"
-                    typeahead="itm for itm in selfList('info.selling.person',$viewValue)"
+                    typeahead="itm for itm in selfList(selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
                     />
                 </div>

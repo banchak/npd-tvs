@@ -11,19 +11,21 @@
           </div>
           <h2>
             {{resource._type || db.title}}
+            
               <a tabindex="-1" class="btn btn-mini" 
                 title="{{ (resource.info.approved && 'ถอน') || 'อนุมัติ'}}"
                 ng-class="resource.info.approved && 'btn-success'"
                 ng-show="authorizeData.user.roles.has('MANAGER','ADMIN','DEVELOPER')" 
                 ng-click="resource.info.approved = !resource.info.approved && authorizeData.user.email"
                 >
-                &lowast;
+                &reg;
               </a>
               <span class="badge badge-success" ng-show="resource.info.approved">
                 <span  title="{{resource.info.approved}}">
                   Approved
                 </span>
               </span>
+            
           </h2>
 
         </div>

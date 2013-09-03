@@ -69,7 +69,7 @@ angular.module('controllers.legacy-gcalendar-list',['controllers.legacy-list', '
           GCalendar.calendars().then(function (resp){
             var temp = utils.temp('gcalendar')
               , cals = []
-            console.log('calendars',resp)
+
             if (resp && resp.items){
 
               angular.forEach(resp.items, function (cal) {

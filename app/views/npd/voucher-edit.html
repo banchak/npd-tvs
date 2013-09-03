@@ -1,12 +1,23 @@
   <div class="container-fluid">
-
+    
         <div ng-include="'views/includes/edit-header.html'"> </div>
 
         <div class="row-fluid">
           <div class="span4">
-            <label>ประเภท : </label>
-            <select class="input-medium"
-              ng-disabled = "!unlockEdit"
+            <label>
+              <span ng-class="!resource._type && 'text-error'">
+                ประเภท :
+                <span
+                  ng-hide="resource._type" 
+                  popover="ห้ามว่าง" popover-trigger="mouseenter" popover-placement="right"
+                  > 
+                  &lowast; 
+                </span>
+              </span>
+            </label>
+            <select class="input-medium" 
+              required
+              ng-disabled = "!unlockEdit || resource.info.approved"
               ng-model  ="resource._type" 
               ng-options="c.name as c.name for c in db.database.BUILT_IN.voucherTypes"
               ng-change  ="voucher_type_change()"
@@ -16,8 +27,19 @@
 
         <div class="row-fluid">
           <div class="span4">
-            <label>วันที่ :</label>
+            <label>
+              <span ng-class="!resource.info.issue_date && 'text-error'">
+                วันที่ :
+                <span
+                  ng-hide="resource.info.issue_date" 
+                  popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
+                  > 
+                  &lowast; 
+                </span>
+              </span>
+            </label>
             <input type="text" class="input-medium" 
+              required ng-title="{{ (!resource.info.issue_date && 'ห้ามว่าง')||'' }}"
               ng-disabled = "resource.info.approved"
               ng-model="resource.info.issue_date" 
               moment="'DD/MM/**BB'"
@@ -28,11 +50,64 @@
 
           <div class="span4">
             <label>
-              เลขที่ : 
+              <span ng-class="!resource._name && 'text-error'">
+                เลขที่ : 
+                <span
+                  ng-hide="resource._name" 
+                  popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
+                  > 
+                  &lowast; 
+                </span>
+              </span>
             </label>
             <input type="text" class="input-medium" 
-              ng-disabled = "!unlockEdit"
+              required
+              popover="ใส่ * เพื่อrun อัตโนมัติ" popover-trigger="focus"
+              ng-disabled = "!unlockEdit || resource.info.approved"
               ng-model="resource._name" />
+          </div>
+
+        </div>
+
+        <div class="row-fluid">
+          <div class="span8">
+            <label>
+              <span ng-class="!person().name && 'text-error'">
+                ชื่อ :
+                <span
+                  ng-hide="person().name" 
+                  popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
+                  > 
+                  &lowast; 
+                </span>
+              </span>
+              <span class="text-error" ng-show="takenItems().length">
+                ค้างยืมรวม {{ takenItems().length }} รายการ  
+                <strong ng-show="utils.sum(takenItems(),'price')"> 
+                  {{utils.sum(takenItems(),'price') | numeral}} บาท 
+                </strong>
+              </span>
+            </label>
+            <div class="input-append">
+              <form style="margin:0;padding:0;display:inline;" ng-submit="personSync(person())">
+                <input type="submit" tabindex="-1" 
+                  style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+                <input type="text" class="input-large" 
+                  required 
+                  ng-disabled="resource.info.approved"
+                  ng-model="person().name" 
+                  typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id', $viewValue)"
+                  typeahead-wait-ms="typeaheadWait"
+                  />
+                <span class="add-on btn" 
+                  ng-disabled="resource.info.approved"
+                  ng-class="!isSynced(person()) && 'btn-info'"
+                  ng-click="personSync(person(),true)"
+                  >
+                  &crarr;
+                </span>
+              </form>
+            </div>
           </div>
         </div>
 
@@ -40,7 +115,7 @@
           <ul class="nav nav-tabs">
             <li ng-class="!__tabIdx && 'active'">
               <a href ng-click="__tabIdx=0">
-                ผู้เกี่ยวข้อง</a></li>
+                ที่อยู่และส่งของ</a></li>
             <li ng-class="__tabIdx==1 && 'active'">
               <a href ng-click="__tabIdx=1">
                 รายการใหม่</a></li>
@@ -51,7 +126,7 @@
 
           <div class="container-fluid" ng-show="!__tabIdx">
 
-            <div class="row-fluid">
+            <!-- div class="row-fluid">
                 <label>
                   ชื่อ :
                   <span class="text-error" ng-show="takenItems().length">
@@ -66,15 +141,22 @@
                     <input type="submit" tabindex="-1" 
                       style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
                     <input type="text" class="input-large" 
+                      required title="required!" name="person_name"
                       ng-disabled="resource.info.approved"
                       ng-model="person().name" 
-                      typeahead="itm for itm in selfList('Person/_name', $viewValue)"
+                      typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id', $viewValue)"
                       typeahead-wait-ms="typeaheadWait"
                       />
-
+                    <span class="add-on btn" 
+                      ng-disabled="resource.info.approved"
+                      ng-class="!isSynced(person()) && 'btn-info'"
+                      ng-click="personSync(person(),true)"
+                      >
+                      &crarr;
+                    </span>
                   </form>
                 </div>
-            </div>
+            </div -->
 
             <div class="row-fluid">
                 <label>ที่อยู่ :</label>
@@ -91,7 +173,7 @@
                     </ul>
                   </div>
                   <div ng-class="(person().$temp.data.meta.locations.length > 1) && 'input-append'">
-                    <textarea rows="2.5" class="input-xxlarge" placeholder="" 
+                    <textarea rows="2.5" class="input-xxlarge" 
                       ng-model="person().address" 
                       ></textarea>
                   </div>
@@ -108,7 +190,6 @@
           </div><!--/tab-->
 
           <div class="container-fluid" ng-show="__tabIdx==1" heading="รายการ">
-            <h5>{{ person().name }}</h5>
             <div class="row-fluid" style="margin-bottom:1em;">
                 <span ng-hide="resource.info.approved">
                   <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(items())">เพิ่ม</a>
@@ -274,7 +355,6 @@
           </div><!-- /tab -->
 
           <div class="container-fluid" ng-show="__tabIdx==2" heading="ค้างยืม">
-            <h5>{{ person().name }}</h5>
             <div class="row-fluid" style="margin-bottom:1em;">
                 <span ng-hide="resource.info.approved">
                   <form style="margin:0;padding:0;display:inline;" ng-submit="resource._type!='ยืม' && takenSelect(true)">
@@ -380,7 +460,7 @@
                                 numeral="'money'" 
                                  />
                               <span class="add-on btn btn-info" 
-                                title="{{ item.$temp.price | numeral }}"
+                                title="{{ utils.formatValue(item.$temp.price) }}"
                                 ng-show="priceUnsaved(item)" 
                                 ng-click="savePriceStr(item)"
                                 >
@@ -391,7 +471,8 @@
 
                           <div class="input-prepend">
                             <span style="padding:0 1em;" ng-show="item.$temp.data.info.taking.date">
-                              วันที่ยืม: {{ item.$temp.data.info.taking.date | moment }}</span>
+                              วันที่ยืม: {{ item.$temp.data.info.taking.date | moment }}
+                            </span>
                           </div>
                         </div>
 
@@ -407,7 +488,7 @@
                           <div style="margin:2px 0;">
                             <textarea rows="{{ utils.textLines(item.remark).length }}" class="input-xlarge" 
                               placeholder="หมายเหตุ" 
-                              ng-show="item.name && item.$temp.synced"
+                              xng-show="item.name && item.$temp.synced"
                               ng-model="item.remark">
                             </textarea>
                           </div>
@@ -455,5 +536,5 @@
 
 
         <div ng-include="'views/includes/edit-footer.html'"> </div>
-
+    
   </div>

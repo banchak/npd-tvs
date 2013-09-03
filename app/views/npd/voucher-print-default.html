@@ -2,27 +2,28 @@
 <div ng-init="useItems = useItems || items()">
   <div ng-repeat="__page in itemPages(10,useItems)">
     <div><hr class="no-print" ng-hide="__page==1" /></div>
+    <div class="paragraph">
+      <div>
+        <div class="pull-right" style="width:1.5in;">
+          <strong>{{ resource._name }}</strong>
+        </div>
+        <h3 class="text-center">
+          {{ useTitle || resource._type }}
+        </h3>
+      </div>
+      <div>
+        <div>
+          <div class="pull-right" style="width:1.5in;">
+            {{ resource.info.issue_date | moment:'DD/MM/YYYY' }}
+          </div>
+          {{ resource.info.person.name }}
+        </div>
+        <div ng-show="__page==1">
+         {{ resource.info.person.address }}
+        </div>
+      </div>
+    </div>
 
-    <div class="paragraph">
-      <div class="pull-right" style="width:1.5in;">
-        <strong>{{ resource._name }}</strong>
-      </div>
-      <h3 class="text-center">
-        {{ useTitle || resource._type }}
-      </h3>
-    </div>
-    <div class="paragraph">
-      <div class="pull-right" style="width:1.5in;">
-        {{ resource.info.issue_date | moment:'DD/MM/YYYY' }}
-      </div>
-      {{ resource.info.person.name }}
-    </div>
-    <div class="paragraph" ng-show="__page==1">
-     {{ resource.info.person.address }}
-    </div>
-    <div class="paragraph">
-    </div>
-    <div>
     <table class="voucher">
     <thead>
       <tr>
@@ -43,10 +44,12 @@
           <div>
             <div class="pull-right" ng-show="(item.$temp.data.state=='taken')">
               <span ng-class="'label'">
-                {{ utils.formatValue(item.$temp.data.taking.date) || '*ค้างยืม*' }}
+                {{ utils.formatValue(item.$temp.data.info.taking.date) || '*ค้างยืม*' }}
               </span>
             </div>      
-            <strong>{{item.name}}</strong> 
+            <strong>{{item.name}}</strong>
+            <small ng-show="item.$temp.data.info.watch.model">[ {{item.$temp.data.info.watch.model}} ]</small>
+            <small ng-show="item.$temp.data.info.serial">[ {{item.$temp.data.info.serial}} ]</small>
             <div style="word-break:break-all;">{{ item.$temp.data.info.detail }}</div>
           </div>
         </td>
@@ -70,17 +73,15 @@
         </td>
       </tr>
     </tbody>
-    <tfoot>
-    </tfoot>
     </table>
-    </div>
-    <div class="paragraph">
+
+    <p>
       <div class="pull-right">
-        <small> {{__page }} / {{itemPages(10,useItems).length}}</small>
+        <small>{{ resource.info.approved }} {{__page }} / {{itemPages(10,useItems).length}}</small>
       </div>
       ลงชื่อ :
-    </div>
-    <div class="paragraph" 
+    </p>
+    <div 
       ng-show="resource._type=='ยืม' && isLastPage(__page,10, useItems) && unselectedItems().length && items().length">
           <div>
             รายการใหม่({{ items().length }} รายการ) [{{ utils.sum(items(),'price') | numeral }} บาท]

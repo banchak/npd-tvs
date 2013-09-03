@@ -245,6 +245,31 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
                   return select.length==1 && !select[0].selected && select[0]
                 }
               }
+            , beforeSave : function (savedata) {
+
+                if (!savedata._id || savedata._name.match(/\*$/)) {
+                  var xx = ({'ยืม' : 'TA', 'คืน' : 'UA', 'ขาย' : 'SA' })[savedata._type] || '**'
+                    , yy = moment().format('YY')
+                    , sep = '-'
+                    , pattern = utils.runningPattern(savedata._name, xx, yy, sep, 4)
+                
+                  if (pattern) {
+
+                    return $scope.db.getHighest('_name', pattern.join('')).then(function(data) {
+                      console.log(pattern,data)
+                      if (data && data.length) {
+                        savedata._name = utils.runningNext(data[0]._name)
+                      }
+                      else {
+                        savedata._name = xx +  yy + sep + '0001'
+                      }
+                      console.log('beforeSave',savedata)
+                      return savedata
+                    })
+                  }      
+                }
+                return savedata
+              }
             }
 
           angular.extend($scope, services)
@@ -278,8 +303,12 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
             })
 
           }
-          $scope.hideEditButton = {}
-          $scope.$watch('resource.info.approved', function() { $scope.hideEditButton.delete = $scope.resource.info.approved })
+          if (!$scope.resource._name) {
+            $scope.resource._name = '*'
+          }
+          if (!$scope.resource.info.issue_date) {
+            $scope.resource.info.issue_date = moment().format('YYYY-MM-DD')
+          }
         }
       
       // init by base controller

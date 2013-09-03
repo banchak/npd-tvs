@@ -47,9 +47,14 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         name    : 'products'
       , title   : 'สินค้า'
       , schema  : 'legacy'
+      , required : [
+          { name : '_type',               label : 'ชนิด'}
+        , { name : '_name',               label : 'รหัส'}
+        , { name : 'info.detail',         label : 'รายละเอียด'}
+       ]
       , categories : 
         [
-          { name : '_type',               label : 'หมวด'}
+          { name : '_type',               label : 'ชนิด'}
         , { name : 'info.condition',      label : 'สภาพ'}
         , { name : 'info.keeping.person', label : 'ที่เก็บ'}
         , { name : 'info.taking.person',  label : 'ผู้ยืม'}
@@ -144,15 +149,17 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         [
           { name : '_type',               label : 'ประเภท'}
         , { name : 'info.prefix',         label : 'คำขึ้นต้น' }
-        , { name : 'meta.locations.province', label : 'จังหวัด'}
+        , { name: 'meta.econtacts.type', label: 'e-contact'}
+        , { name: 'meta.locations.zipcode', label: 'รหัสไปรษณีย์'}
+        , { name: 'meta.locations.province', label: 'จังหวัด'}
+        , { name: 'meta.locations.city', label: 'เขต/อำเภอ'}
         ] 
       , descriptions : [
-          { name : 'info.person_id',          label: 'เลขสำคัญ' }
-        , { name : 'meta.locations.address',  label: 'ที่อยู่'}
-        , { name : 'meta.locations.province', label: 'จังหวัด' }
-        , { name : 'meta.phones.id',          label: 'โทรศัพท์' }
-        , { name : 'meta.faxes.id',           label: 'แฟกซ์' }
-        , { name : 'meta.econtacts',         label: 'e-contact'}
+          { name : 'info.person_id', label: 'เลขสำคัญ' }
+        , { name : 'info.detail', label: 'ชื่อเต็ม' }
+        , { name : 'meta.locations',  label: 'ที่อยู่', formatter : utils.mapReduce('address + " " + city + " " + province + " " + zipcode', 'type', true)}
+        , { name : 'meta.phones', label: 'โทรศัพท์', formatter : utils.mapReduce('id','type',true) }
+        , { name : 'meta.econtacts', label: 'e-contact', formatter : utils.mapReduce('id','type',true)}
         ]
       , orders :
         [
@@ -161,16 +168,16 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         ]
       , queries :
         [
-          { name : '@supplier', label : '@แหล่งซื้อ', value : '@info.is_supplier', notValue : '!@info.is_supplier'}
-        , { name : '@broker', label : '@ตัวแทนขาย', value : '@info.is_broker', notValue : '!@info.is_broker'}
+          { name : '@broker', label : '@ตัวแทนขาย', value : '@info.is_broker', notValue : '!@info.is_broker'}
         , { name : '@customer', label : '@ลูกค้า', value : '!@info.is_supplier && !@info.is_broker', notValue : '@info.is_supplier || @info.is_broker'}
+        , { name : '@supplier', label : '@แหล่งซื้อ', value : '@info.is_supplier', notValue : '!@info.is_supplier'}
         ]
       , boundList : function () {
                 return [ 
-                       { name : '@supplier', label : 'แหล่งซื้อ'}
-                      ,{ name : '@broker', label : 'ตัวแทนขาย'}
+                       { name : '@broker', label : 'ตัวแทนขาย'}
                       ,{ name : '@customer', label : 'ลูกค้า'}
-                      , { label : 'ทั้งหมด'}
+                      ,{ name : '@supplier', label : 'แหล่งซื้อ'}
+                      ,{ label : 'ทั้งหมด'}
                       ]
         }
       , searchable : function() {
@@ -179,7 +186,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
               var roles = $rootScope.authorizeData.user.roles
 
               if (roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
-                return ['_name', 'info.person_id', 'meta.phones.id', 'meta.econtacts.id']
+                return ['_name', 'info.person_id', 'info.detail', 'meta.phones.id', 'meta.econtacts.id']
               }
             }
           })
@@ -190,6 +197,12 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         name    : 'vouchers'
       , title   : 'เอกสาร'
       , schema  : 'legacy'
+      , required : [
+          { name : '_type',               label : 'ประเภท'}
+        , { name : '_name',               label : 'เลขที่'}
+        , { name : 'info.issue_date',     label : 'วันที่'}
+        , { name : 'info.person.name',    label : 'ผู้เกี่ยวข้อง'}
+       ]
       , categories : 
         [
           { name : '_type',               label : 'ประเภท'}
@@ -203,6 +216,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
             formatter : function(v) {return utils.formatValue(utils.sum(v, 'selected && price')) },viewClass : 'text-large text-info' }
         , { name : 'meta.takenItems', label : 'ค้างยืม', 
             formatter : function(v) {return utils.formatValue(utils.sum(v, '!selected && price')) },viewClass : 'text-large text-info' }
+        , { name : 'info.approved', label : 'อนุมัติโดย'}
         //, { name : 'meta.items.name' }
         ]
       , orders :
@@ -216,7 +230,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
               var roles = $rootScope.authorizeData.user.roles
 
               if (roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
-                return ['_name', 'info.person.name', 'meta.items.name', 'meta.takenItems.name']
+                return ['_name', 'info.person.name', 'meta.items.name', 'meta.takenItems.name', 'info.approved']
               }
             }
           })

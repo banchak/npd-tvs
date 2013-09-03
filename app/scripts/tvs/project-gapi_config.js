@@ -46,6 +46,8 @@ angular.module('tvs.project')
           user.roles.has = user.hasRole
         }
 
+        user.limitAccess = ! (user.roles && user.roles.indexOf('STAFF')>=0)
+
         return user
       }
   })

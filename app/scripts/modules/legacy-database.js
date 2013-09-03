@@ -23,11 +23,6 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.util
 
       database.COLLECTIONS = COLLECTIONS
 
-      database.escapeRegex = function (str) {
-
-          return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-        }
-
       database.legacy = function(name) {
 
           var schema = (database.COLLECTIONS[name] || name)
@@ -161,13 +156,14 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.util
                 // otherwise may be regex or any str
                 if (!kw.match(/(^\^|\$$|\.\*)/)) {
                   // auto search with LIKE operator
-                  kw = '.*' + database.escapeRegex(kw) + '.*'
+                  kw = '.*' + utils.escapeRegex(kw) + '.*'
                 }
 
                 qdef = { $regex : kw }
 
-                if (kw.match(/[a-z]/) && !kw.match(/[A-Z]/))
+                if (kw.match(/[a-z]/) && !kw.match(/[A-Z]/)) {
                   qdef.$options = 'i'
+                }
               }
 
               if (not) {
@@ -261,19 +257,17 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.util
           
         }
 
-      database.legacy.prototype.scopeQuery 
-      = function(keyword, scopeFields) 
-        {
-          var self = this
-          
-          if (this.limitScope) {
-            keyword = this.limitScope(keyword)
-          }
-
-          return $q.when(keyword).then(function (kw) {
-            return self.rawScopeQuery(kw, scopeFields)
-          })
+      database.legacy.prototype.scopeQuery = function(keyword, scopeFields) {
+        var self = this
+        
+        if (this.limitScope) {
+          keyword = this.limitScope(keyword)
         }
+
+        return $q.when(keyword).then(function (kw) {
+          return self.rawScopeQuery(kw, scopeFields)
+        })
+      }
 
       database.legacy.prototype.describeItem  = function (k, v) {
         var itm, d
@@ -324,6 +318,25 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.util
 
       }
 
+      database.legacy.prototype.getHighest = function(fld, pattern) {
+        var options = { limit : 1 }
+          , qry = {}
+          , o
+
+        o = {}
+        o[fld] = -1
+        options.sort = o
+
+        o = {}
+        o[fld] = 1
+        options.fields = o
+
+        qry[fld] = { $regex : pattern.source || pattern }
+
+        // return promise
+        return this.dataAccess.query(qry, options)
+
+      }
 
       return database; 
     }

@@ -5,9 +5,20 @@
         <div><!--head-->
           <div class="row-fluid">
               <div class="span4">
-                <label>ชนิดสัญญา : </label>
+                <label>
+                  <span ng-class="!resource._type && 'text-error'">
+                    ชนิดสัญญา :
+                    <span
+                      ng-hide="resource._type" 
+                      popover="ห้ามว่าง" popover-trigger="mouseenter" popover-placement="right"
+                      > 
+                      &lowast; 
+                    </span>
+                  </span>
+                </label>
                 <select class="input-medium"
-                  ng-disabled = "!unlockEdit"
+                  required
+                  ng-disabled = "!unlockEdit || resource.info.approved"
                   ng-model  ="resource._type" 
                   ng-options="c.name as c.name for c in BUILT_IN.contractTypes"
                   ng-change  ="contract_type_change()"
@@ -28,9 +39,21 @@
               </div>
             
               <div class="span4">
-                <label>เลขที่สัญญา : </label>
+                <label>
+                  <span ng-class="!resource._name && 'text-error'">
+                    เลขที่ : 
+                    <span
+                      ng-hide="resource._name" 
+                      popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
+                      > 
+                      &lowast; 
+                    </span>
+                  </span>
+                </label>
                 <input type="text" class="input-medium" 
-                  ng-disabled = "!unlockEdit"
+                  required
+                  popover="ใส่ * เพื่อrun อัตโนมัติ" popover-trigger="focus"
+                  ng-disabled = "!unlockEdit || resource.info.approved"
                   ng-model="resource._name" />
                 <span></span>
               </div>

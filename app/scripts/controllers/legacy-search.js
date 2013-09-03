@@ -2,14 +2,17 @@
 
 angular.module('controllers.legacy-search',['modules.utils'])
 
-  .factory('legacySearchDI',['$routeParams', '$q', 'utils'
-  , function($routeParams, $q, utils)
+  .factory('legacySearchDI',['$routeParams', '$q', '$cookies', '$rootScope', 'utils', 'GAPI_CONFIG'
+  , function($routeParams, $q, $cookies, $rootScope, utils, GAPI_CONFIG)
     {
 
       return {
             $routeParams  : $routeParams
           , $q            : $q
           , utils         : utils
+          , $cookies      : $cookies
+          , $rootScope    : $rootScope
+          , GAPI_CONFIG   : GAPI_CONFIG
           }
     }
   ])
@@ -19,6 +22,9 @@ angular.module('controllers.legacy-search',['modules.utils'])
     {
       var utils   = legacySearchDI.utils
         , $q = legacySearchDI.$q
+        , $cookies = legacySearchDI.$cookies
+        , $rootScope = legacySearchDI.$rootScope
+        , GAPI_CONFIG = legacySearchDI.GAPI_CONFIG
 
       $scope.utils        = utils
       $scope.promiseBusy  = 0
@@ -59,6 +65,26 @@ angular.module('controllers.legacy-search',['modules.utils'])
 
 
       $scope.goSearch = function (keyword) {
+        var kmatch = keyword.match(/^([-+])\1{2,}(.*)/)
+          , user = utils.lookup($rootScope,'authorizeData.user')
+
+        if (kmatch) {
+
+          keyword = kmatch[2]
+
+          if (user && user.roles) {
+
+            if (kmatch[1]=='-' && $cookies.incognito!=user.email) {
+              $cookies.incognito = user.email
+              GAPI_CONFIG.userSignIn(user)
+            }
+            if (kmatch[1]=='+' && $cookies.incognito==user.email) {
+              $cookies.incognito = ''
+              GAPI_CONFIG.userSignIn(user)
+            }
+
+          }
+        }
         utils.$location.path ('/')
         utils.$location.search( { search : keyword })
 

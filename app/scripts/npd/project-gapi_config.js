@@ -2,7 +2,7 @@
 'use strict'
 
 angular.module('npd.project')
-  .service('GAPI_CONFIG', ['COLLECTIONS', function (COLLECTIONS){
+  .service('GAPI_CONFIG', ['COLLECTIONS', '$cookies', function (COLLECTIONS, $cookies){
     return {
       client_id : '1088349293256.apps.googleusercontent.com'
     , scopes    : [
@@ -22,42 +22,53 @@ angular.module('npd.project')
       ]
     , userSignIn : function (user) {
         var email = user.email
+          , incog = ($cookies.incognito==email)
 
         if (email) {
 
           user.roles = ['MEMBER']
 
-          if (email.match(/\@(h2heng\.com|adm\-thai\.homeip\.net)$/)) {
-            // match domain
-            user.roles = user.roles.concat(['STAFF'])
+          if (!incog) {
+            if (email.match(/\@(h2heng\.com|adm\-thai\.homeip\.net)$/)) {
+              // match domain
+              user.roles = user.roles.concat(['STAFF'])
 
-            // match user in demain
-            if (email.match(/^(noom|admin)\@h2heng.com$/)) {
-              user.roles = user.roles.concat( ['MANAGER', 'ADMIN'])
-            }
-          }
-
-          if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
-            // match domain
-            user.roles = user.roles.concat(['OFFICER'])
-
-          }
-
-          if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/)) {
-              user.roles = user.roles.concat( ['STAFF', 'MANAGER', 'DEVELOPER'])
+              // match user in demain
+              if (email.match(/^(noom|admin)\@h2heng.com$/)) {
+                user.roles = user.roles.concat( ['MANAGER','ADMIN'])
+              }
             }
 
-          if (email.match(/panida66\@gmail\.com/)){ 
-            user.roles = ['STAFF']
-          }
+            if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
+              // match domain
+              user.roles = user.roles.concat(['OFFICER'])
 
+            }
+
+            if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/)) {
+
+              user.roles = user.roles.concat( ['STAFF','MANAGER', 'DEVELOPER'])
+
+            }
+
+            if (email.match(/panida66\@gmail\.com/)){ 
+              user.roles = ['STAFF']
+            }
+          }
           user.roles.has = user.hasRole
+
         }
+
+        user.limitAccess = ! (user.roles && user.roles.indexOf('STAFF')>=0)
 
         if (!user.roles || !user.roles.has('OFFICER', 'OFFICER.COST', 'MANAGER', 'STAFF.IT', 'ADMIN', 'DEVELOPER')) {
             COLLECTIONS.Product.limitScope = function (keyword) {
               return ['@sellable', keyword]
             }
+        }
+        else
+        {
+          COLLECTIONS.Product.limitScope = null
         }
         return user
       }

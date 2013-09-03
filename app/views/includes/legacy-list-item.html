@@ -2,19 +2,42 @@
     <div class="row-fluid" >
       <div style="word-wrap:break-word;">
         <h3>
-          <a ng-href="{{ urlSearch({_name : data._name}) }}" xng-click="goSearch({_name : data._name})" ng-bind="data._name"></a>
+          <a ng-href="{{ urlSearch({_name : data._name}) }}" 
+            ng-bind="data._name"></a>
+
           <span ng-show="adminView">
             <span ng-repeat="action in adminView.actions">
-              <a class="btn btn-small" ng-href="#{{ basepath }}/{{action.name}}/{{ data.$id() }}">{{action.label || action.name}}</a>
+              <a class="btn btn-small" 
+                title="{{data.info.approved && 'approved by '+data.info.approved}}"
+                ng-class="data.info.approved && 'btn-success approved'"
+                ng-href="#{{ basepath }}/{{action.name}}/{{ data.$id() }}"
+                >
+                {{action.label || action.name}}
+              </a>
             </span>
+
             <span ng-show="!adminView.actions">
-              <a class="btn btn-small" ng-href="#{{ basepath }}/edit/{{ data.$id() }}">แก้ไข</a>
+              <a class="btn btn-small" 
+                title="{{data.info.approved && 'approved by '+data.info.approved}}"
+                ng-class="data.info.approved && 'btn-success approved'"
+                ng-href="#{{ basepath }}/edit/{{ data.$id() }}"
+                >
+                แก้ไข
+              </a>
             </span>
             <span ng-show="utils.temp('gdrive',data)">
-              <a class="btn btn-small" ng-click="viewGDrive(data)">ไฟล์แนบ</a>
+              <a class="btn btn-small" 
+                ng-click="viewGDrive(data)"
+                >
+                ไฟล์แนบ
+              </a>
             </span>
             <span ng-show="utils.temp('gcalendar',data)">
-              <a class="btn btn-small" ng-click="viewGCalendar(data)">ปฏิทิน</a>
+              <a class="btn btn-small" 
+                ng-click="viewGCalendar(data)"
+                >
+                ปฏิทิน
+              </a>
             </span>
           </span>
         </h3>
@@ -51,13 +74,13 @@
                 </dt>
 
                 <dd ng-class="fld.dataClass">
-                  <div class="pre-wrap" ng-class="fld.viewClass">{{ fld.format || fld.value }}</div>
+                  <div class="pre-wrap" ng-class="fld.viewClass">{{ utils.formatValue(fld.format || fld.value) }}</div>
                   <div ng-show="fld.subfields">
                     <dl ng-class="ifSingleShow('table-display table-sub','')" ng-hide="dtToggles[fldId]">
                       <div ng-repeat="subfld in fld.subfields" ng-class="fld.defClass">
                         <dt ng-bind="subfld.label" ng-class="subfld.termClass">{{ subfld.label }}</dt>
                         <dd ng-class="subfld.dataClass">
-                          <div class="pre-wrap" ng-class="subfld.viewClass">{{ subfld.format || subfld.value }}</div>
+                          <div class="pre-wrap" ng-class="subfld.viewClass">{{ utils.formatValue(subfld.format || subfld.value) }}</div>
                         </dd>
                       </div>
                     </dl>

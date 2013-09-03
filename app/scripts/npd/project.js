@@ -20,7 +20,7 @@ angular.module('npd.project', [
 
       this.appMenu  = {
           title         : 'Npd3'
-        , version       : '0.5.4.0 2013-9-2 jsat66@gmail.com'
+        , version       : '0.5.5.0 2013-9-2 jsat66@gmail.com'
         , menus         : [
             'Product', 'Person', 'Voucher'
           ]
@@ -47,9 +47,9 @@ angular.module('npd.project', [
               listctrl.success = function (scope) {
 
                   $rootScope.authorize().then(function () {
-                      if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
-                        var roles = $rootScope.authorizeData.user.roles
+                      var roles = utils.lookup($rootScope,'authorizeData.user.roles')
 
+                      if (roles) {
                         scope.adminView = roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')
 
                         if (scope.adminView && ctrl.name=='vouchers') {
@@ -69,9 +69,9 @@ angular.module('npd.project', [
               listctrl.success = function (scope) {
 
                 $rootScope.authorize().then(function () {
-                    if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+                    var roles = utils.lookup($rootScope,'authorizeData.user.roles')
 
-                      var roles = $rootScope.authorizeData.user.roles
+                    if (roles) {
                       scope.adminView = roles.has('OFFICER', 'STAFF.IT', 'MANAGER', 'ADMIN', 'DEVELOPER')
                     }
                 })
@@ -134,7 +134,8 @@ angular.module('npd.project', [
 
 
                   $rootScope.authorize().then(function () {
-                    if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+
+                    if (utils.lookup($rootScope,'authorizeData.user')) {
 
                       var roles = $rootScope.authorizeData.user.roles
                         , showFields = utils.temp('singleShowFields')
@@ -255,7 +256,7 @@ angular.module('npd.project', [
 
                       if (roles && roles.has('STAFF.IT', 'DEVELOPER')) {
                         item = { label : 'developer'}
-                        item.subfields = [{ label : 'raw data', value : data }]
+                        item.subfields = [{ label : 'raw data', value : JSON.stringify(data,undefined,2) }]
                         showFields.get(data).push(item)
                       }
                     }

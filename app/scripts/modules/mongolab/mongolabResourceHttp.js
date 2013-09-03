@@ -28,7 +28,7 @@ angular.module('mongolabResourceHttp', []).factory('$mongolabResourceHttp', ['MO
         (successcb || angular.noop)(result, response.status, response.headers, response.config);
         return result;
       }, function (response) {
-        ;(errorcb || angular.noop)(undefined, response.status, response.headers, response.config);
+        ;(errorcb || angular.noop)(response.data, response.status, response.headers, response.config);
         return undefined;
       });
     };

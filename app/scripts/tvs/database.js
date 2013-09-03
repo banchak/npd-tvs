@@ -2,7 +2,7 @@
 (function() {
 'use strict';
 
-angular.module('tvs.database', ['modules.legacy-database'])
+angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
 
   .constant(
     'MONGOLAB_CONFIG'
@@ -44,13 +44,17 @@ angular.module('tvs.database', ['modules.legacy-database'])
 
     })
 
-  .service('COLLECTIONS',[ function () {
+  .service('COLLECTIONS',['utils', function (utils) {
     return {
       Contract : 
       {
         name    : 'contracts'
       , title   : 'สัญญา'
       , schema  : 'legacy'
+      , required : [
+          { name : '_type',               label : 'ชนิดสัญญา'}
+        , { name : '_name',               label : 'เลขที่'}
+       ]
       , categories : 
         [
           { name : '_type',               label : 'ชนิดสัญญา'}
@@ -63,6 +67,7 @@ angular.module('tvs.database', ['modules.legacy-database'])
           { name :'info.issue_date', label : 'วันที่ทำสัญญา'}
         , { name : 'display.area', label : 'พื้นที่เช่า'}
         , { name : 'display.tenant', label : 'คู่สัญญา' }
+        , { name : 'info.approved', label : 'อนุมัติโดย'}
         ]
       , orders :
         [
@@ -92,7 +97,7 @@ angular.module('tvs.database', ['modules.legacy-database'])
                       , { label : 'ทั้งหมด'}
                       ]
         }
-      , searchable : ['_name', 'display.area', 'display.tenant']
+      , searchable : ['_name', 'display.area', 'display.tenant', 'info.approved']
       }
 
     , Area : 
@@ -120,14 +125,18 @@ angular.module('tvs.database', ['modules.legacy-database'])
       , categories : 
         [
           { name: '_type', label: 'ประเภท'}
+        , { name: 'meta.econtacts.type', label: 'e-contact'}
+        , { name: 'meta.locations.zipcode', label: 'รหัสไปรษณีย์'}
         , { name: 'meta.locations.province', label: 'จังหวัด'}
         , { name: 'meta.locations.city', label: 'เขต/อำเภอ'}
+
         ]
       , descriptions : [
           { name :'info.person_id', label : 'เลขสำคัญ'}
-        , { name :'meta.phones.id', label : 'โทรศัพท์'}
-        , { name :'meta.econtacts.id', label : 'e-contact'}
-        , { name :'meta.locations.address', label : 'ที่อยู่'}
+        , { name : 'info.detail', label: 'ชื่อเต็ม' }
+        , { name : 'meta.locations',  label: 'ที่อยู่', formatter : utils.mapReduce('address + " " + city + " " + province + " " + zipcode', 'type', true)}
+        , { name : 'meta.phones', label: 'โทรศัพท์', formatter : utils.mapReduce('id','type',true) }
+        , { name : 'meta.econtacts', label: 'e-contact', formatter : utils.mapReduce('id','type',true)}
         ]
       , boundList : function () {
                 return [ 
@@ -139,11 +148,9 @@ angular.module('tvs.database', ['modules.legacy-database'])
       , searchable : [
           '_name'
         , 'info.person_id'
+        , 'info.detail'
         , 'meta.phones.id'
         , 'meta.econtacts.id'
-        , 'meta.locations.address'
-        ,'meta.locations.city'
-        ,'meta.locations.province'
         ]
       }
 

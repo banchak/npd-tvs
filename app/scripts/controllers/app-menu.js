@@ -36,7 +36,6 @@ angular.module('controllers.app-menu',[])
                 angular.forEach(subs,function (bound){
                   mnu.subMenus.push({ label : bound.label || bound.name, url : urlBound(db,bound.name) })
                 })
-                console.log(mnu)                
               }
             })
           }

@@ -17,8 +17,64 @@ angular.module('modules.utils', [])
           , $location : $location
           , $route    : $route
           , $rootScope: $rootScope
+          , $parse : $parse
           , format : { date : 'DD/MM/BBBB', dateTime: 'DD/MM/BBBB hh:mm', number : '0,0[.]00'}
           }
+
+      utils.runningNext = function (runno) {
+        var rmatch = runno.match(/^(.*?)(\d*)$/)
+          , idx, pad
+
+        if (rmatch) {
+
+          idx = '' + ((rmatch[2] | 0) + 1)
+          pad = rmatch[2].length - idx.length
+
+          if (pad>=0) {
+
+            if (pad) {
+              idx = '000000000'.substr(0,pad) + idx
+            }
+            return rmatch[1] + idx
+          }
+        }
+        return runno
+      }
+
+      utils.runningRegex = function (xx, yy, sep, digit) {
+          var regx
+ 
+          regx = (xx?'(.{' + xx.length + '})?' : '')
+              + (yy?'(\\d{' + yy.length + '})?' : '')
+              + (sep?'(.{' + sep.length + '})?' : '')
+              + ('(\\d{' + (digit||4) + '})?')
+
+          return new RegExp('^' + regx + '$')
+      }
+
+      utils.runningPattern = function (val, xx, yy, sep, digit) {
+          var regx, pmatch
+ 
+          regx = utils.runningRegex(xx, yy, sep, digit)
+
+          pmatch = val.replace(/\*$/,'').match(regx)
+
+          if (pmatch && !pmatch[4]) {
+
+            return [
+              utils.escapeRegex(pmatch[1] || xx ||'')
+              ,utils.escapeRegex(pmatch[2] || yy||'')
+              ,utils.escapeRegex(pmatch[3] || sep || '')
+              ,'\\d{' + (digit||4) + '}'
+              ]
+          }
+      }
+
+      utils.escapeRegex = function (str) {
+
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+      }
+
 
       utils.temp = function (attr, obj) {
         
@@ -42,6 +98,42 @@ angular.module('modules.utils', [])
         }
       }
 
+      utils.mapReduce = function (v, k, flat) {
+        var mk = (k && $parse(k))
+          , mv = $parse(v)
+
+        return function (obj) {
+          var result = []
+
+          angular.forEach(obj,function (o){
+            var vval = mv(o)
+              , kval = mk && mk(o)
+              , kv
+
+            if (vval) {
+              if (mk) {
+                if (flat) {
+                  kv = utils.formatValue(kval) + ' : ' +  utils.formatValue(vval)
+                }
+                else {
+                  kv = {}
+                  kv[kval] = vval
+                }
+              }
+              else {
+                kv = vval
+              }
+              result.push(kv)
+            }
+          })
+          
+          if (flat && result.length==1) {
+            return result[0]
+          }
+
+          return result
+        }
+      }
       utils.dateListAhead = function (q) {
         var mm, list, qmatch, mmatch, mstart, mval
           , qregx = /^(\d*)\/?(\d*)\/?(\d*)$/

@@ -146,7 +146,9 @@ angular.module('controllers.legacy-list',['modules.utils'])
           }
         })
 
-        promise = promise.then(function(){ return $scope.db.dataAccess.query(qry, options) })
+        promise = promise.then(function(){ 
+            return $scope.db.dataAccess.query(qry, options) 
+        })
 
         promise.then(function(data) { 
 
@@ -348,7 +350,7 @@ angular.module('controllers.legacy-list',['modules.utils'])
         var temp = utils.temp('singleShowFields')
 
         if (!temp.get(data)) {
-          temp.set(data, [ { label : 'dump data', value: JSON.stringify(data,undefined,2) } ])
+          temp.set(data, [ { label : 'raw data', value: JSON.stringify(data,undefined,2) } ])
         }
 
         return temp.get(data)

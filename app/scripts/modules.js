@@ -13,6 +13,7 @@ angular.module(
   , 'controllers.legacy-search'
   , 'directives.numeral'
   , 'directives.moment'
+  , 'ngCookies'
   ])
 
 var app = angular.module('angularApp');

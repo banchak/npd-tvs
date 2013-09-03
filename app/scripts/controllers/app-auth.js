@@ -44,11 +44,6 @@ angular.module('controllers.app-auth',['modules.google-api'])
       }
     })
 
-    $scope.$on('userSignIn', function(event, user) {
-      
-      user.limitAccess = ! (user.roles && user.roles.indexOf('STAFF')>=0)
-    })
-
     $scope.reload = function () {
         window.location.reload() 
     }
