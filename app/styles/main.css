@@ -176,6 +176,36 @@ dl.table-display.table-sub {
   opacity: 1.0;
 }
 
+.label-sort {
+  font-weight : 600;
+  color : #B22222;
+}
+
+.label-state {
+  display : none ;
+  text-align : center;
+  font-weight : 500;
+  color : white;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  margin-left:0;
+  margin-right:0.5em;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -khtml-border-radius: 8px;
+  border-radius: 8px;
+}
+
+.state-sold span.label-state {
+  display : inline;
+  background-color : #B22222;
+}
+
+.state-taken span.label-state {
+  display : inline;
+  background-color : #00008B;
+}
+
 
 .sold dt {
   color: #DC143C;

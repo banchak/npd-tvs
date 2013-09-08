@@ -5,7 +5,7 @@
 
   <div class="page-header-right" ng-class="{ 'first-page' : _pageNo==1 }">
     <small>{{ _params.term }}</small> 
-    สัญญาที่ {{ (_params.code=='*' && custome().code) || _params.code || 'ธญพ.'}} 
+    สัญญาที่ {{ (_params.code=='*' && custom().code) || _params.code || 'ธญพ.'}} 
     <strong>{{ resource.info.reference || resource._name }}</strong>
     <div class="no-screen">
       <small>หน้าที่ {{_pageNo}}/{{ $parent._pageCount }}</small>

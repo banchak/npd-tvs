@@ -1,7 +1,7 @@
 
   <div>
     <div ng-hide="authorizeData.user">
-      <div style="margin:20px;" ng-controller="appAuthCtrl">
+      <div ng-controller="appAuthCtrl">
         <div ng-show="authorizeData.ready">
           <h2 class="text-center" ng-show="appLogo || appTitle">
             <span style="margin:1em;" ng-show="appLogo">
@@ -9,16 +9,18 @@
             </span>
             {{ appTitle }}
           </h2>
-          <div>
-            We want a 
-            <a href ng-click="signIn()"><strong class="text-warning">Google</strong></a> 
-            account to work with, thank you.
-          </div>
-          <div style="margin: 20px 4px;">
-            <button class="btn btn-large btn-primary" ng-click="signIn()">Sign in</button>
+          <div class="text-center">
+            <p>
+              We want a 
+              <a href ng-click="signIn()"><strong class="text-warning">Google</strong></a> 
+              account to work with, thank you.
+            </p>
+            <p>
+              <button class="btn btn-large btn-primary" ng-click="signIn()">Sign in</button>
+            </p>
           </div>
         </div>
-        <div style="margin: 20px 4px;" ng-show="signed && !authorizeData">
+        <div style="text-center" ng-show="signed && !authorizeData">
           <span class="text-warning">Waiting... or <a href ng-click="reload()">reload</a>.</span>
         </div>
       </div>

@@ -20,7 +20,7 @@ angular.module('npd.project', [
 
       this.appMenu  = {
           title         : 'Npd3'
-        , version       : '0.6.0.0 2013-9-8 jsat66@gmail.com'
+        , version       : '0.6.0.1 2013-9-8 jsat66@gmail.com'
         , menus         : [
             'Product', 'Person', 'Voucher'
           ]
