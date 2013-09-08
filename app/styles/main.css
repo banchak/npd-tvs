@@ -164,6 +164,10 @@ dl.table-display.table-sub {
   opacity: 0.80;
 }
 
+.hover-opacity.cancelled {
+  opacity: 0.30;
+}
+
 .hover-opacity:hover {
   opacity: 1.0;
 }
@@ -196,16 +200,30 @@ dl.table-display.table-sub {
   border-radius: 8px;
 }
 
-.state-sold span.label-state {
+span.label-state.cancelled {
   display : inline;
   background-color : #B22222;
 }
 
-.state-taken span.label-state {
+span.label-state.sold {
   display : inline;
-  background-color : #00008B;
+  background-color : #B22222;
 }
 
+span.label-state.posted {
+  display : inline;
+  background-color : #3A87AD;
+}
+
+span.label-state.taken {
+  display : inline;
+  background-color : #3A87AD;
+}
+
+span.label-state.approved {
+  display : inline;
+  background-color : #51A351;
+}
 
 .sold dt {
   color: #DC143C;

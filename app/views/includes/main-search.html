@@ -1,14 +1,14 @@
 
   <div>
     <div ng-hide="authorizeData.user">
+      <h2 class="text-center" ng-show="appLogo || appTitle">
+        <span style="margin:1em;" ng-show="appLogo">
+          <img ng-src="{{appLogo}}" />
+        </span>
+        {{ appTitle }}
+      </h2>
       <div ng-controller="appAuthCtrl">
         <div ng-show="authorizeData.ready">
-          <h2 class="text-center" ng-show="appLogo || appTitle">
-            <span style="margin:1em;" ng-show="appLogo">
-              <img ng-src="{{appLogo}}" />
-            </span>
-            {{ appTitle }}
-          </h2>
           <div class="text-center">
             <p>
               We want a 
@@ -20,8 +20,10 @@
             </p>
           </div>
         </div>
-        <div style="text-center" ng-show="signed && !authorizeData">
-          <span class="text-warning">Waiting... or <a href ng-click="reload()">reload</a>.</span>
+        <div class="text-center" ng-show="signed && !authorizeData">
+          <p class="text-warning">
+            Waiting... or <a href ng-click="reload()">reload</a>.
+          </p>
         </div>
       </div>
     </div>

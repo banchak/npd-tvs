@@ -15,9 +15,14 @@ Change logs
 * numeral directive - add params 'text' render all numeral parts to text as "3 ปี" -> "สามปี"
 * num2str.bahttext - incorrect covert "แสนพันบาทถ้วน" -> "แสนบาทถ้วน"
 * controllers/legacy-list - define  css with state name
+* controllers/legacy-list - move action buttons to dropdown menu
 
 ### TVS
 * tvs/contract-edit - incorrect duration + rental_date calculation example "1 เดือน" + "01/09/2556" = "01/10/2556"
 * tvs/app-route - exclude from tvs/project to new file
 * views/tvs/contract-print/tof.html - typo mistake custom().code
+
+### NPD
+* npd/voucher-edit - begin implement post/cancel/unpost
+* npd/project - adminView.actions - return actions that depend on data e.g. if approved then can post, if posted then can unpost
 

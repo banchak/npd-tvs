@@ -19,7 +19,7 @@ angular.module('tvs.project', [
   , function ($rootScope) {
       this.appMenu  = {
         title         : 'Thanya'
-      , version       : '0.6.0.1 2013-9-8 jsat66@gmail.com'
+      , version       : '0.6.1.0 2013-9-8 jsat66@gmail.com'
       , menus: [
           'Contract','Tenant','Area','Equipment'
         ]
@@ -33,11 +33,15 @@ angular.module('tvs.project', [
           listctrl.gdriveCtrlBase = 'legacyGCalendarListCtrl'
           listctrl.adminView = true
           if (ctrl.name=='contracts') {
+            var actions = [
+                  { name : 'edit', label : 'แก้ไข'}
+                , { name : 'print', label : 'พิมพ์'}
+              ]
             listctrl.adminView = {
-              actions : [
-              { name : 'edit', label : 'แก้ไข'}
-            , { name : 'print', label : 'พิมพ์'}
-            ]}
+              actions : function(data) {
+                return actions
+              }
+            }
           }
         }
       }

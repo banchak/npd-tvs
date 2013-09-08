@@ -22,6 +22,8 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
       var uis     = legacyEditDI.uis
         , utils   = legacyEditDI.utils
         , id      = legacyEditDI.$routeParams.id
+        , opr     = legacyEditDI.$routeParams.opr
+        , orgUrl = legacyEditDI.$routeParams.url
         , $filter = legacyEditDI.$filter
         , $q      = legacyEditDI.$q
 
@@ -232,15 +234,20 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
         exit : function(_id) {
           var  vpath = ''
           
+          console.log('orgUrl',orgUrl,_id)
           if (_id === undefined) {
+            if (orgUrl) {
+              utils.$location.url(orgUrl)
+              return              
+            }
             _id = $scope.resource.$id()
           }
 
           if (_id) {
             vpath = '/view/' + _id
           }
-
-          utils.$location.path($scope.basepath + vpath )
+          console.log('exit',vpath)
+          utils.$location.url($scope.basepath + vpath )
           //utils.redirect(utils.basepath())
         }
 
@@ -253,7 +260,9 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
           , promise
 
         if (!$scope.resource.$id()) {
-          return $q.when()
+          return uis.errorBox('ไม่มีข้อมูล สำหรับลบ').open().then(function () {
+            $scope.editOpr.exit(false);
+          })
         }
 
         promise = uis.messageBox($scope.db.title, 'ลบข้อมูล?', btn).open()
@@ -279,8 +288,8 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
             }
           })
         }
-      , save : function(cb) { // return promise
-          var msgbox = uis.messageBox($scope.db.title, 'กำลังบันทึกข้อมูล..')
+      , save : function(cb, message) { // return promise
+          var msgbox = uis.messageBox($scope.db.title, (message || '') + ' กำลังบันทึกข้อมูล..')
             , savedata, promise
 
           // isolate savedata from model data prevent view binding effect
@@ -342,7 +351,10 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
 
               if (data) { // success
 
-                if (cb) { cb(data.$id()) } 
+                if (cb) { 
+
+                  cb(id=='new'?data.$id():undefined) 
+                } 
                 else {
 
                   if (id == 'new') {
@@ -376,11 +388,15 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
           angular.extend($scope.resource,data) 
 
           if (editctrl.success) { editctrl.success() }
+
+          if (opr=='delete') { $scope.editOpr.remove() }
         })  
       }
       else {
 
         if (editctrl.success) { editctrl.success() }
+
+        if (opr=='delete') { $scope.editOpr.remove() }
       }
 
     }

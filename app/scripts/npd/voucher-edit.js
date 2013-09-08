@@ -3,11 +3,12 @@
 'use strict'
 
 angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
-  .controller('voucherEditCtrl', ['$scope', 'legacyEditDI', '$controller','Database', 'GDrive', '$filter'
-  , function ($scope, legacyEditDI, $controller, Database, GDrive, $filter)
+  .controller('voucherEditCtrl', ['$scope', 'legacyEditDI', '$controller','Database', 'GDrive', '$filter', '$routeParams'
+  , function ($scope, legacyEditDI, $controller, Database, GDrive, $filter, $routeParams)
     {
       var db    = new Database.legacy('Voucher')
         , utils = legacyEditDI.utils
+        , uis   = legacyEditDI.uis
         , productDb = new Database.legacy('Product')
 
       function syncState (data) {
@@ -309,7 +310,23 @@ angular.module('npd.voucher-edit',['controllers.legacy-edit','npd.database'])
           if (!$scope.resource.info.issue_date) {
             $scope.resource.info.issue_date = moment().format('YYYY-MM-DD')
           }
-        }
+
+          if ($routeParams.opr=='cancel') {
+            $scope.resource.info.posted = 'cancelled'
+            $scope.editOpr.save($scope.editOpr.exit,'**ยกเลิก** ')
+          }
+
+          if ($routeParams.opr=='unpost') {
+            $scope.resource.info.posted = ''
+            $scope.editOpr.save($scope.editOpr.exit,'**คืนรายการ** ')
+          }
+
+          if ($routeParams.opr=='post') {
+            uis.errorBox('Sorry, not implement yet!').open().then(function(){
+              $scope.editOpr.exit()
+            })
+          }
+      } // success
       
       // init by base controller
       $controller (

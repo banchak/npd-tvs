@@ -1,46 +1,56 @@
 
     <div class="row-fluid" >
       <div style="word-wrap:break-word;">
-        <h3>
-          <a ng-href="{{ urlSearch({_name : data._name}) }}" 
-            ng-bind="data._name"></a>
+        <div style="margin-top:1em;">
 
-          <span ng-show="adminView">
-            <span ng-repeat="action in adminView.actions">
-              <a class="btn btn-small" 
-                title="{{data.info.approved && 'approved by '+data.info.approved}}"
-                ng-class="data.info.approved && 'btn-success approved'"
-                ng-href="#{{ basepath }}/{{action.name}}/{{ data.$id() }}"
-                >
-                {{action.label || action.name}}
-              </a>
-            </span>
+          <h3 class="item-title">
+            <a ng-href="{{ urlSearch({_name : data._name}) }}" ng-bind="data._name"></a>
 
-            <span ng-show="!adminView.actions">
-              <a class="btn btn-small" 
-                title="{{data.info.approved && 'approved by '+data.info.approved}}"
-                ng-class="data.info.approved && 'btn-success approved'"
-                ng-href="#{{ basepath }}/edit/{{ data.$id() }}"
-                >
-                แก้ไข
-              </a>
-            </span>
-            <span ng-show="utils.temp('gdrive',data)">
-              <a class="btn btn-small" 
-                ng-click="viewGDrive(data)"
-                >
-                ไฟล์แนบ
-              </a>
-            </span>
-            <span ng-show="utils.temp('gcalendar',data)">
-              <a class="btn btn-small" 
-                ng-click="viewGCalendar(data)"
-                >
-                ปฏิทิน
-              </a>
-            </span>
-          </span>
-        </h3>
+            <small class="dropdown" ng-show="adminView">
+                  <a tabindex="-1" href class="dropdown-toggle btn btn-mini">
+                    <span style="font-weight:800;">&nabla;</span>
+                  </a>
+                  <ul class="dropdown-menu">
+
+                    <li ng-hide="adminView.actions">
+                        <a 
+                          title="{{ data.info.approved && ('approved by '+data.info.approved) }}"
+                          xng-class="data.info.approved && 'btn-success'"
+                          ng-href="#{{ basepath }}/edit/{{ data.$id() }}"
+                          >
+                          แก้ไข
+                        </a>            
+                    </li>
+
+                    <li ng-repeat="action in adminView.actions(data)">
+                      <a 
+                        title="{{ action.name + ((action.opr && ('.'+action.opr)) || '') }}"
+                        xng-class="{'btn-inverse' : action.name=='cancel', 'btn-success' : action.name=='edit' && data.info.approved}"
+                        ng-href="#{{basepath}}/{{action.name}}/{{data.$id()}}{{(action.opr && ('?' + utils.serialize({opr: action.opr},true))) || '' }}"
+                        >
+                        {{action.label || action.name}}
+                      </a>
+                    </li>
+
+                    <li ng-show="utils.temp('gdrive',data)">
+                      <a href 
+                        ng-click="viewGDrive(data)"
+                        >
+                        ไฟล์แนบ
+                      </a>
+                    </li>
+                    <li ng-show="utils.temp('gcalendar',data)">
+                      <a href 
+                        ng-click="viewGCalendar(data)"
+                        >
+                        ปฏิทิน
+                      </a>
+                    </li>
+
+                  </ul>
+            </small>
+          </h3>
+        </div>
         <div ng-hide="ifSingleShow(true ,false)">
           <span style="padding-right:4px;" ng-repeat="cat in categories">
             <span class="label hover-opacity-high" style="margin:1px 0;" ng-init="_v=utils.lookup(data,cat.name);" ng-show="_v">

@@ -338,10 +338,18 @@ angular.module('modules.utils', [])
           $route.reload()
         }
 
-      utils.serialize = function(obj) {
-          var str = [];
-          for(var p in obj)
-             str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      utils.serialize = function(obj,withUrl) {
+          var str = []
+
+          for(var p in obj) {
+             str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]))
+             if (p=='url') {
+              withUrl = false
+             }
+          }
+          if (withUrl) {
+            str.push(encodeURIComponent('url') + "=" + encodeURIComponent(utils.$location.url()))
+          }
           return str.join("&");
         }
         
@@ -453,18 +461,12 @@ var deepStrip = function (obj, resourceOnly) {
       var e = []
 
       for (var k in obj) {
-        if (k=='meta' || k=='areas') {
-          console.log('before', k,  obj[k])
-        }
+
         if (!deepStrip(obj[k], resourceOnly)) {
           e.push(k)
         }
-        else if (k=='meta' || k=='areas') {
-          console.log('deepStrip', k, obj[k])
-        }
       }
       if (e.length) {
-        console.log('delete', e)
         while (e.length)
         {
           if (obj.splice) {

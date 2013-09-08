@@ -1,12 +1,12 @@
 
   <div ng-controller="legacySearchResultCtrl">
-    <div class="row-fluid">
+    <div class="row-fluid"  style="margin:20px 10px;">
       <form class="form-inline text-center" ng-submit="goSearch(search)">
           <span style="margin:1em;" ng-show="appLogo">
             <img ng-src="{{appLogo}}" />
           </span>
           <span ng-show="searchBusy"><img src="images/spinner.gif" /></span>
-          <input type="text" class="span8" ng-model="search" />
+          <input type="text" class="span4" ng-model="search" />
           <button type="submit" class="btn" >search</button>
       </form>
     </div>

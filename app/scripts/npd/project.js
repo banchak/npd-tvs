@@ -20,7 +20,7 @@ angular.module('npd.project', [
 
       this.appMenu  = {
           title         : 'Npd3'
-        , version       : '0.6.0.1 2013-9-8 jsat66@gmail.com'
+        , version       : '0.6.1.0 2013-9-8 jsat66@gmail.com'
         , menus         : [
             'Product', 'Person', 'Voucher'
           ]
@@ -54,10 +54,34 @@ angular.module('npd.project', [
 
                         if (scope.adminView && ctrl.name=='vouchers') {
                           scope.adminView = {
-                            actions : [
-                            { name : 'edit', label : 'แก้ไข'}
-                          , { name : 'print', label : 'พิมพ์'}
-                          ]}
+                            actions : function (data) {
+                              var temp = utils.temp('actions')
+                                , actions = temp.get(data)
+
+                              if (actions) {
+                                return actions
+                              }
+
+                              actions = []
+                              if (data.info.posted) {
+                                actions.push({ name : 'edit', label : 'คืนรายการ', opr : 'unpost'})
+                              }
+                              else {
+                                actions.push({ name : 'edit', label : 'แก้ไข'})
+                                if (data.info.approved) {
+                                  actions.push({ name : 'edit', label : 'ผ่านรายการ', opr : 'post'})
+                                }
+                                else {
+                                  actions.push({ name : 'edit', label : 'ยกเลิก', opr : 'cancel'})
+                                }
+                              }                              
+                              if (data.info.posted != 'cancelled') {
+                                actions.push({ name : 'print', label : 'พิมพ์'})
+                              }
+                              temp.set(data,actions)
+                              return actions
+                            }
+                          }
                         }
                       }
                   })

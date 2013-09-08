@@ -8,7 +8,7 @@ angular.module('modules.uis', ['ui.bootstrap'])
             return $dialog.dialog({
               templateUrl: 'template/dialog/message.html'
             , controller: 'MessageBoxController'
-            , dialogClass: 'modal ' + (extclass || 'text-error')
+            , dialogClass: 'modal ' + (extclass || '')
             , resolve:{
                 model: function() {
                   return {

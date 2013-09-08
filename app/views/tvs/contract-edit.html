@@ -771,17 +771,24 @@
                 <div>
                   <div class="input-prepend">
                     <span class="add-on">จำนวน</span>
-                    <input type="text" class="input-small" ng-model="pm().tel_qty" numeral="'qty'"/>
+                    <input type="text" class="input-small" 
+                      ng-disabled = "resource.info.approved"
+                      ng-model="pm().tel_qty" 
+                      numeral />
                   </div>
                   <div class="input-prepend">
                     <span class="add-on">ค่ามัดจำ</span>
                     <input type="text" placeholder="อัตราต่อหมายเลข" class="input-medium" 
-                      ng-model="pm().tel_deposit_rate" numeral="'money'"/>
+                      ng-disabled = "resource.info.approved"
+                      ng-model="pm().tel_deposit_rate" 
+                      numeral="'money'"/>
                   </div>
                   <div class="input-prepend">
                     <span class="add-on">ค่าติดตั้ง</span>
                     <input type="text" placeholder="อัตราต่อหมายเลข" class="input-medium" 
-                    ng-model="pm().tel_install_rate" numeral="'money'"/>
+                      ng-disabled = "resource.info.approved"
+                      ng-model="pm().tel_install_rate" 
+                      numeral="'money'"/>
                   </div>
                 </div>
 
@@ -888,6 +895,7 @@
                 <label>หัวสัญญา :
                 </label>
                 <input type="text" class="input-xxlarge" 
+                  ng-disabled = "resource.info.approved"
                   ng-model="custom().title"
                   typeahead="itm for itm in selfList('info.custom.title',$viewValue)"
                   typeahead-wait-ms="typeaheadWait"
@@ -901,6 +909,7 @@
                 <label>หัวรอง :
                 </label>
                 <input type="text" class="input-xxlarge" 
+                  ng-disabled = "resource.info.approved"
                   ng-model="custom().subTitle"
                   typeahead="itm for itm in selfList('info.custom.subTitle',$viewValue)"
                   typeahead-wait-ms="typeaheadWait"
@@ -914,6 +923,7 @@
                 </label>
                 <input type="text" class="input-medium" 
                   placeholder="ช.ธญพ., บ.ธญพ. ฯลฯ"
+                  ng-disabled = "resource.info.approved"
                   ng-model="custom().code"
                   typeahead="itm for itm in selfList('info.custom.code',$viewValue)"
                   typeahead-wait-ms="typeaheadWait"
@@ -923,6 +933,7 @@
 
             <div class="row-fluid">
               <a href tabindex="-1" class="btn btn-small" 
+                ng-hide = "resource.info.approved"
                 ng-class="__mdOpen && 'btn-warning'"
                 ng-click="__mdOpen = !__mdOpen"
                 >
@@ -932,19 +943,27 @@
                 ใช้องค์ประกอบ :
               </label>
               <label class="checkbox inline">
-                <input type="checkbox" ng-model="custom().title_section" >
+                <input type="checkbox" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="custom().title_section" >
                 title
               </label>
               <label class="checkbox inline">
-                <input type="checkbox" ng-model="custom().head_section" >
+                <input type="checkbox" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="custom().head_section" >
                 หัว
               </label>
               <label class="checkbox inline">
-                <input type="checkbox" ng-model="custom().parties_section" >
+                <input type="checkbox" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="custom().parties_section" >
                 คู่สัญญา
               </label>
               <label class="checkbox inline">
-                <input type="checkbox" ng-model="custom().foot_section" >
+                <input type="checkbox" 
+                  ng-disabled = "resource.info.approved"
+                  ng-model="custom().foot_section" >
                 ท้าย(ลงนาม)
               </label>                   
             </div>
