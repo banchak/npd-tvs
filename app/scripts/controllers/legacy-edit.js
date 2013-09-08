@@ -201,7 +201,7 @@ angular.module('controllers.legacy-edit',['modules.uis', 'modules.utils'])
           }
 
           if (xquery) {
-            qry = angular.extend(xquery)
+            qry = angular.extend(qry, xquery)
           }
           promise = db.dataAccess.distinct(name, qry).then (function (data) {
             

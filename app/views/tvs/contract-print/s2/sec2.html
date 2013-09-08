@@ -1,0 +1,65 @@
+
+<h5>ข้อ 2. อัตราและการชำระค่าบริการ</h5>
+<p>
+  2.1 ผู้รับบริการตกลงชำระค่าบริการดังกล่าวข้างต้นในข้อ 1. แก่ผู้ให้บริการ 
+  ไม่ว่าผู้รับบริการจะได้เปิดดำเนินธุรกิจในวันใดหรือไม่ก็ตาม 
+  โดยชำระล่วงหน้าเป็นรายเดือนภายในวันที่ 5 ของทุกเดือน 
+  <span ng-show="service_rates().length==1" ng-repeat="rate in service_rates()">
+    ใน {{ rate.description }} <strong>{{ rate.value | numeral }}</strong> บาท
+    <strong>({{ rate.value | numeral:'bahttext'}})</strong>
+    ซึ่งเป็นอัตราที่ยังไม่รวมภาษีมูลค่าเพิ่ม 
+    และผู้รับบริการ/ผู้เช่า เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม  
+  </span>
+  <span ng-show="service_rates().length &gt; 1">
+  ในอัตราค่าบริการ 
+  ซึ่งเป็นอัตราที่ยังไม่รวมภาษีมูลค่าเพิ่ม 
+  และผู้รับบริการ/ผู้เช่า เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม
+  ดังนี้
+  </span>
+</p>
+<p ng-show="service_rates().length &gt; 1">
+  <div ng-repeat="rate in service_rates()">
+  (2.1.{{$index+1}}) {{rate.description}} 
+  <span ng-show="rate.value">{{rate.value | numeral}} บาท ({{rate.value | numeral:'bahttext'}})</span>
+  </div>
+</p>
+
+<p>
+  <table style="font-size:small;margin:0 auto;text-indent:0;">
+    <tr >
+      <th style="border:thin solid;padding:0 1em;">ประเภทของอาคาร</th>
+      <th style="border:thin solid;padding:0 1em;">อัตราค่าบริการ (บาท/ตารางเมตร/เดือน)</th>
+    </tr>
+    <tr>
+      <td style="border:thin solid;padding:0 1em;">อาคารที่ไม่มีระบบปรับอากาศในส่วนกลาง</td>
+      <td style="border:thin solid;padding:0 1em;text-align:center;">220.-</td>
+    </tr>
+    <tr>
+      <td style="border:thin solid;padding:0 1em;">อาคารที่มีระบบปรับอากาศในส่วนกลาง</td>
+      <td style="border:thin solid;padding:0 1em;text-align:center;">285.-</td>
+    </tr>
+  </table>
+</p>
+<p>
+  2.2  อัตราค่ากระแสไฟฟ้า น้ำประปา และแก๊ส สำหรับสถานที่เช่าในวันเริ่มให้บริการเป็นดังนี้
+    <div>(2.2.1)&nbsp;ค่าน้ำประปา  20  บาท ต่อลูกบาศก์เมตร (Cu. Metre) (ไม่รวมภาษีมูลค่าเพิ่ม)</div>
+    <div>(2.2.2)&nbsp;ค่ากระแสไฟฟ้า  5 บาท ต่อกิโลวัตต์-ชั่วโมง (kWh)  (ไม่รวมภาษีมูลค่าเพิ่ม)</div>
+    <div>(2.2.3)&nbsp;ค่าแก๊ส 108  บาท ต่อลูกบาศก์เมตร (Cu. Metre) (ไม่รวมภาษีมูลค่าเพิ่ม)</div>
+    <div>(2.2.4)&nbsp;ค่าน้ำเย็นระบบปรับอากาศ 100 บาทต่อตารางเมตรต่อเดือน(ไม่รวมภาษีมูลค่าเพิ่ม)</div>
+</p>
+<p>
+  อัตราค่าบริการดังกล่าวข้างต้นยังไม่รวมภาษีมูลค่าเพิ่มและผู้รับบริการ/ผู้เช่า เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม
+</p>
+<p>
+  2.3 ในกรณีที่ผู้รับบริการ  
+  ไม่ชำระเงินตามที่กล่าวข้างต้นภายในกำหนด 
+  ผู้รับบริการยินยอมเสียค่าปรับในอัตราร้อยละ 15 ต่อปีของเงินที่ค้างชำระ 
+  จนกว่าจะชำระครบถ้วน แต่การที่ชำระค่าปรับดังกล่าว 
+  จะไม่เป็นเหตุให้ถือเป็นข้ออ้างว่าผู้รับบริการมิได้ผิดสัญญาแต่อย่างใด
+</p>
+<p>
+  2.4 ผู้รับบริการตกลงวางเงินประกันการใช้ น้ำประปา ไฟฟ้าและแก๊ส
+  ในส่วนของพื้นที่เช่า เป็นเงินจำนวน 
+  <strong>{{ resource.info.service_deposit | numeral }}</strong> บาท 
+  <strong>({{ resource.info.service_deposit | numeral:'bahttext' }})</strong>
+</p>

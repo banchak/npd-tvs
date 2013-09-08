@@ -1,27 +1,58 @@
 
-  <div ng-init="printForm = utils.$router.current.params.form || 'r1'">
-    <div class="span3 pull-right no-print">
-      <div class="no-print" style="padding:4px;">
-        <button class="btn btn-primary" ng-click="utils.printPage()">Print</button>
-        <span style="padding-left:12px"></span>
-        <button class="btn" ng-click="editOpr.exit()">Cancel</button>
+  <div ng-init="
+    printForm = utils.$router.current.params.form; 
+    formRev = '2';
+    revList = [{val:'2', lbl:'rev.2 (ล่าสุด)'},{val:'1', lbl:'rev.1'}]
+    "
+    >
+    <div class="no-print">
+      <div class="span3 pull-right">
+        <div style="padding:4px;">
+          <button class="btn btn-primary" ng-click="utils.printPage()">Print</button>
+          <span style="padding-left:12px"></span>
+          <button class="btn" ng-click="editOpr.exit()">Cancel</button>
+        </div>
       </div>
+
+
+      <div>
+        <select class="input-medium" ng-model="formRev" ng-options="r.val as (r.lbl || r.val) for r in revList"></select>
+      </div>
+      
+      <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
+        <li ng-class="printForm=='r$' && 'active'" 
+          ng-show="(utils.notEmpty(rent_rates())) && (printForm=printForm||'r$')">
+          <a href ng-click="printForm='r$'">
+            เช่า</a></li>
+        <li ng-class="printForm=='s$' && 'active'"
+          ng-show="(utils.notEmpty(service_rates())) && (printForm=printForm||'s$')">
+          <a href ng-click="printForm='s$'">
+            บริการ</a></li>
+        <li ng-class="printForm=='u$' && 'active'"
+          ng-show="(utils.notEmpty(utility_rates()) || resource.info.parking_rate) && (printForm=printForm||'u$')">
+          <a href ng-click="printForm='u$'">
+            สาธารณูปโภค</a></li>
+        <li ng-class="printForm=='pm$' && 'active'"
+          ng-show="(utils.notEmpty(pm_rates()) || utils.notEmpty(pm()) || utils.notEmpty(pm_utilities())) && (printForm=printForm||'pm$')">
+          <a href ng-click="printForm='pm$'">
+            ส่งเสริมการขาย</a></li>
+        <li ng-class="printForm=='atm$' && 'active'"
+          ng-show="(utils.notEmpty(atm())) && (printForm=printForm||'atm$')">
+          <a href ng-click="printForm='atm$'">
+            ตู้ ATM</a></li>
+        <li ng-class="printForm=='bb$' && 'active'"
+          ng-show="(utils.notEmpty(billboard())) && (printForm=printForm||'bb$')">
+          <a href ng-click="printForm='bb$'">
+            ป้ายโฆษณา</a></li>
+        <li ng-class="printForm=='custom' && 'active'" 
+          ng-show="custom().text && (printForm=printForm||'custom')">
+          <a href ng-click="printForm='custom'">
+            ร่างข้อความเอง</a></li>
+      </ul>
     </div>
-    
-    <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
-      <li ng-class="printForm=='r1' && 'active'">
-        <a href ng-click="printForm='r1'">
-          สัญญาเช่า</a></li>
-      <li ng-class="printForm=='s1' && 'active'">
-        <a href ng-click="printForm='s1'">
-          สัญญาบริการ</a></li>
-      <li ng-class="printForm=='rec' && 'active'" ng-show="record().text">
-        <a href ng-click="printForm='rec'">
-          บันทึกแนบท้าย</a></li>
-    </ul>
     <div class="page-boundary">
       <div class="print-page" ng-show="printForm">
-        <div ng-include="printForm && ('views/tvs/contract-print-'+printForm+'.html')"></div>
+        <div ng-include="printForm && ('views/tvs/contract-print-' + printForm.replace('$',formRev) + '.html')"></div>
       </div>
     </div>
   </div>

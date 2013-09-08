@@ -44,6 +44,7 @@
       }
       , finalize : function (txt) {
         txt = txt.replace(/หมื่นพัน/g,'หมื่น')
+        txt = txt.replace(/แสนพัน/g,'แสน')
         txt = txt.replace(/สิบหนึ่ง/g,'สิบเอ็ด')
         return txt
       }

@@ -22,10 +22,8 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
       ]
     , contractTypes :
       [
-        {name    : '1 ปี', duration : '1 ปี (หนึ่ง)' }
-      , {name    : '3 ปี', duration : '3 ปี (สาม)'}
-      , {name    : '15 ปี', duration : '15 ปี (สิบห้า)'}
-      , {name    : 'อื่นๆ', duration : ''}
+        {name    : 'สัญญา' }
+      , {name    : 'บันทึก'}
       ]
     , areaTypes :
       [
@@ -40,6 +38,7 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
       , {name : 'meta.econtacts.type', list : ['email', 'twitter', 'facebook', 'line'] }
       , {name : 'meta.locations.type', list : ['ที่บ้าน','ที่ทำงาน'] }
       , {name : 'meta.locations.province', list : ['กรุงเทพฯ'] }
+      , {name : 'info.duration',  list : ['1 ปี', '3 ปี', '15 ปี'] }
       ]
 
     })

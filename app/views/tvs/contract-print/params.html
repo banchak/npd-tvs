@@ -1,0 +1,26 @@
+
+<div 
+  ng-init="
+    _params.contractCalled = _params.contractCalled || 'สัญญา';
+
+    _params.renterCalled = _params.renterCalled || (_params.called==1 && '&quot;ผู้ให้เช่า&quot;');
+    _params.tenantCalled = _params.tenantCalled || (_params.called==1 && '&quot;ผู้เช่า&quot;');
+    _params.signer1Called = _params.signer1Called ||(_params.called==1 && 'ผู้ให้เช่า');
+    _params.signer2Called = _params.signer2Called || (_params.called==1 && 'ผู้เช่า');
+
+    _params.renterCalled = _params.renterCalled || (_params.called==2 && '&quot;ผู้ให้บริการ&quot;');
+    _params.tenantCalled = _params.tenantCalled || (_params.called==2 && '&quot;ผู้รับบริการ&quot;');
+    _params.signer1Called = _params.signer1Called ||(_params.called==2 && 'ผู้ให้บริการ');
+    _params.signer2Called = _params.signer2Called || (_params.called==2 && 'ผู้รับบริการ');
+
+    _params.renterCalled = _params.renterCalled || '&quot;ผู้ให้บริการ&quot; หรือ &quot;ผู้ให้เช่า&quot;';
+    _params.tenantCalled = _params.tenantCalled || '&quot;ผู้รับบริการ&quot; หรือ &quot;ผู้เช่า&quot;';
+    _params.signer1Called = _params.signer1Called ||'ผู้ให้บริการ';
+    _params.signer2Called = _params.signer2Called || 'ผู้รับบริการ';
+
+    _params.sumInsured = _params.sumInsured || 100000 ;
+    _params.transferChargeRate = _params.transferChargeRate || 3000 ;
+    _params.transferChargeMax = _params.transferChargeMax || 200000 ;
+
+    "
+  ></div>

@@ -280,7 +280,7 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
                           signers.push(name)
                       })
 
-                    text = _renderTenants(entry.meta().tenant_type, tenants, signers)
+                    text = _renderTenants(entry.info().tenant_type, tenants, signers)
                     
                   }
                   
@@ -301,10 +301,12 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
                   var size = 0
 
                   angular.forEach($scope.areas(), function (ar) {
-
-                    var sz = parseFloat('' + ar.size)
-                    if (sz) {
-                      size += sz
+                    if (ar) {
+                      var sz = parseFloat('' + ar.size)
+  
+                      if (sz) {
+                        size += sz
+                      }
                     }
                   })
 
@@ -336,7 +338,7 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
                         $scope.isSynced(ar,'room')
                       }
 
-                      if (utils.trim(ar.room)) 
+                      if (ar && utils.trim(ar.room)) 
                       {
                         zfb = _renderZoneFloorBuilding(ar)
                         if (rooms[zfb] == undefined)
@@ -386,72 +388,79 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
 
                 }
 
-              , contract_type_change : function ( ){
-                  var  
-                    duration  = $scope.resource._type
-
-                  for (var ct in $scope.CONTRACT_TYPES)
-                  {
-                    ct = $scope.CONTRACT_TYPES[ct]
-                    if (ct.name == $scope.resource._type)
-                    {
-                      duration = (ct.duration || duration)
-                      break
-                    }
-                  }
-                  
-                  $scope.resource.info.duration = duration
-                }
-
               , tenant_addable : function ( ){
 
-                  return (!_isLegalPerson(entry.meta().tenant_type,'')) || ($scope.tenants().length <1)
+                  return (!_isLegalPerson(entry.info().tenant_type,'')) || ($scope.tenants().length <1)
                 }
 
               , inc_rent_rates : function ( ){
 
-                  var rent_rates  = $scope.rent_rates()
+                  var rates  = $scope.rent_rates()
                   
-                  if (rent_rates.length==1)
-                      rent_rates[0].description = _rentRateMessage(1);
+                  if (rates.length==1)
+                      rates[0].description = _rentRateMessage(1);
 
-                  entry.add(rent_rates, { 
-                      description  : _rentRateMessage(rent_rates.length && (rent_rates.length + 1))
+                  entry.add(rates, { 
+                      description  : _rentRateMessage(rates.length && (rates.length + 1))
                     , value        : 0 
                    })
                 }
 
               , dec_rent_rates : function ( ){
-                  var rent_rates = $scope.rent_rates()
+                  var rates = $scope.rent_rates()
                   
-                  entry.remove(rent_rates)
+                  entry.remove(rates)
                   
-                  if (rent_rates.length==1) 
-                    rent_rates[0].description = _rentRateMessage()
+                  if (rates.length==1) 
+                    rates[0].description = _rentRateMessage()
                 }
 
               , inc_service_rates :function ( ){
-                  var  service_rates = $scope.service_rates()
+                  var  rates = $scope.service_rates()
                   
-                  if (service_rates.length==1)
-                    service_rates[0].description = _serviceRateMessage(1);
+                  if (rates.length==1)
+                    rates[0].description = _serviceRateMessage(1);
                 
                   entry.add(
-                    service_rates
+                    rates
                   , { 
-                      description  : _serviceRateMessage(service_rates.length && (service_rates.length + 1))
+                      description  : _serviceRateMessage(rates.length && (rates.length + 1))
                     , value        : 0 
                     })
                 }
 
               , dec_service_rates : function ( ) {
                   var  
-                    service_rates = $scope.service_rates()
+                    rates = $scope.service_rates()
                   
-                  entry.remove(service_rates)
+                  entry.remove(rates)
                   
-                  if (service_rates.length==1)
-                    service_rates[0].description = _serviceRateMessage()
+                  if (rates.length==1)
+                    rates[0].description = _serviceRateMessage()
+                }
+
+              , inc_utility_rates :function ( ){
+                  var  rates = $scope.utility_rates()
+                  
+                  if (rates.length==1)
+                    rates[0].description = _serviceRateMessage(1);
+                
+                  entry.add(
+                    rates
+                  , { 
+                      description  : _serviceRateMessage(rates.length && (rates.length + 1))
+                    , value        : 0 
+                    })
+                }
+
+              , dec_utility_rates : function ( ) {
+                  var  
+                    rates = $scope.utility_rates()
+                  
+                  entry.remove(rates)
+                  
+                  if (rates.length==1)
+                    rates[0].description = _serviceRateMessage()
                 }
 
               , sumSigner2 : function ( ) {
@@ -496,10 +505,12 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
                   $scope.rent_date_synced = $scope.resource.info.duration + $scope.resource.info.rent_date
 
                   if (rent_date && $scope.resource.info.duration) {
+
                     duration = $scope.resource.info.duration.match(/(?:(\d+)\s*ปี)?\s*(?:(\d+)\s*เดือน)?\s*(?:(\d+)\s*วัน)?/)
                     if (duration) {
+
                       before_rent = moment(rent_date).subtract('days',1)
-                      end_rent =  before_rent.clone().add({years : duration[1]||0, months : duration[2]||0, days : duration[3]||0})
+                      end_rent =  before_rent.clone().add({years : duration[1]|0, months : duration[2]|0, days : duration[3]|0})
 
                       $scope.resource.info.rent_until = end_rent.format('YYYY-MM-DD')
                       $scope.resource.info.decorate_until = before_rent.format('YYYY-MM-DD')
@@ -511,12 +522,12 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
 
                 }
               , makeHtml : function (tof) {
-                  tof = tof || 'views/tvs/contract-print-tof.html'
+                  tof = tof || 'views/tvs/contract-print/tof.html'
                   return function (scope, element, attrs) {
 
                     var hr = element.find('hr').addClass("no-print")
 
-                    if ($scope.record().title_section)
+                    if ($scope.custom().title_section)
                     {
                       hr.after(angular.element('<div ng-include="\'' + tof + '\'"></div>'))
                     }
@@ -552,51 +563,56 @@ angular.module('tvs.contract-edit',['controllers.legacy-edit','tvs.database'])
 
           // entry for view
           angular.forEach(
-            ['tenants', 'tenant_signers', 'areas', 'rent_rates', 'service_rates', 'witnesses']
+            ['tenants', 'tenant_signers', 'areas', 'goods', 'rent_rates', 'service_rates', 'utility_rates', 'pm_rates', 'pm_utilities', 'witnesses']
           , function (n) {
 
               $scope[n] = function () { return entry.meta(n) }
             })
 
-          angular.forEach(['record'], function (n) {
+          angular.forEach(['pm', 'billboard', 'atm', 'custom'], function (n) {
               $scope[n] = function () { return entry.info(n,{}) }
-              $scope[n]()
+              //$scope[n]()
             })
 
 
           angular.extend($scope, services)
 
-          // default add at least 1 entry
-          if ($scope.tenants().length==0) {
-            $scope.resource$entry.add($scope.tenants())
+          if (!$scope.resource._id) {
+            // default add at least 1 entry
+            if ($scope.tenants().length==0) {
+              $scope.resource$entry.add($scope.tenants())
+            }
+
+            if ($scope.areas().length==0) {
+              $scope.resource$entry.add($scope.areas())
+            }
+
+            if ($scope.rent_rates().length==0) {
+              //$scope.inc_rent_rates()
+            }
+
+            if ($scope.service_rates().length==0) {
+              //$scope.inc_service_rates()
+            }
+
+            if ($scope.utility_rates().length==0) {
+              //$scope.inc_utility_rates()
+            }
+
+            while($scope.witnesses().length < 2) {
+
+                $scope.resource$entry.add($scope.witnesses())
+            }
           }
-
-          if ($scope.areas().length==0) {
-            $scope.resource$entry.add($scope.areas())
-          }
-
-          if ($scope.rent_rates().length==0) {
-            $scope.inc_rent_rates()
-          }
-
-          if ($scope.service_rates().length==0) {
-            $scope.inc_service_rates()
-          }
-
-          while($scope.witnesses().length < 2) {
-
-              $scope.resource$entry.add($scope.witnesses())
-          }
-
           $scope.meta_tenant_render(false)
           $scope.meta_area_render(false)
 
           if (!$scope.resource._name) {
             $scope.resource._name = '*'
           }
-          if (!$scope.resource.info.issue_date) {
-            $scope.resource.info.issue_date = moment().format('YYYY-MM-DD')
-          }
+          //if (!$scope.resource.info.issue_date) {
+          //  $scope.resource.info.issue_date = moment().format('YYYY-MM-DD')
+          //}
 
           $scope.$watch('tenants()',$scope.meta_tenant_render,true)
           $scope.$watch('tenant_signers()',$scope.meta_tenant_render,true)

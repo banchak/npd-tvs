@@ -1,0 +1,25 @@
+
+<h5>ข้อ 3. กำหนดเวลาของสัญญา</h5>
+<p>
+  3.1 คู่สัญญาทั้งสองฝ่ายตกลงกันว่า 
+  สัญญาจ้างบริการฉบับนี้มีกำหนดระยะเวลา <strong>{{ resource.info.duration }}</strong> 
+  ตั้งแต่วันที่ <strong>{{ resource.info.rent_date | moment:'thaitext' }}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.rent_until| moment:'thaitext' }}</strong>
+  และ ผู้รับบริการเริ่มชำระค่าบริการ
+  ตั้งแต่วันที่ <strong>{{ resource.info.pay_date | moment:'thaitext' }}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.pay_until | moment:'thaitext' }}</strong>
+</p>
+<p>
+  ผู้รับบริการไม่ต้องชำระค่าบริการ 
+  ในระยะเวลาที่ตกแต่งสถานที่เช่า 
+  นับตั้งแต่วันที่ <strong>{{ resource.info.decorate_date | moment:'thaitext' }}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.decorate_until | moment:'thaitext' }}</strong> 
+</p>
+<p>
+  3.2 คู่สัญญาตกลงกันว่า 
+  สัญญาจ้างบริการนี้มีกำหนดเวลาเท่ากันกับสัญญาเช่าสถานที่
+  ศูนย์การค้า ธัญญะ ช็อปปิ้ง พาร์ค 
+  และสัญญาจ้างบริการสาธารณูปโภค 
+  เมื่อสัญญาเช่าสถานที่ และ/หรือสัญญาจ้างบริการสาธารณูปโภคสิ้นสุดลง
+  ให้สัญญาจ้างบริการฉบับนี้สิ้นสุดลงด้วย
+</p>

@@ -13,6 +13,19 @@ angular.module('directives.numeral', [])
         if (format && format.toLowerCase() == 'bahttext') {
           return num2str.bahtText(num.value(),lang || 'th')
         }
+        if (format && format.toLowerCase() == 'text') {
+          var inp
+
+          input = (input || '').toString()
+          inp = input.split(/(\d+)\s*/)
+          if (inp) {
+            for (var i=1; i<inp.length; i +=2) {
+              inp[i] = num2str.format(inp[i] | 0, lang || 'th')
+            }
+            input = inp.join('')
+          }
+          return input
+        }
         
         if (lang) {
           num.language(lang)

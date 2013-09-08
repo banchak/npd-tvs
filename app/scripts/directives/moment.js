@@ -93,8 +93,6 @@ angular.module('directives.moment', [])
                     var 
                       mdate = moment(viewValue, config.inputFormat, config.lang)
 
-                    console.log('parser', viewValue)
-
                     if (mdate && mdate.isValid()) 
                     {
                       //mdate = moment(mdate.format(storeFormat))

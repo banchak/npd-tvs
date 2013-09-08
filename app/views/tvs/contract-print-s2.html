@@ -1,0 +1,83 @@
+<div ng-init="_params={
+  code : 'บ.ธญพ.'
+  ,title : 'สัญญาจ้างบริการส่วนกลาง'
+  ,hidePartiesCloseMessage : true
+  }">
+
+  <div ng-include="'views/tvs/contract-print/params.html'"></div>
+  <div ng-include="'views/tvs/contract-print/tof.html'"></div>
+  <div ng-include="'views/tvs/contract-print/head.html'"></div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/parties.html'"></div>
+    <p>
+    โดยที่ผู้รับบริการ ได้เข้าทำสัญญาเช่าสถานที่ในโครงการธัญญะ ช็อปปิ้ง พาร์ค กับผู้ให้เช่า 
+    ตามสัญญาเช่า <strong>{{ resource.display.area }}</strong> 
+    สัญญาเลขที่ ช.ธญพ. <strong>{{ resource._name }}</strong> 
+    ลงวันที่ <strong>{{ resource.info.issue_date | moment:'thaitext' }}</strong>
+    และสัญญาจ้างบริการสาธารณูปโภค เลขที่ ส.ธญพ <strong>{{ resource._name }}</strong> 
+    ลงวันที่ <strong>{{ resource.info.issue_date | moment:'thaitext' }}</strong>
+    นั้น ผู้รับบริการยินยอมตกลงรับบริการต่างๆ 
+    ตามที่ระบุในสัญญาฉบับนี้ ในสถานที่เช่าจากผู้ให้บริการ หรือ ผู้ให้เช่า
+    </p>
+    <p>
+    ทั้งสองฝ่ายจึงตกลงทำสัญญาฉบับนี้ 
+    ซึ่งคู่สัญญาให้ถือเป็นส่วนหนึ่งของสัญญาเช่าสถานที่ดังกล่าวข้างต้นด้วย 
+    ทั้งสองฝ่ายได้ตกลงกันดังต่อไปนี้
+    </p>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec1.html'"></div>
+  </div>
+
+  <div ng-include="'views/tvs/contract-print/tof.html'"></div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec2.html'"></div>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec3.html'"></div>
+  </div>
+
+  <div ng-include="'views/tvs/contract-print/tof.html'"></div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec4.html'"></div>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec5.html'"></div>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec6.html'"></div>
+  </div>
+
+  <div ng-include="'views/tvs/contract-print/tof.html'"></div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec7.html'"></div>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec8.html'"></div>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec9.html'"></div>
+  </div>
+
+  <div ng-include="'views/tvs/contract-print/tof.html'"></div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/s2/sec10.html'"></div>
+  </div>
+
+  <div class="paragraph">
+    <div ng-include="'views/tvs/contract-print/foot.html'"></div>
+  </div>
+
+</div>
+

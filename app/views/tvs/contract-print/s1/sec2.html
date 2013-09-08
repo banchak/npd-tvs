@@ -1,0 +1,65 @@
+
+<h5>ข้อ 2. อัตราและการชำระค่าบริการ</h5>
+<p>
+  บริษัทจะคิดค่าบริการดังกล่าวข้างต้นในข้อ 1. จากผู้รับบริการ 
+  ไม่ว่าผู้รับบริการจะได้เปิดดำเนินธุรกิจในวันใดหรือไม่ก็ตาม 
+  โดยชำระล่วงหน้าเป็นรายเดือนภายในวันที่ 5 ของทุกเดือน 
+  <span ng-show="service_rates().length==1" ng-repeat="rate in service_rates()">
+  ใน {{ rate.description }} <strong>{{ rate.value | numeral }} บาท ({{ rate.value | numeral:'bahttext'}})</strong>
+  ซึ่งเป็นอัตราที่ยังไม่รวมภาษีมูลค่าเพิ่ม 
+  และผู้รับบริการ/ผู้เช่า เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม  </span>
+  <span ng-show="service_rates().length &gt; 1">
+  ในอัตราค่าบริการ 
+  ซึ่งเป็นอัตราที่ยังไม่รวมภาษีมูลค่าเพิ่ม 
+  และผู้รับบริการ/ผู้เช่า เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม
+  ดังนี้
+  </span>
+</p>
+<p ng-show="service_rates().length &gt; 1">
+  <div ng-repeat="rate in service_rates()">
+  (2.{{$index+1}}) {{rate.description}} 
+  <span ng-show="rate.value">{{rate.value | numeral}} บาท ({{rate.value | numeral:'bahttext'}})</span>
+  </div>
+</p>
+
+<p>
+  <table style="font-size:small;margin:0 auto;text-indent:0;">
+    <tr >
+      <th style="border:thin solid;padding:0 1em;">ประเภทของอาคาร</th>
+      <th style="border:thin solid;padding:0 1em;">อัตราค่าบริการ (บาท/ตารางเมตร/เดือน)</th>
+    </tr>
+    <tr>
+      <td style="border:thin solid;padding:0 1em;">อาคารที่ไม่มีระบบปรับอากาศในส่วนกลาง</td>
+      <td style="border:thin solid;padding:0 1em;">220.-</td>
+    </tr>
+    <tr>
+      <td style="border:thin solid;padding:0 1em;">อาคารที่มีระบบปรับอากาศในส่วนกลาง</td>
+      <td style="border:thin solid;padding:0 1em;">220.- บวกค่าบริการระบบปรับอากาศส่วนกลาง</td>
+    </tr>
+    <tr>
+      <td colspan="2" style="border:thin solid;padding:0 1em;">
+      หมายเหตุ : ค่าบริการระบบปรับอากาศส่วนกลางจะแจ้งให้ผู้รับบริการ/ผู้เช่าทราบในภายหลัง
+      </td>
+    </tr>
+  </table>
+</p>
+<p>
+  ในกรณีที่ผู้รับบริการ ไม่ชำระเงินตามที่กล่าวข้างต้นภายในกำหนด 
+  ผู้รับบริการยินยอมเสียค่าปรับเป็นค่าเสียหาย 
+  ในอัตราร้อยละ 0.5 ต่อวันของเงินที่ค้างชำระ จนกว่าจะชำระครบถ้วน 
+  แต่การที่ชำระค่าเสียหายดังกล่าว 
+  จะไม่เป็นเหตุให้ถือเป็นข้ออ้างว่าผู้รับบริการมิได้ผิดสัญญาแต่อย่างใด
+</p>
+<p>
+  ผู้รับบริการไม่ต้องชำระค่าบริการ ในระยะเวลาที่ตกแต่งสถานที่เช่า 
+  นับตั้งแต่วันที่ <strong>{{ resource.info.decorate_date | moment:'thaitext'}}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.decorate_until | moment:'thaitext'}}</strong>
+</p>
+<p>
+  สัญญาจ้างบริการเริ่มตั้งแต่วันที่ <strong>{{ resource.info.rent_date | moment:'thaitext'}}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.rent_until | moment:'thaitext'}}</strong>
+</p>
+<p>
+  ผู้รับบริการเริ่มชำระค่าบริการ ตั้งแต่วันที่ <strong>{{ resource.info.pay_date | moment:'thaitext'}}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.pay_until | moment:'thaitext'}}</strong>
+</p>

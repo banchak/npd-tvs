@@ -1,0 +1,23 @@
+
+<h4 class="paragraph-center" ng-show="_params.title">
+  {{ (_params.title=='*' && custom().title) || _params.title }}
+  </h4>
+<h5 class="paragraph-center" ng-show="_params.subTitle">
+  {{ (_params.subTitle=='*' && custom().subTitle) || _params.subTitle }}
+  </h5>
+
+<div class="pull-right" style="min-width:35%;text-indent:0;" ng-hide="_params.hideHeadMessage">
+  <div ng-show="!_params.headMessage">
+    {{ _params.contractCalled }}นี้ทำขึ้นที่ บริษัท ธัญวิลล์ จำกัด<br />
+    เลขที่ 52 อาคารธนิยะพลาซา ชั้น 9 เอ็ม<br />
+    ถนนสีลม แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร<br />
+  </div>
+  <div ng-show="_params.headMessage==2">
+    {{ _params.contractCalled }}นี้ทำขึ้นที่ โครงการธัญญะ ช็อปปิ้ง พาร์ค<br />
+    735,735/1-8 ถนนศรีนครินทร์<br />
+    แขวงสวนหลวง เขตสวนหลวง กรุงเทพมหานคร<br />
+  </div>
+  <br />
+  วันที่ <strong>{{ resource.info.issue_date | moment:'thaitext' }}</strong>
+</div>
+<div style="clear:both"> </div>

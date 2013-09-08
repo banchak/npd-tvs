@@ -19,7 +19,7 @@ angular.module('tvs.project', [
   , function ($rootScope) {
       this.appMenu  = {
         title         : 'Thanya'
-      , version       : '0.5.6.0 2013-9-4 jsat66@gmail.com'
+      , version       : '0.6.0.0 2013-9-8 jsat66@gmail.com'
       , menus: [
           'Contract','Tenant','Area','Equipment'
         ]

@@ -1,0 +1,13 @@
+
+<p>
+  ข้อ 2.  สัญญาบริการพื้นที่ฉบับนี้  
+  มีกำหนดระยะเวลาบริการ <strong>{{ resource.info.duration }}</strong> 
+  ({{ resource.info.duration | numeral:'text' }})
+  นับแต่วันที่ <strong>{{ resource.info.rent_date | moment:'thaitext' }}</strong> 
+  ถึงวันที่ <strong>{{ resource.info.rent_until | moment:'thaitext' }}</strong>  
+  โดยผู้รับบริการจะต้องชำระค่าบริการล่วงหน้าเป็นรายเดือนให้แก่ผู้ให้บริการ 
+  ณ  ที่ทำการของผู้ให้บริการ ภายในวันที่ 1 ของทุกๆ เดือน 
+  ในอัตราค่าบริการเดือนละ <strong>{{ atm().rate | numeral }}</strong> บาท 
+  <strong>({{ atm().rate | numeral:'bahttext' }})</strong>
+  ยังไม่รวมภาษีมูลค่าเพิ่ม 
+</p>

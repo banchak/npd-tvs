@@ -134,25 +134,29 @@ angular.module('modules.utils', [])
           return result
         }
       }
-      utils.dateListAhead = function (q) {
-        var mm, list, qmatch, mmatch, mstart, mval
+      utils.dateListAhead = function (q, adj) {
+        var list, qmatch, mmatch, mstart, mval, mm, dmark
           , qregx = /^(\d*)\/?(\d*)\/?(\d*)$/
 
-        function mmFormat (mm, alt) {
-
-          return mm.format((alt && 'D/M/BBBB') || utils.format.date)
+        function mmFormat (mm, alt, mark) {
+          var s = mm.format((alt && 'D/M/BBBB') || utils.format.date)
+          return s + ((mark && mark[s])|| '')
         }
 
-        mm = mmFormat(moment())
+        adj = adj || 0
+
+        mm = mmFormat(moment(),true)
+        mmatch = mm.match(qregx)
 
         qmatch = q.match(qregx)
         if (qmatch && (qmatch[1] || qmatch[2] || qmatch[3])) {
           list = []
-          mmatch = mm.match(qregx)
-
+  
           if (!qmatch[1]) {
-
             // list each day in month
+            dmark = {}
+            dmark[mm] = ' (วันนี้)'
+
             qmatch[2] = qmatch[2] || mmatch[2]
             qmatch[3] = qmatch[3] || mmatch[3]
             mstart = moment(mmatch[1] + '/' + qmatch[2] + '/' + qmatch[3] ,'DD/MM/**BB')
@@ -164,25 +168,30 @@ angular.module('modules.utils', [])
             for (var d=0; d<=40; d++) {
               mval = moment(mstart)
               mval.subtract('days',d)
+
               if (mval.isValid()) {
-                list.push({ name : mmFormat(mval), label : mmFormat(mval,true)})
+                list.push({ name : mmFormat(mval), label : mmFormat(mval,true, dmark)})
               }
             }
           }
           else {
             if (!qmatch[2]) {
               // list day in each month
+              mm = (qmatch[1] | 0) + '/'+mmatch[2]+'/'+mmatch[3]
+              dmark = {}
+              dmark[mm] = ' (เดือนนี้)'
+
               qmatch[3] = qmatch[3] || mmatch[3]
               mstart = moment('1/' + mmatch[2] + '/' + qmatch[3], 'DD/MM/**BB')
               if (mstart.isValid()) {
 
-                for (var m=0; m<=12; m++) {
+                for (var m=-6+(adj*2); m<=6+(adj*2); m++) {
 
                   mval = moment(mstart)
                   mval.subtract('months',m)
-                  mval.date(Number(qmatch[1]))
+                  mval.date(qmatch[1] | 0)
                   if (mval.isValid()) {
-                    list.push({ name : mmFormat(mval), label : mmFormat(mval,true)})
+                    list.push({ name : mmFormat(mval), label : mmFormat(mval,true, dmark)})
                   }
                 }
               }
@@ -190,14 +199,18 @@ angular.module('modules.utils', [])
             else {
               if (!qmatch[3]) {
                 // list day in each year
+                mm = (qmatch[1] | 0) + '/' + (qmatch[2] | 0) + '/' + mmatch[3]
+                dmark = {}
+                dmark[mm] = ' (ปีนี้)'
+
                 mstart = moment(qmatch[1]+'/'+qmatch[2]+'/'+mmatch[3],'DD/MM/**BB')
                 if (mstart.isValid()) {
-                  for (var y=0; y<10; y++) {
+                  for (var y=-3+adj; y<=6+adj; y++) {
 
                     mval = moment(mstart)
                     mval.subtract('years',y)
                     if (mval.isValid()) {
-                      list.push({ name : mmFormat(mval), label : mmFormat(mval,true)})
+                      list.push({ name : mmFormat(mval), label : mmFormat(mval,true, dmark)})
                     }
 
                   }
@@ -440,14 +453,26 @@ var deepStrip = function (obj, resourceOnly) {
       var e = []
 
       for (var k in obj) {
+        if (k=='meta' || k=='areas') {
+          console.log('before', k,  obj[k])
+        }
         if (!deepStrip(obj[k], resourceOnly)) {
           e.push(k)
         }
+        else if (k=='meta' || k=='areas') {
+          console.log('deepStrip', k, obj[k])
+        }
       }
       if (e.length) {
+        console.log('delete', e)
         while (e.length)
         {
-          delete obj[e.pop()]
+          if (obj.splice) {
+            obj.splice(e.pop(),1)
+          }
+          else {
+            delete obj[e.pop()]
+          }
         }
       }
     }
