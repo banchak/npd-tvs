@@ -48,18 +48,21 @@ angular.module('controllers.legacy-search',['modules.utils'])
       }
 
       $scope.goPathItem = function (name, item, search) {
-        utils.$location.path ('/' + name + '/view/\''+ encodeURIComponent(item._name) )
-        if (!search) {
-          utils.$location.search({})
+
+        utils.$location.path ('/' + name )
+
+        if (search) {
+          utils.$location.search(search)
         }
+        utils.$location.search('bound',item._name)
       }
 
       $scope.urlPathItem = function (name, item, search) {
-        var url =encodeURI('#/' + name + '/view/\'') + encodeURIComponent(item._name)
+        var url 
 
-        if (search) {
-          url += '?' + utils.serialize(utils.$location.search())
-        }
+        url = encodeURI('#/' + name) + '?'
+              + utils.serialize(angular.extend({}, (search || utils.$location.search()), {bound : item._name}))
+
         return url
       }
 

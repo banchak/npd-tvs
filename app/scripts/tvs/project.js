@@ -46,6 +46,7 @@ angular.module('tvs.project', [
           path : function (path, roles) {
             if (!roles.has('OFFICER', 'MANAGER', 'ADMIN', 'STAFF.IT', 'DEVELOPER')) {
 
+              console.log('secure',path,roles)
               if (path.match(/^\/manage$/)) {
                 return
               }

@@ -1,4 +1,9 @@
 
+(function(){
+
+'use strict'
+
+
   var app = angular.module('angularApp');
 
   app.run(['$route', function($route) {
@@ -51,4 +56,5 @@
 
     $route.reload()
   }])
+
 }).call(this);

@@ -290,8 +290,4 @@ angular.module('npd.project', [
         }
   }])
 
-
-
-
-
 }).call(this);

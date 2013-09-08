@@ -24,10 +24,8 @@ angular.module('controllers.legacy-list',['modules.utils'])
         , gone
 
       $scope.$on('$locationChangeStart', function(scope, next, current){
-        
         gone = true
       })
-
 
       $scope.db       = listctrl.db
       $scope.adminView = listctrl.adminView

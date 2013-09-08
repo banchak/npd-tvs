@@ -3,9 +3,9 @@
 
 'use strict'
 
-var app = angular.module('angularApp')
+  var app = angular.module('angularApp')
 
-app.run(['$route', function($route) {
+  app.run(['$route', function($route) {
     app._routeProvider
 
       .when('/', {
@@ -17,7 +17,7 @@ app.run(['$route', function($route) {
       {
         templateUrl : 'views/npd/product-edit.html'
       , controller  : 'productEditCtrl'
-/*      , resolve     : 
+  /*  , resolve     : 
         {
           editctrl 
           : function(Database)
