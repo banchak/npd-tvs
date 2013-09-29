@@ -1,4 +1,5 @@
-  <div class="container-fluid">
+
+  <div class="container-fluid" ng-show="dataReady">
 
         <div ng-include="'views/includes/edit-header.html'"> </div>
         
@@ -7,7 +8,7 @@
               <div class="span4">
                 <label>
                   <span ng-class="!resource._type && 'text-error'">
-                    ชนิด :
+                    ประเภท :
                     <span
                       ng-hide="resource._type" 
                       popover="ห้ามว่าง" popover-trigger="mouseenter" popover-placement="right"
@@ -113,25 +114,16 @@
 
           <div class="container-fluid" ng-show="!__tabIdx"  heading="คู่สัญญา">
               <label>คู่สัญญา :
-                <span>
-                  [ <a href="" 
-                      ng-class="utils.AND(switching.tenant,'label')" 
-                      ng-click="switching.tenant= !switching.tenant">
-                      description</a> ]
-                </span>
-                <span ng-show="resource.meta.tenant_type && !resource.info.approved">
-                  <span ng-show="utils.AND(switching.meta_tenant,tenant_addable())">
+                <span ng-show="resource.info.tenant_type && !resource.info.approved">
+                  <span ng-show="tenant_addable()">
                     <a href="" class="btn btn-small btn-danger" 
                       ng-click="resource$entry.add(tenants())">
                       เพิ่มผู้เช่า</a>
                   </span>
-                  <span ng-show="switching.meta_tenant">
+                  <span>
                     <a href="" class="btn btn-small btn-danger" 
                       ng-click="resource$entry.add(tenant_signers())">
                       เพิ่มผู้ลงนาม</a>
-                  </span>
-                  <span ng-hide="switching.tenant_synced">
-                    <a class="btn btn-small btn-info" href="" ng_click="meta_tenant_render(true)">sync</a>
                   </span>
                 </span>
               </label>
@@ -162,7 +154,7 @@
                       <input type="text" class="input-xlarge" 
                         ng-disabled = "resource.info.approved"
                         ng-model="tenant.name"
-                        typeahead="itm for itm in selfList('Tenant/_name', $viewValue,{_type : resource.meta.tenant_type})"
+                        typeahead="itm for itm in selfList('Tenant/_name', $viewValue,{_type : resource.info.tenant_type})"
                         typeahead-wait-ms="typeaheadWait"
                         />
                         <span class="add-on btn btn-small" 
@@ -237,7 +229,7 @@
                 </div>
               </div>
               
-              <div ng-show="switching.tenant">
+              <div>
                 <textarea rows="5" class="input-xxlarge" 
                   ng-disabled = "resource.info.approved"
                   ng-model="resource.display.tenant" 
@@ -293,14 +285,8 @@
 
           <div class="container-fluid" ng-show="__tabIdx==1" heading="พื้นที่เช่า">
               <label>พื้นที่เช่า :
-                <span>
-                  [ <a href="" ng-class="utils.AND(switching.area,'label')" ng-click="switching.area=!switching.area">description</a> ]
-                </span>
-                <span ng-show="switching.meta_area && !resource.info.approved">
+                <span ng-show="!resource.info.approved">
                   <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(areas())">เพิ่มห้อง</a>
-                </span>
-                <span ng-hide="switching.area_synced">
-                  <a href="" class="btn btn-small btn-info" ng_click="meta_area_render(true)">sync</a>
                 </span>
               </label>
               
@@ -374,7 +360,7 @@
                 </div>
               </div>
               
-              <div ng-show="switching.area">
+              <div>
                 <textarea rows="1.5" class="input-xxlarge" 
                   ng-disabled = "resource.info.approved"
                   ng-model="resource.display.area" 

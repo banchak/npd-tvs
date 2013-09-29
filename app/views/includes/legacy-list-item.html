@@ -14,21 +14,19 @@
 
                     <li ng-hide="adminView.actions">
                         <a 
-                          title="{{ data.info.approved && ('approved by '+data.info.approved) }}"
-                          xng-class="data.info.approved && 'btn-success'"
                           ng-href="#{{ basepath }}/edit/{{ data.$id() }}"
                           >
                           แก้ไข
                         </a>            
                     </li>
 
-                    <li ng-repeat="action in adminView.actions(data)">
+                    <li ng-repeat="action in adminView.actions(data)" ng-class="!(action.url) && 'divider'">
                       <a 
-                        title="{{ action.name + ((action.opr && ('.'+action.opr)) || '') }}"
-                        xng-class="{'btn-inverse' : action.name=='cancel', 'btn-success' : action.name=='edit' && data.info.approved}"
-                        ng-href="#{{basepath}}/{{action.name}}/{{data.$id()}}{{(action.opr && ('?' + utils.serialize({opr: action.opr},true))) || '' }}"
+                        title="{{ action.title || '' }}"
+                        ng-href="{{ (action.url || '').replace('$id',data.$id()) }}"
+                        ng-show="action.url"
                         >
-                        {{action.label || action.name}}
+                        {{ action.label || action.title }}
                       </a>
                     </li>
 
@@ -48,6 +46,11 @@
                     </li>
 
                   </ul>
+            </small>
+            <small ng-show="data._sys.post_errors">
+              <a href class="label label-warning" ng-click="viewErrors(data,data._sys.post_errors)">
+                error
+              </a>
             </small>
           </h3>
         </div>

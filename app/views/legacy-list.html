@@ -56,18 +56,20 @@
               ng-class="ifSingleShow('span12','span'+utils.gScope.thumb_span)" 
               ng-repeat="data in dataList | filter : dataList.searchWithin"
               >
-
+              <div ng-class="$last && ($parent.filteredLength=$index+1) && ''"></div>
               <div class="thumbnail hover-opacity" 
-                ng-class="(data.$temp.state && ('state-' + data.$temp.state)) || data.info.posted">
+                ng-class="(data.$temp.state && ('state-' + data.$temp.state))">
 
                 <div style="height:0; padding-left:20px;">
                   <div style="position:relative; z-index:100;">
 
                     <span class="label-state" ng-class="data.$temp.state" ng-bind="data.$temp.state"></span>
                     <span class="label-state"
-                      title="{{data.info.posted || (data.info.approved && ('approved by ' + data.info.approved))"
-                      ng-class="data.info.posted || (data.info.approved && 'approved')"
-                      >{{ data.info.posted || 'approved' }}</span>
+                      title="{{ data.$temp.postState && (data.postState + ' by ' + data.$temp.poster) }}"
+                      ng-class="data.$temp.postState"
+                      >
+                      {{ data.$temp.postState }}
+                      </span>
 
                     <span ng-hide="ifSingleShow(true, !(showSortField && utils.lookup(data,showSortField)))">
                       <span class="label-sort">
@@ -100,4 +102,5 @@
 <div ng-include="'views/includes/legacy-list-image-viewer.html'"></div>
 <div ng-include="'views/includes/legacy-list-gdrive-viewer.html'"></div>
 <div ng-include="'views/includes/legacy-list-gcalendar-viewer.html'"></div>
+<div ng-include="'views/includes/legacy-list-errors-viewer.html'"></div>
 

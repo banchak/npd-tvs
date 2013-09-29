@@ -21,10 +21,10 @@ var app = angular.module('angularApp');
 app.controller('redirectCtrl',['$routeParams', '$location', function ($routeParams, $location) {
 
   var id    = $routeParams.id
-    , paths  = $location.path().split('/')
+    , url  = $location.url().split('/')
 
-  paths.splice(paths.length-1,0,'view')
-  $location.path(paths.join('/'))
+  url.splice(1,0,'view')
+  $location.url(url.join('/'))
 }])
 
 // add more route from database config

@@ -205,6 +205,11 @@ span.label-state.cancelled {
   background-color : #B22222;
 }
 
+span.label-state.pending {
+  display : inline;
+  background-color : #c09853;
+}
+
 span.label-state.sold {
   display : inline;
   background-color : #B22222;

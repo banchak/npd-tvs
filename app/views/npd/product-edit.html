@@ -1,27 +1,27 @@
-  <div class="container-fluid">
+
+  <div class="container-fluid" ng-show="dataReady">
 
         <div ng-include="'views/includes/edit-header.html'"> </div>
 
         <div class="row-fluid">
           <div class="media">
-            <!-- div class="span4">
-              <label>ประเภท : {{ resource._type }}</label>
-              <select class="input-medium"
-                ng-model  ="resource._type" 
-                ng-options="c.name as c.name for c in db.database.BUILT_IN.productTypes"
-              ></select>
-            </div -->
 
             <div class="pull-right" ng-show="thumbnailLink">
               <img class="media-object" ng-src="{{thumbnailLink}}" />
             </div>
             <div class="media-body">
               <div>
-                <label>ชนิด : </label>
+                <label>ประเภท : </label>
+                <select class="input-medium"
+                  ng-disabled="!unlockEdit" 
+                  ng-model  ="resource._type" 
+                  ng-options="c.name as c.name for c in db.database.BUILT_IN.productTypes"
+                  ></select>
+                <label>หมวด : </label>
                 <input type="text" class="input-medium"
-                  ng-disabled="resource.info.approved"
-                  ng-model="resource._type"
-                  typeahead="itm for itm in selfList('_type',$viewValue)"
+                  ng-disabled="!unlockEdit || resource.info.approved"
+                  ng-model="resource.info.category" 
+                  typeahead="itm for itm in selfList('info.category',$viewValue, {_type : resource._type})"
                   typeahead-wait-ms="typeaheadWait"
                   />
               </div>
@@ -33,7 +33,7 @@
                   </span>
                 </label>
                 <input type="text" class="input-medium" 
-                  ng-disabled="!unlockEdit" 
+                  ng-disabled="!unlockEdit"
                   ng-model="resource._name" />
               </div>
             </div>
@@ -47,7 +47,6 @@
           </div>
         </div>
 
-
         <div class="row-fluid"> <!-- body -->
 
           <ul class="nav nav-tabs">
@@ -56,7 +55,8 @@
                 คุณสมบัติ</a></li>
             <li 
               ng-class="__tabIdx==1 && 'active'" 
-              ng-show="authorizeData.user.roles.has('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
+              ng-show="!limitEdit && (!resource._id || authorizeData.user.roles.has('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')) "
+              >
               <a href ng-click="__tabIdx=1">
                 ซื้อ</a></li>
             <li 
@@ -79,7 +79,9 @@
 
                 <div class="row-fluid">
                     <label>รายละเอียด : </label>
-                    <textarea rows=2 class="input-xxlarge" ng-model="resource.info.detail"></textarea>
+                    <textarea rows=2 class="input-xxlarge" 
+                      ng-model="resource.info.detail"
+                      ></textarea>
                 </div>
 
                 <div class="row-fluid">
@@ -115,9 +117,10 @@
                 <div class="row-fluid">
                   <div class="span4">
                     <label>น้ำหนักรวม : </label>
-                    <input type="text" class="input-medium"
+                    <input type="text" class="input-small"
                       ng-disabled="resource.info.approved"
                       ng-model="resource.info.weight" 
+                      numeral="'0[.]0'"
                       />
                   </div>
 
@@ -165,7 +168,7 @@
                     <div class="container-fluid">
                       <div class="row-fluid">
                         <div class="span4">
-                          <label>ยี่ห้อ : </label>
+                          <label>brand : </label>
                           <input type="text" class="input-medium"
                             ng-model="resource.info.brand" 
                             typeahead="itm for itm in selfList('info.brand',$viewValue)"
@@ -224,6 +227,7 @@
                             <input type="text" class="input-small"
                               ng-disabled="resource.info.approved"
                               ng-model="metal().gold_weight" 
+                              numeral="'0[.]0'"
                               />
                           </div>
 
@@ -241,8 +245,9 @@
                         <div class="row-fluid">
                           <div class="input-prepend span4">
                             <span class="add-on">เบอร์แหวน</span>
-                            <input type="text" class="input-medium"
+                            <input type="text" class="input-small"
                               ng-model="metal().ring_size" 
+                              numeral="'0[.]0'"
                               />
                           </div>
 
@@ -301,7 +306,7 @@
                                 <input type="text" class="input-small" 
                                   ng-disabled="resource.info.approved"
                                   ng-model="gem.weight" 
-                                  numeral="'money'" />
+                                  numeral="'0[.]0'" />
                               </div>
 
                               <div class="input-prepend">
@@ -330,7 +335,7 @@
                         </label>
                         <div class="row-fluid">
                           <div class="input-prepend span4">
-                            <span class="add-on">ยี่ห้อ</span>
+                            <span class="add-on">brand</span>
                             <input type="text" class="input-medium"
                               ng-model="resource.info.brand" 
                               typeahead="itm for itm in selfList('info.brand',$viewValue)"
@@ -412,35 +417,68 @@
             
             <div ng-show="__tabIdx==1" heading="ซื้อ">
             
-                <div>
-                  <label>วันที่ซื้อ : </label>
-                  <input type="text" class="input-medium" 
-                    ng-disabled="resource.info.approved"
-                    ng-model="resource.info.buying.date" 
-                    moment="'DD/MM/**BB'"
-                    typeahead="d.name as (d.label || d.name) 
-                      for d in utils.dateListAhead($viewValue) | filter:$viewValue"
-                    />
-                </div>
+                <div class="row-fluid">
 
-                <div>
-                  <label>เงื่อนไขซื้อ : </label>
-                  <input type="text" class="input-medium" 
-                    ng-disabled="resource.info.approved"
-                    ng-model="resource.info.buying.cond"
-                    typeahead="itm for itm in selfList('info.buying.cond',$viewValue)"
-                    typeahead-wait-ms="typeaheadWait"
-                    />
+                  <div class="span4">
+                    <label>วันที่ซื้อ : </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="buying().date" 
+                      moment="'DD/MM/**BB'"
+                      typeahead="d.name as (d.label || d.name) 
+                        for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                      />
+                  </div>
+
+                  <div class="span4">
+                    <label>เงื่อนไขซื้อ : </label>
+                    <input type="text" class="input-medium" 
+                      ng-disabled="resource.info.approved"
+                      ng-model="buying().cond"
+                      typeahead="itm for itm in selfList('info.buying.cond',$viewValue)"
+                      typeahead-wait-ms="typeaheadWait"
+                      />
+                  </div>
                 </div>
 
                 <div>
                   <label>ซื้อจาก : </label>
                   <input type="text" class="input-xlarge" 
                     ng-disabled="resource.info.approved"
-                    ng-model="resource.info.buying.person"
+                    ng-model="buying().person"
                     typeahead="itm for itm in selfList('info.buying.person',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
                     />
+                </div>
+
+                <div class="row-fluid">
+
+                  <label>
+                    มาจาก : 
+                    <span ng-hide="resource.info.approved">
+                      <a href="" class="btn btn-small btn-danger" 
+                        ng-click="resource$entry.add(refs())">
+                        เพิ่ม
+                      </a>
+                    </span>
+                  </label>
+                  <div class="alert alert-success" ng-show="refs().length">
+                    <div ng-repeat="ref in refs()">
+                      <div class="pull-right" ng-hide="resource.info.approved">
+                        [ <a tabindex="-1" class="btn btn-small btn-warning" href 
+                          ng-click="resource$entry.remove(refs(),$index)"
+                          >
+                          ลบ
+                          </a> ]
+                      </div>
+                      <div class="input-prepend">
+                        <span class="add-on">รหัส</span>
+                        <input type="text" class="input-medium" 
+                          ng-model="ref.name" />
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
                 <div class="row-fluid">
@@ -449,7 +487,7 @@
                     <label>ต้นทุนซื้อ : </label>
                     <input type="text" class="input-medium" 
                       ng-disabled="resource.info.approved"
-                      ng-model="resource.info.buying.cost"
+                      ng-model="buying().cost"
                       numeral="'money'"
                       />
                   </div>
@@ -610,7 +648,9 @@
                   <label class="add-on">
                     คชจ.ปรับปรุง: 
                     <span ng-hide="resource.info.approved">
-                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(repairings())">เพิ่ม</a>
+                      <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(repairings())">
+                        เพิ่ม
+                      </a>
                     </span>
                   </label>
                   <input type="text" class="input-medium" disabled
@@ -685,43 +725,94 @@
 
             <div ng-show="__tabIdx==3" heading="ที่เก็บ/ยืม/ขาย">
 
-                <div>
-                  <label>ที่เก็บ : </label>
+                <div ng-hide="limitEdit && !limitEdit.selling">
+                  <label>
+                    ขายให้ : 
+                    <span ng-show="taking().person && unlockEdit">
+                      <a href class="btn btn-small" ng-click="sellFromTaking()">ผู้ยืม</a>
+                    </span>
+                  </label>
                   <input type="text" class="input-xlarge" 
                     ng-disabled="!unlockEdit"
-                    ng-model="keeping().person"
-                    typeahead="itm for itm in selfList('info.keeping.person',$viewValue)"
+                    ng-model="selling().person"
+                    typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
                     />
                 </div>
-                
-                <div class="row-fluid" ng-show="utils.notEmpty(keeping())">
-                  <div class="alert alert-success">
+
+                <div class="row-fluid"  
+                  ng-show="utils.notEmpty(selling()) && !(limitEdit && !limitEdit.selling)"
+                  >
+                  <div class="alert alert-error">
+
                     <div class="input-prepend">
-                      <span class="add-on">วันที่เก็บ</span>
+                      <span class="add-on">วันที่ขาย</span>
                       <input type="text" class="input-medium" 
                         ng-disabled="!unlockEdit"
-                        ng-model="keeping().date" 
+                        ng-model="selling().date" 
                         moment="'DD/MM/**BB'"
-                        typeahead="d.name as (d.label || d.name) 
-                          for d in utils.dateListAhead($viewValue) | filter:$viewValue"
                         />
                     </div>
+
+                    <div class="input-prepend">
+                      <span class="add-on">เอกสาร</span>
+                      <input type="text" class="input-medium" 
+                        ng-disabled="!unlockEdit"
+                        ng-model="selling().voucher" 
+                        />
+                    </div>
+
+                    <div class="input-prepend">
+                      <span class="add-on">ขายที่</span>
+                      <input type="text" class="input-medium" 
+                        ng-disabled="!unlockEdit"
+                        ng-model="selling().site" 
+                        typeahead="itm for itm in selfList('info.selling.site',$viewValue)"
+                        typeahead-wait-ms="typeaheadWait"
+                        />
+                    </div>
+
+                    <span class="control-group " ng-class="prohibitPrice(selling()) && 'error'">
+                      <div class="input-prepend">
+                        <span class="add-on">ราคาขาย</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="selling().price"
+                          numeral="'money'"
+                          />
+                      </div>
+
+                      <span class="help-inline"
+                        ng-show="prohibitPrice(selling())">
+                        *ผิด*
+                      </span>
+                    </span>
+
                   </div>
                 </div>
 
-                <div>
-                  <label>ยืมโดย : </label>
+                <div ng-hide="limitEdit && !limitEdit.taking">
+                  <label>
+                    ยืมโดย : 
+                    <span ng-show="getState()=='taken'">
+                      <a href class="btn btn-small" ng-click="_allowChangeTaking=!_allowChangeTaking">
+                      ปรับราคายืม
+                      </a>
+                    </span>
+                  </label>
                   <input type="text" class="input-xlarge" 
                     ng-disabled="!unlockEdit"
                     ng-model="taking().person"
-                    typeahead="itm for itm in selfList(selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
+                    typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
                     />
                 </div>
 
-                <div class="row-fluid" ng-show="utils.notEmpty(taking())">
+                <div class="row-fluid" 
+                  ng-show="utils.notEmpty(taking()) && !(limitEdit && !limitEdit.taking)"
+                  >
                   <div class="alert alert-info">
+
                     <div class="input-prepend">
                       <span class="add-on">วันที่ยืม</span>
                       <input type="text" class="input-medium" 
@@ -734,46 +825,193 @@
                     </div>
 
                     <div class="input-prepend">
-                      <span class="add-on">ราคายืม</span>
+                      <span class="add-on">เอกสาร</span>
                       <input type="text" class="input-medium" 
                         ng-disabled="!unlockEdit"
-                        ng-model="taking().price"
-                        numeral="'money'"
+                        ng-model="taking().voucher" 
                         />
                     </div>
 
-                    <div>
-                      <textarea rows="1" class="input-xxlarge"  placeholder="หมายเหตุ"
+                    <div class="input-prepend">
+                      <span class="add-on">ยืมที่</span>
+                      <input type="text" class="input-medium" 
                         ng-disabled="!unlockEdit"
-                        ng-model="taking().remark"
-                      ></textarea>
-
+                        ng-model="taking().site" 
+                        typeahead="itm for itm in selfList('info.taking.site',$viewValue)"
+                        typeahead-wait-ms="typeaheadWait"
+                        />
                     </div>
+
+                    <span class="control-group " ng-class="prohibitPrice(taking()) && 'error'">
+
+                      <form style="margin:0;padding:0;display:inline;" 
+                        ng-disabled="!unlockEdit && !_allowChangeTaking"
+                        ng-submit="takingMsgChanged(oldTakingMsg) && storeTakingMsg(oldTakingMsg, true)"
+                        >
+                        <input type="submit" tabindex="-1" 
+                          style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+
+
+                        <div class="input-prepend"  
+                          ng-class="_allowChangeTaking && takingMsgChanged(oldTakingMsg) && 'input-append'"
+                          >
+                          <span class="add-on">ราคายืม</span>
+                          <input type="text" class="input-medium" 
+                            ng-disabled="!unlockEdit && !_allowChangeTaking"
+                            ng-model="taking().price"
+                            numeral="'money'"
+                            />
+                          <span class="add-on btn btn-small btn-info" 
+                            title="{{ oldTakingMsg }}"
+                            ng-show="_allowChangeTaking && takingMsgChanged(oldTakingMsg)"
+                            ng-click="storeTakingMsg(oldTakingMsg)">
+                            &crarr;
+                          </span>
+                        </div>
+                      </form>
+
+                      <span class="help-inline"
+                        ng-show="prohibitPrice(taking())">
+                        *ผิด*
+                      </span>
+                    </span>
+
+                    <div class="input-prepend">
+                      <span class="add-on">หมายเหตุ</span>
+                      <input type="text" class="input-large" 
+                        ng-disabled="!unlockEdit && !_allowChangeTaking"
+                        ng-model="taking().remark"
+                        />
+                    </div>
+
+
+                    <div>
+                      <textarea rows="{{ utils.textLines(custom().memo).length}}" class="input-xxlarge"  placeholder="memo"
+                        ng-disabled="!unlockEdit && !_allowChangeTaking"
+                        ng-model="taking().memo"
+                      ></textarea>
+                    </div>
+
                   </div>
                 </div>
-                
-                <div>
-                  <label>
-                    ขายให้ : 
-                    <span ng-show="taking().person">
-                      <a href class="btn btn-small" ng-click="sellFromTaking()">ผู้ยืม</a>
-                    </span>
-                  </label>
+
+                <label ng-show="tooks().length">
+                  ประวัติยืม :
+                  <span ng-hide="!unlockEdit">
+                    <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(tooks())">
+                      เพิ่ม
+                    </a>
+                  </span>
+                </label>
+                <div class="alert alert-info" ng-show="tooks().length">
+                  <div ng-repeat="took in tooks()">
+                    <hr ng-show="$index" />
+                    <div class="pull-right" ng-hide="!unlockEdit || resource.info.approved">
+                      [ <a tabindex="-1" class="btn btn-small btn-warning" href 
+                        ng-click="resource$entry.remove(tooks(),$index)"
+                        >
+                        ลบ
+                        </a> ]
+                    </div>
+                    <div>
+                      <div class="input-prepend">
+                        <span class="add-on">ยืมโดย</span>
+                        <input type="text" class="input-xlarge" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="took.person"
+                          typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
+                          typeahead-wait-ms="typeaheadWait"
+                          />
+                      </div>
+                    </div>
+                    <div>
+                      <div class="input-prepend">
+                        <span class="add-on">วันที่ยืม</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="took.date" 
+                          moment="'DD/MM/**BB'"
+                          typeahead="d.name as (d.label || d.name) 
+                            for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                          />
+                      </div>
+                      <div class="input-prepend">
+                        <span class="add-on">เอกสาร</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="took.voucher" 
+                          />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">ยืมที่</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="took.site" 
+                          typeahead="itm for itm in selfList('info.taking.site',$viewValue)"
+                          typeahead-wait-ms="typeaheadWait"
+                          />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">วันที่คืน</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="took.until" 
+                          moment="'DD/MM/**BB'"
+                          typeahead="d.name as (d.label || d.name) 
+                            for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                          />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">ราคายืม</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="took.price"
+                          numeral="'money'"
+                          />
+                      </div>
+
+                      <div class="input-prepend">
+                        <span class="add-on">หมายเหตุ</span>
+                        <input type="text" class="input-large" 
+                          ng-disabled="!unlockEdit && !_allowChangeTaking && !(limitEdit.keeping && took.until==keeping().date)"
+                          ng-model="took.remark"
+                          />
+                      </div>
+                    </div>
+                    <div>
+                      <textarea rows="{{ utils.textLines(custom().memo).length}}" class="input-xxlarge"  placeholder="memo"
+                        ng-disabled="!unlockEdit && !_allowChangeTaking && !(limitEdit.keeping && took.until==keeping().date)"
+                        ng-model="took.memo"
+                      ></textarea>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div ng-hide="limitEdit && !limitEdit.keeping">
+                  <label>ที่เก็บ : </label>
                   <input type="text" class="input-xlarge" 
-                    ng-disabled="!unlockEdit"
-                    ng-model="selling().person"
-                    typeahead="itm for itm in selfList(selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
+                    ng-disabled="!unlockEdit && !limitEdit.keeping"
+                    ng-model="keeping().person"
+                    typeahead="itm for itm in selfList('info.keeping.person',$viewValue)"
                     typeahead-wait-ms="typeaheadWait"
                     />
                 </div>
+                
+                <div class="row-fluid" 
+                  ng-show="utils.notEmpty(keeping()) && !(limitEdit && !limitEdit.keeping)"
+                  >
+                  <div class="alert alert-success">
 
-                <div class="row-fluid"  ng-show="utils.notEmpty(selling())">
-                  <div class="alert alert-error">
                     <div class="input-prepend">
-                      <span class="add-on">วันที่ขาย</span>
+                      <span class="add-on">วันที่เก็บ</span>
                       <input type="text" class="input-medium" 
-                        ng-disabled="!unlockEdit"
-                        ng-model="selling().date" 
+                        ng-disabled="!unlockEdit && !limitEdit.keeping"
+                        ng-model="keeping().date" 
+                        ng-change="limitEdit.keeping && (tooks()[tooks().length-1].until = keeping().date)"
                         moment="'DD/MM/**BB'"
                         typeahead="d.name as (d.label || d.name) 
                           for d in utils.dateListAhead($viewValue) | filter:$viewValue"
@@ -781,22 +1019,71 @@
                     </div>
 
                     <div class="input-prepend">
-                      <span class="add-on">ราคาขาย</span>
+                      <span class="add-on">เอกสาร</span>
                       <input type="text" class="input-medium" 
                         ng-disabled="!unlockEdit"
-                        ng-model="selling().price"
-                        numeral="'money'"
+                        ng-model="keeping().voucher" 
                         />
+                    </div>
+
+
+                  </div>
+                </div>
+
+                <label ng-show="kepts().length">
+                  ประวัติเก็บ :
+                  <span ng-hide="!unlockEdit">
+                    <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(kepts())">
+                      เพิ่ม
+                    </a>
+                  </span>
+                </label>
+                <div class="alert alert-info" ng-show="kepts().length">
+                  <div ng-repeat="kept in kepts()">
+                    <hr ng-show="$index" />
+                    <div class="pull-right" ng-hide="!unlockEdit || resource.info.approved">
+                      [ <a tabindex="-1" class="btn btn-small btn-warning" href 
+                        ng-click="resource$entry.remove(kepts(),$index)"
+                        >
+                        ลบ
+                        </a> ]
+                    </div>
+                    <div>
+                      <div class="input-prepend">
+                        <span class="add-on">เก็บที่</span>
+                        <input type="text" class="input-xlarge" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="kept.person"
+                          typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id',$viewValue)"
+                          typeahead-wait-ms="typeaheadWait"
+                          />
+                      </div>
+                    </div>
+                    <div>
+                      <div class="input-prepend">
+                        <span class="add-on">วันที่เก็บ</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="kept.date" 
+                          moment="'DD/MM/**BB'"
+                          typeahead="d.name as (d.label || d.name) 
+                            for d in utils.dateListAhead($viewValue) | filter:$viewValue"
+                          />
+                      </div>
+                      <div class="input-prepend">
+                        <span class="add-on">เอกสาร</span>
+                        <input type="text" class="input-medium" 
+                          ng-disabled="!unlockEdit"
+                          ng-model="kept.voucher" 
+                          />
+                      </div>
                     </div>
                   </div>
                 </div>
 
             </div>
-
         </div>
 
-
         <div ng-include="'views/includes/edit-footer.html'"> </div>
-
 
   </div>

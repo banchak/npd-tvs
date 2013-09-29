@@ -1,4 +1,4 @@
-  
+
     <div class="editnav-top" >
     
       <div class="form-inline" ng-show="dataList && dataList.length>1">
@@ -18,16 +18,22 @@
               ng-options="c.val as (c.dsp+' : แถว ') for c in [{val:'12',dsp:'1'},{val:'6',dsp:'2'},{val:'4',dsp:'3'},{val:'3',dsp:'4'}]"
             ></select>
           </span>
-          <input type="text" name="search-within" class="input-medium" ng-model="dataList.searchWithin" placeholder="ค้นภายในเนื้อหา" />
+          <input type="text" name="search-within" class="input-medium" 
+            ng-model="dataList.searchWithin" 
+            placeholder="ค้นเท่าที่แสดง" 
+            />
       </div>
 
       <div class="row-fluid text-right" style="padding:4px 0;" ng-show="!dataList || dataList.length!=1">
         <span ng-hide="promiseBusy">
+          <span ng-show="dataList.length && (filteredLength != dataList.length)">
+            เห็น <strong>{{ filteredLength }}</strong> จาก
+          </span>
           <span>
             แสดง <strong>{{ dataList.length }}</strong>
           </span>
           <span ng-show="dataCount && dataCount != dataList.length">
-            จาก <strong>{{ dataCount }}</strong>
+            จาก ทั้งหมด <strong>{{ dataCount }}</strong>
           </span>
           <span>รายการ</span>
           <button class="btn btn-small" 

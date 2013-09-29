@@ -14,6 +14,11 @@
         controller: 'mainCtrl'
       })
 
+      .when('/manage', {
+        templateUrl: 'views/tvs/manage.html',
+        //controller: ''
+      })
+
       .when('/contracts/print/:id', 
       {
         templateUrl : 'views/tvs/contract-print.html'

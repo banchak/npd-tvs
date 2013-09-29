@@ -65,6 +65,7 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.util
           return new this.dataAccess(schema)
         }
 
+
       database.legacy.prototype.rawScopeQuery 
       = function(keyword, scopeFields) 
         {
@@ -211,10 +212,22 @@ angular.module('modules.legacy-database', ['mongolabResourceHttp', 'modules.util
               })
 
               angular.forEach(this.descriptions, function(k){
-                k = k.name || k
 
-                if (fields.indexOf(k)==-1) 
-                  fields.push(k)
+                if (k.searchIn !== undefined) {
+                  if (k.searchIn) {
+                    angular.forEach(k.searchIn, function(n){
+                      if (fields.indexOf(n)==-1) 
+                        fields.push(n)
+                    })
+                  }
+                }
+                else {
+
+                  k = k.name || k
+
+                  if (fields.indexOf(k)==-1) 
+                    fields.push(k)
+                }
               })
 
               this.scopeFields = fields

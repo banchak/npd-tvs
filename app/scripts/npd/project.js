@@ -20,11 +20,33 @@ angular.module('npd.project', [
 
       this.appMenu  = {
           title         : 'Npd3'
-        , version       : '0.6.1.0 2013-9-8 jsat66@gmail.com'
+        , version       : '0.7.0.0 2013-9-29 jsat66@gmail.com'
         , menus         : [
             'Product', 'Person', 'Voucher'
           ]
         }
+
+      function _action (ctrlname) {
+
+        return function (cmd, lbl, opr, params) {
+          var u
+
+          u = '#/'+ctrlname
+          if (cmd) {
+            u += '/'+cmd
+          }
+
+          if (opr) {
+            params = angular.extend({},params,{opr : opr})
+          }
+
+          if (params) {
+            u += '?' + utils.serialize(params,!!opr)
+          }
+
+          return { url : u, label : lbl, title : opr }
+        }
+      }
 
       this.view = {
 
@@ -34,6 +56,7 @@ angular.module('npd.project', [
           }
 
         , listctrl : function (listctrl, ctrl) {
+            var _act = _action(ctrl.name)
 
             listctrl.gdriveCtrlBase = 'legacyGCalendarListCtrl'
 
@@ -41,6 +64,7 @@ angular.module('npd.project', [
 
               listctrl.gcalendarCtrlBase = 'legacyImageListCtrl'
             }
+
 
             //listctrl.adminView = true
             if (ctrl.name == 'vouchers' || ctrl.name == 'persons') {
@@ -52,7 +76,7 @@ angular.module('npd.project', [
                       if (roles) {
                         scope.adminView = roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')
 
-                        if (scope.adminView && ctrl.name=='vouchers') {
+                        if (scope.adminView && ctrl.name=='persons') {
                           scope.adminView = {
                             actions : function (data) {
                               var temp = utils.temp('actions')
@@ -61,22 +85,59 @@ angular.module('npd.project', [
                               if (actions) {
                                 return actions
                               }
+                              actions = []
+                              actions.push(_act('edit/$id', 'แก้ไข'))
+                              actions.push(_act('edit/$id', 'เพิ่ม(ตามนี้)','ditto'))
+                              actions.push({})
+                              actions.push(_action('products')(null, 'สินค้า ที่เกี่ยวข้อง',null, {scopes : JSON.stringify(['\''+data._name])}))
+                              actions.push(_action('vouchers')(null, 'เอกสาร ที่เกี่ยวข้อง',null, {scopes : JSON.stringify(['\''+data._name])}))
+                              temp.set(data,actions)
+                              return actions
+                            }
+                          }                          
+                        }
+
+                        if (scope.adminView && ctrl.name=='vouchers') {
+                          scope.adminView = {
+                            actions : function (data) {
+                              var temp = utils.temp('actions')
+                                , postState = utils.lookup(data,'_sys.post_state')
+                                , approved = utils.lookup(data,'info.approved')
+                                , actions = temp.get(data)
+
+                              if (actions) {
+                                return actions
+                              }
 
                               actions = []
-                              if (data.info.posted) {
-                                actions.push({ name : 'edit', label : 'คืนรายการ', opr : 'unpost'})
+
+                              if (postState) {
+                                actions.push(_act('edit/$id', 'เพิ่ม(ตามนี้)','ditto'))
+                                actions.push(_act('edit/$id','คืนรายการ','unpost'))
+                                if (postState=='pending')
+                                  actions.push(_act('edit/$id', 'ผ่านรายการ(ต่อ)', 'post'))
                               }
                               else {
-                                actions.push({ name : 'edit', label : 'แก้ไข'})
-                                if (data.info.approved) {
-                                  actions.push({ name : 'edit', label : 'ผ่านรายการ', opr : 'post'})
+                                actions.push(_act('edit/$id', 'แก้ไข'))
+                                actions.push(_act('edit/$id', 'เพิ่ม(ตามนี้)','ditto'))
+                                if (approved) {
+                                  actions.push(_act('edit/$id', 'ผ่านรายการ', 'post'))
                                 }
                                 else {
-                                  actions.push({ name : 'edit', label : 'ยกเลิก', opr : 'cancel'})
+                                  actions.push(_act('edit/$id', 'ยกเลิก', 'cancel'))
                                 }
                               }                              
-                              if (data.info.posted != 'cancelled') {
-                                actions.push({ name : 'print', label : 'พิมพ์'})
+                              if (postState != 'cancelled') {
+                                actions.push({})
+                                actions.push(_act('print/$id', 'พิมพ์'))
+                                if (postState == 'posted') {
+                                  actions.push(_action('products')(
+                                    null, 
+                                    'สินค้า ที่เกี่ยวข้อง',
+                                    null, 
+                                    {scopes : JSON.stringify(['\''+data._name])}))
+                                }
+
                               }
                               temp.set(data,actions)
                               return actions
@@ -84,6 +145,7 @@ angular.module('npd.project', [
                           }
                         }
                       }
+                    
                   })
                 }
             }            
@@ -97,6 +159,40 @@ angular.module('npd.project', [
 
                     if (roles) {
                       scope.adminView = roles.has('OFFICER', 'STAFF.IT', 'MANAGER', 'ADMIN', 'DEVELOPER')
+
+                      if (scope.adminView) {
+                        scope.adminView = {
+                          actions : function (data) {
+                            var temp = utils.temp('actions')
+                              , actions = temp.get(data)
+
+                            if (actions) {
+                              return actions
+                            }
+                            actions = []
+                            actions.push(_act('edit/$id', 'แก้ไข'))
+                            actions.push(_act('edit/$id', 'เพิ่ม(ตามนี้)','ditto'))
+                            if (!utils.lookup(data,'info.selling') && utils.lookup(data,'info.taking')) {
+
+                              if (roles.has('MANAGER', 'ADMIN'))
+                                actions.push(_act('edit/$id', 'ปรับราคายืม','taking-edit'))
+                              
+                              actions.push(_act('edit/$id', 'รับคืนของยืม','getting'))
+                            } 
+                            if (utils.lookup(data,'info.selling')) {
+                              actions.push(_act('edit/$id', 'รับซื้อคืน','buying-back'))
+                            }
+                            actions.push({})
+                            actions.push(_action('vouchers')(
+                              null, 
+                              'เอกสาร ที่เกี่ยวข้อง',
+                              null, 
+                              {scopes : JSON.stringify(['\''+data._name])}))
+                            temp.set(data,actions)
+                            return actions
+                          }
+                        }                          
+                      }
                     }
                 })
 
@@ -104,191 +200,17 @@ angular.module('npd.project', [
                 angular.forEach(scope.dataList, function(data) {
                   var state = utils.temp('state')
 
-                  if (data.info.selling) {
+                  if (utils.lookup(data,'info.selling')) {
                     state.set(data,'sold')
                   }
-                  else if (data.info.taking && data.info.taking.person) {
+                  else if (utils.lookup(data,'info.taking.person')) {
                     state.set(data, 'taken')
                   }
-                  else if (data.info.keeping) {
-                    state.set(data, 'kept')
-                  }
+
                 })
+                  
               }
 
-              listctrl.singleShowFields = function (data) {
-
-                var item
-                  , showFields = utils.temp('singleShowFields')
-
-                if (!showFields.get(data)) {
-
-                  showFields.set(data, [])
-
-                  item = { label : 'สถานะ' }
-  
-                  if (data.info.selling) {
-                    item.value      = 'sold'
-                    item.viewClass  = 'label label-important'
-                  }
-                  else if (data.info.taking && data.info.taking.person) {
-                    item.value      = (data.info.taking.person)
-                    item.viewClass  = 'label label-info'
-                  }
-                  else if (data.info.keeping) {
-                    item.value      = data.info.keeping.person || ' stock '
-                    item.viewClass  = 'label label-success'
-                  }
-
-                  if (item.value) {
-                    showFields.get(data).push(item)
-                  }
-
-                  if (data.info.condition) {
-                    showFields.get(data).push({ label : 'สภาพ', value : data.info.condition } )
-                  }
-
-                  if (data.info.weight) {
-                    showFields.get(data).push({ label : 'น้ำหนัก', value : data.info.weight } )
-                  }
- 
-                  if (data.info.gold_weight) {
-                    showFields.get(data).push({ label : 'นน.ทอง', value : data.info.gold_weight } )
-                  }
-
-
-                  $rootScope.authorize().then(function () {
-
-                    if (utils.lookup($rootScope,'authorizeData.user')) {
-
-                      var roles = $rootScope.authorizeData.user.roles
-                        , showFields = utils.temp('singleShowFields')
-
-                      if (roles && roles.has('STAFF', 'MANAGER', 'ADMIN')) {
-
-                        if (data.info.target_price || data.info.taking_price || data.info.lowest_price) {
-
-                          item = { label : 'ราคาตั้งขาย' }
-
-                          if (data.info.target_price) {
-                            item.value = data.info.target_price
-                          }
-
-                          if (data.info.taking_price || data.info.lowest_price) {
-                            item.subfields = []
-
-                            if (data.info.taking_price) {
-                              item.subfields.push({ label : 'ราคาตั้งยืม', value : data.info.taking_price } )
-                            }
-
-                            if (data.info.lowest_price) {
-
-                              item.subfields.push({ label : 'ราคาประเมิน', value : data.info.lowest_price } )
-                            }
-                          }
-                          showFields.get(data).push(item)
-                        }
-                      }
-
-                      if (roles && roles.has('OFFICER', 'MANAGER', 'ADMIN')) {
-
-                        if (data.info.selling) {
-
-                          item = { label : 'ขายให้', defClass : 'sold'  }
-
-                          if (data.info.selling.person) {
-                            item.value = data.info.selling.person
-                          }
-
-                          if (data.info.selling.date || data.info.selling.price || data.info.selling.site) {
-                            item.subfields = []
-
-                            if (data.info.selling.site) {
-                              item.subfields.push({ label : 'ขายโดย', value : data.info.selling.site})
-                            }
-
-                            if (data.info.selling.date) {
-                              item.subfields.push({ label : 'วันที่ขาย', value : data.info.selling.date})
-                            }
-
-                            if (data.info.selling.price) {
-                              item.subfields.push({ label : 'ราคาขาย', value : data.info.selling.price})
-                            }
-                          }
-
-                          showFields.get(data).push(item)
-                        }
-
-                        if (data.info.taking && data.info.taking.person) {
-                          item = { label : 'ยืมโดย', defClass : 'taken' }
-
-                          if (data.info.taking.person) {
-                            item.value = data.info.taking.person
-                          }
-
-                          if (data.info.taking.date || data.info.taking.price) {
-                            item.subfields = []
-
-                            if (data.info.taking.date) {
-                              item.subfields.push({ label : 'วันที่ยืม', value : data.info.taking.date})
-                            }
-
-                            if (data.info.taking.price) {
-                              item.subfields.push({ label : 'ราคายืม', value : data.info.taking.price})
-                            }
-                          }
-                          showFields.get(data).push(item)
-                        }
-                      }
-
-                      if (roles && roles.has('ADMIN')) {
-
-                        if (data.info.memo || data.info.buying) {
-                          item = { label : 'ประวัติ' }
-                          item.subfields = []
-                          if (data.info.cost) {
-                            var netcost = data.info.cost
-                            if (data.info.buying && data.info.buying.provider_cost) {
-                              netcost += data.info.buying.provider_cost
-                            }
-
-                            item.subfields.push ({ label : 'ทุนร้านสุทธิ', value :  netcost})
-                          }
-                          if (data.info.buying) {
-                            if (data.info.buying.cost) {
-                              item.subfields.push ({ label : 'ทุนซื้อ', value :  data.info.buying.cost})
-                            }
-                            if (data.info.buying.provider_cost) {
-                              item.subfields.push ({ label : 'คชจ.ปรับปรุง', value :  data.info.buying.provider_cost})
-                            }
-                            if (data.info.buying.date) {
-                              item.subfields.push ({ label : 'วันที่ซื้อ', value : data.info.buying.date})
-                            }
-                            if (data.info.buying.cond) {
-                              item.subfields.push ({ label : 'เงื่อนไขซื้อ', value : data.info.buying.cond})
-                            }
-                            if (data.info.buying.person) {
-                              item.subfields.push ({ label : 'ซื้อจาก', value : data.info.buying.person})
-                            }
-                          }
-                          if (data.info.memo) {
-                            item.subfields.push ({ label : 'หมายเหตุ', value : data.info.memo})
-                          }
-                          showFields.get(data).push(item)
-                        }
-                      }
-
-                      if (roles && roles.has('STAFF.IT', 'DEVELOPER')) {
-                        item = { label : 'developer'}
-                        item.subfields = [{ label : 'raw data', value : JSON.stringify(data,undefined,2) }]
-                        showFields.get(data).push(item)
-                      }
-                    }
-                  })
-                }
-
-                return showFields.get(data)
-              }
             }
           }
 

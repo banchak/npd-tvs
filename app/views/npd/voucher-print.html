@@ -14,11 +14,11 @@
             ng-show="items().length && (printForm = printForm || 'default')">
             <a href ng-click="printForm='default'">{{resource._type}}</a>
             </li>
-          <li
+          <!-- li
             ng-class="printForm=='untaken' && 'active'" 
             ng-show="selectedItems().length &&  (printForm = printForm || 'untaken')">
             <a href ng-click="printForm='untaken'">ตัดยืม</a>
-            </li>
+            </li -->
           <li
             ng-class="printForm=='taken' && 'active'" 
             ng-show="unselectedItems().length &&  (printForm = printForm || 'taken')">

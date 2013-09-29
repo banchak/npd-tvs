@@ -67,6 +67,7 @@ angular.module('controllers.legacy-list',['modules.utils'])
 
       // default scope from routeParams.find
       if (legacyListDI.$routeParams.bound) {
+        // http://stackoverflow.com/questions/16630912/angular-js-route-doesnt-match-component-with-2f-encoded
         $scope.bound = decodeURIComponent(legacyListDI.$routeParams.bound)
       }
 
@@ -86,6 +87,7 @@ angular.module('controllers.legacy-list',['modules.utils'])
       $scope.categories = angular.copy(listctrl.categories || listctrl.db.categories || {})
 
       if ($scope.sort.name && !$scope.sort.name.match(/_name|_id/)) {
+
         $scope.showSortField = $scope.sort.name
         angular.forEach($scope.categories, function (cat) {
           if (cat.name == $scope.sort.name) {
@@ -99,15 +101,6 @@ angular.module('controllers.legacy-list',['modules.utils'])
             $scope.goOrder()
           }
         }, true)
-
-      function promiseReady (resp) {
-
-        $scope.promiseBusy--
-        if ($scope.promiseBusy < 0) {
-          $scope.promiseBusy = 0
-        }
-        return resp
-      }
 
       $scope.inspectMode = function () {
         if ($scope._inspect == undefined) {
@@ -148,7 +141,7 @@ angular.module('controllers.legacy-list',['modules.utils'])
             return $scope.db.dataAccess.query(qry, options) 
         })
 
-        promise.then(function(data) { 
+        promise = promise.then(function(data) { 
 
           if (!$scope.dataCount) {
             $scope.dataCount = (data && data.length) || 0
@@ -161,34 +154,48 @@ angular.module('controllers.legacy-list',['modules.utils'])
             }
           }
           $scope.dataList.push.apply($scope.dataList,data)
-
+          return data
         })
 
-        promise.then (promiseReady,promiseReady)
+        promise.then (function(){ $scope.promiseBusy-- })
 
         promise.then (function () {
+          var state = utils.temp('postState')
+            , poster = utils.temp('poster')
 
-          if (gone) {
+          if (gone)
             return
-          }
-
-          if (listctrl.success) {
+          
+          if (listctrl.success)
             listctrl.success ($scope)
-          }
+
+          if (gone)
+            return
 
           angular.forEach($scope.dataList, function (data) {
 
-            if (!gone) {
+              state.set(data,utils.lookup(data,'_sys.post_state'))
+              if (state.get(data)) {
+
+                poster.set(data,utils.lookup(data,'_sys.poster'))
+              } else {
+
+                poster.set(data,utils.lookup(data,'info.approved'))
+                if (poster.get(data))
+                  state.set(data,'approved')
+              }
+
+
               $scope.db.describe(data)
-            }
           })
 
-          if (gone) {
-            return
-          }
           if ($scope.dataList && $scope.dataList.length==1) {
             $scope.singleShowFields($scope.dataList[0])
           }
+
+          if (gone)
+            return
+
         })
 
         return promise
@@ -200,41 +207,6 @@ angular.module('controllers.legacy-list',['modules.utils'])
         }
       }
 
-      $scope.loadCatList = function(categories, qry) {
-
-          qry = qry || scopeQuery
-
-          // prepare each categories
-          angular.forEach(categories, function(cat) {
-
-              cat.dataList = []
-
-              $scope.promiseBusy++
-              $q.when(qry).then (function(_qry){
-
-                $scope.db.dataAccess.distinct(cat.name, _qry)
-                  .then(function(data) {
-
-                      angular.forEach(data, function(v) {
-
-                        var q = {}
-                          , p
-
-                        q[cat.name] = v
-
-                        cat.dataList.push({ name : v, qry : q })
-
-                        if (utils.notEmpty(cat.catgories)) {
-
-                          $scope.loadCatList(cat.catgories, q)
-                        }
-                          
-                      })
-                    })
-
-              }).then (promiseReady,promiseReady)
-            })
-        }
 
       $scope.urlBound = function(bound) {
         var url = utils.$location.url()
@@ -344,8 +316,11 @@ angular.module('controllers.legacy-list',['modules.utils'])
       }
 
       $scope.singleShowFields = function(data) {
-
         var temp = utils.temp('singleShowFields')
+
+        if (listctrl.db.singleShowFields) {
+          return listctrl.db.singleShowFields(data)
+        }
 
         if (!temp.get(data)) {
           temp.set(data, [ { label : 'raw data', value: JSON.stringify(data,undefined,2) } ])
@@ -359,6 +334,34 @@ angular.module('controllers.legacy-list',['modules.utils'])
         $scope.singleShowFields = listctrl.singleShowFields || listctrl.db.singleShowFields
       }
 
+      $scope.errorsViewer = {
+          opened  : false
+        , close   : function () { 
+            $scope.errorsViewer.show = false 
+            $scope.errorsViewer.opened = false 
+          }
+        , options : {
+            //backdropFade  : true
+            //dialogFade    : true
+            backdrop      : false
+          }
+        }
+
+      $scope.viewErrors = function(data, errors) {
+        var temp = utils.temp('errors')
+
+        temp.set(data,errors)
+
+        angular.extend ($scope.errorsViewer, {
+                    opened : true
+                  //, show   : true
+                  , data   : data
+                  , title  : data._name
+                  , description : utils.temp('description',data)
+                  })
+
+      }
+
       function loadBoundList () {
 
         if ($scope.db.boundList) {
@@ -367,7 +370,8 @@ angular.module('controllers.legacy-list',['modules.utils'])
           if (angular.isFunction($scope.db.boundList)) {
             boundlist = $scope.db.boundList()
           }
-          $q.when(boundlist).then(function (list) {
+
+          return $q.when(boundlist).then(function (list) {
 
             if (list) {
 
@@ -393,22 +397,73 @@ angular.module('controllers.legacy-list',['modules.utils'])
         }
       }
 
+      function loadCatList(categories, qry) {
+
+        qry = qry || scopeQuery
+
+        // prepare each categories
+        angular.forEach(categories, function(cat) {
+
+          cat.dataList = []
+
+          $q.when(qry).then (function(_qry){
+
+            $scope.db.dataAccess.distinct(cat.name, _qry).then(function(data) {
+
+              angular.forEach(data, function(v) {
+
+                var q = {}
+                  , p
+
+                q[cat.name] = v
+
+                cat.dataList.push({ name : v, qry : q })
+
+                if (utils.notEmpty(cat.catgories)) {
+
+                  loadCatList(cat.catgories, q)
+                }
+                  
+              })
+            })
+          })
+        })
+      }
+
       // load data & describe
       if (!gone) {
 
 
         $scope.success = $scope.loadDataList().then (function () {
 
-          loadBoundList()
+          if (!gone) {
+
+            angular.forEach($scope.dataList, function(data) {
+              var state = utils.temp('state')
+                , approved = utils.temp('approved')
+
+              if (utils.lookup(data,'info.selling')) {
+                state.set(data,'sold')
+              }
+              else if (utils.lookup(data,'info.taking.person')) {
+                state.set(data, 'taken')
+              }
+
+              approved.set(data,utils.lookup(data,'info.approved'))
+
+            })
+
+            $q.when(loadBoundList()).then(function(){
+
+              if (!gone) {
+
+                loadCatList($scope.categories)
+              }
+            })
+          }
           return $scope
         })
-
-
       }
 
-      if (!gone) {
-
-        $scope.loadCatList($scope.categories)            
-      }
     }
   ])

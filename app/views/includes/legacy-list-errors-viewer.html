@@ -1,0 +1,26 @@
+
+<div modal="errorsViewer.opened" close="errorsViewer.close()" options="errorsViewer.options">
+    <div class="modal-header">
+        <h3 ng-bind="errorsViewer.title"></h3>
+    </div>
+
+    <div class="modal-body">
+        <div ng-show="errorsViewer.data.$temp.errors"> 
+          <h4 class="text-warning">Errors</h4>
+          <div class="alert alert-block alert-warning">
+
+            <div class="row-fluid" style="padding:2px;" ng-repeat="err in errorsViewer.data.$temp.errors">
+              <div class="span4">{{err.name}}</div>
+              <div>{{err.error}} </div>
+            </div>
+
+          </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-warning cancel" ng-click="errorsViewer.close()">Close</button>
+    </div>
+
+</div>
+<div class="modal-backdrop" ng-show="errorsViewer.opened" ng-click="errorsViewer.close()"></div>

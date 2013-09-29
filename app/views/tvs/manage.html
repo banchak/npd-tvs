@@ -19,13 +19,6 @@
     <hr />
     <ul class="nav nav-list">
       <li class="nav-header">Manage</li>
-      <li class="divider"></li>
-      <li ng-show="authorizeData.user.roles.has('ADMIN', 'DEVELOPER')">
-        <a ng-href="#/manage/image-sync">sync รูปภาพ สินค้า</a>
-      </li>
-      <li ng-show="authorizeData.user.roles.has('ADMIN','DEVELOPER')">
-        <a ng-href="#/manage/folder-sync">sync folder สินค้า</a>
-      </li>
       <li ng-show="authorizeData.user.roles.has('ADMIN','DEVELOPER')" class="divider"></li>
       <li ng-show="authorizeData.user.link">
         <a ng-href="{{ authorizeData.user.link }}">goto {{ authorizeData.user.given_name }} page</a>

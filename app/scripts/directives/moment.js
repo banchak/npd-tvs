@@ -7,6 +7,9 @@ angular.module('directives.moment', [])
 
   .filter('moment', function () {
     return function (input, format, lang) {
+      if (!input)
+        return
+
       var mdate = moment(input)
 
       if (format && format.toLowerCase()=='thaitext') {
@@ -90,6 +93,8 @@ angular.module('directives.moment', [])
                 ctrl.$parsers.unshift(
                   function (viewValue) 
                   {
+                    if (!viewValue)
+                      return ''
                     var 
                       mdate = moment(viewValue, config.inputFormat, config.lang)
 

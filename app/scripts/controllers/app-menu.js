@@ -13,10 +13,11 @@ angular.module('controllers.app-menu',[])
         , newpath = '/' + db.name
 
       if (bound) {
-        newpath += '/view/' + bound
+        newpath += '/view/' + encodeURIComponent(bound)
       }
-      url = url.replace(encodeURI($location.path()),encodeURI(newpath))
-      return '#'+ url
+      return '#'+encodeURI(newpath)
+      //url = url.replace(encodeURI($location.path()),encodeURI(newpath))
+      //return '#'+ url
     }
 
     //$scope.appTitle = menu.title

@@ -29,15 +29,12 @@ angular.module('npd.image-sync',['modules.gdrive', 'modules.utils','npd.database
                 return
               }
 
-              name = meta.title
+              name = meta.title.replace('.jpg','')
 
               db.dataAccess.query({_name : name}, {}, function (resp) {
 
-
                 angular.forEach(resp,function (resource) {
-
                   var pm
-
 
                   if (!resource.meta) {
                     resource.meta = {}
@@ -52,7 +49,6 @@ angular.module('npd.image-sync',['modules.gdrive', 'modules.utils','npd.database
                   pm = resource.$update().then(function () {
 
                       $scope.files.push({ id : meta.id, name : name})
-
                     })
                   
                   promises.push(pm)
@@ -219,7 +215,7 @@ angular.module('npd.image-sync',['modules.gdrive', 'modules.utils','npd.database
 
       $scope.doFileSync = function () {
 
-        doSync (syncFile)
+        doSync (syncImages)
       } 
 
       $scope.doFolderSync = function () {

@@ -1,20 +1,15 @@
-
 (function() {
 'use strict';
 
 angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
 
-  .constant(
-    'MONGOLAB_CONFIG'
-  , {
+  .constant('MONGOLAB_CONFIG', {
       //BASE_URL : 'http://thaismart.dyndns-ip.com/app/mongolabmountpoint/'    
-      API_KEY:'hlCl82ffQGLADdTWTybrGxg2wRzPPvUu'
+      API_KEY: 'hlCl82ffQGLADdTWTybrGxg2wRzPPvUu'
     , DB_NAME:'tvsdemo'
     })
 
-  .value(
-    'BUILT_IN'
-  , {
+  .value('BUILT_IN', {
       personTypes :
       [
         {name    : 'บุคคล'}
@@ -51,21 +46,27 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
       , title   : 'สัญญา'
       , schema  : 'legacy'
       , required : [
-          { name : '_type',               label : 'ชนิดสัญญา'}
+          { name : '_type',               label : 'ประเภท'}
         , { name : '_name',               label : 'เลขที่'}
        ]
       , categories : 
         [
-          { name : '_type',               label : 'ชนิดสัญญา'}
+          { name : '_type',               label : 'ประเภท'}
+        , { name : 'info.duration',       label : 'อายุสัญญา'}
         , { name : 'meta.areas.building', label : 'อาคาร'}
         , { name : 'meta.areas.floor',          label : 'ชั้น'}
         , { name : 'meta.areas.zone',           label : 'โซน'}
+        , { name : 'info.tenant_type',    label : 'ประเภทผู้เช่า'}
         , { name : 'info.business_type',           label : 'ประเภทกิจการ'}
         ] 
       , descriptions : [
-          { name :'info.issue_date', label : 'วันที่ทำสัญญา'}
-        , { name : 'display.area', label : 'พื้นที่เช่า'}
-        , { name : 'display.tenant', label : 'คู่สัญญา' }
+          { name :'info.issue_date', label : 'วันที่ทำสัญญา', searchIn : false }
+        , { name : 'display.area', label : 'พื้นที่เช่า', 
+            searchIn : ['meta.areas.rooms']}
+        , { name : 'display.tenant', label : 'คู่สัญญา' , 
+            searchIn : ['meta.tenants.name','meta.tenants.register_id','meta.tenants.address','meta.tenant_signers.name']}
+        , { name : 'info.shop_name', label : 'ชื่อร้าน'}
+        , { name : 'info.brand_name', label : 'เครื่องหมายการค้า'}
         , { name : 'info.approved', label : 'อนุมัติโดย'}
         ]
       , orders :
@@ -79,28 +80,30 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
       , queries :
         [
           { name : '@draft', label : '@รออนุมัติ', value : '!@info.approved', notValue : '@info.approved'}
-        , { name : '@approved', label : '@อนุมัติแล้ว', value : '@info.approved', notValue : '!@info.approved'}
-        , { name : '@y1', label : '@1 ปี', value : '@_type=1 ปี'}
-        , { name : '@y3', label : '@3 ปี', value : '@_type=3 ปี'}
-        , { name : '@y15',label : '@15 ปี', value : '@_type=15 ปี'}
-        , { name : '@yo', label : '@อื่นๆ', value : 'อื่นๆ'}
+        , { name : '@approved', label : '@อนุมัติแล้ว', value : '@info.approved'}
+        , { name : '@y1', label : '@1 ปี', value : '@contract && @info.duration="1 ปี"', notValue : '@contract && !@info.duration="1 ปี"'}
+        , { name : '@y3', label : '@3 ปี', value : '@contract && @info.duration="3 ปี"', notValue : '@contract && !@info.duration="3 ปี"'}
+        , { name : '@y15',label : '@15 ปี', value : '@contract && @info.duration="15 ปี"', notValue : '@contract && !@info.duration="15 ปี"'}
+        , { name : '@yo',label : '@อื่นๆ', value : '@contract && !@info.duration=^(1|3|15) ปี$', notValue : '@contract && @info.duration=^(1|3|15) ปี$'}
+        , { name : '@note', label : '@บันทึก', value : '@_type="บันทึก"'}
+        , { name : '@contract', label : '@สัญญา', value : '@_type="สัญญา"'}
         ]
       , boundList : function () {
-                return [ 
-                        { name : '@draft',  label : 'รออนุมัติ'}
-                      , { name : '@approved',  label : 'อนุมัติแล้ว'}
-                      , { name : '@_type=1 ปี', label : '1 ปี'}
-                      , { name : '@_type=3 ปี',    label : '3 ปี'}
-                      , { name : '@_type=15 ปี',    label : '15 ปี'}
-                      , { name : '@_type=อื่นๆ',    label : 'อื่นๆ'}
-                      , { label : 'ทั้งหมด'}
-                      ]
+          return [ 
+                  { name : '@draft',  label : 'รออนุมัติ'}
+                , { name : '@approved',  label : 'อนุมัติแล้ว'}
+                , { name : '@y1', label : '1 ปี'}
+                , { name : '@y3',    label : '3 ปี'}
+                , { name : '@y15',    label : '15 ปี'}
+                , { name : '@yo',    label : 'อื่นๆ'}
+                , { name : '@note',    label : 'บันทึก'}
+                , { label : 'ทั้งหมด'}
+                ]
         }
       , searchable : ['_name', 'display.area', 'display.tenant', 'info.approved']
       }
 
-    , Area : 
-      {
+    , Area : {
         name    : 'areas'
       , title   : 'พื้นที่'
       , schema  : 'legacy'
@@ -139,7 +142,7 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
         ]
       , boundList : function () {
                 return [ 
-                       { name : '@_type=บุคคล', label : 'บุคคล'}
+                       { name : '@_type="บุคคล"', label : 'บุคคล'}
                       ,{ name : '@_type=นิติบุคคล', label : 'นิติบุคคล'}
                       , { label : 'ทั้งหมด'}
                       ]
@@ -153,8 +156,7 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
         ]
       }
 
-    , Equipment : 
-      {
+    , Equipment : {
         name      : 'equipments'
       , title     : 'อุปกรณ์'
       , schema    : 'legacy'
@@ -168,3 +170,4 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
   }])
 
 }).call(this);
+

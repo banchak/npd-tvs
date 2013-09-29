@@ -42,6 +42,50 @@ angular.module('mongolabResourceHttp', []).factory('$mongolabResourceHttp', ['MO
       angular.extend(this, data);
     };
 
+    Resource.bulkInsert = function (dataArray, successcb, errorcb) {
+
+      var httpPromise = $http.post(
+                collectionUrl
+              , JSON.stringify(dataArray)
+              , { params:requestParams }
+              );
+      return promiseThen(httpPromise, successcb, errorcb, function(data){ return data;});
+    }
+
+    // https://support.mongolab.com/entries/20433053-Is-there-a-REST-API-for-MongoDB-
+    Resource.bulkUpdate = function (queryJson, data, options, successcb, errorcb) {
+
+      var prepareOptions = function(options) {
+
+        var optionsMapping = {multi: 'm', upsert: 'u'};
+        var optionsTranslated = {};
+
+        if (options && !angular.equals(options, {})) {
+          angular.forEach(optionsMapping, function (targetOption, sourceOption) {
+            if (angular.isDefined(options[sourceOption])) {
+              if (angular.isObject(options[sourceOption])) {
+                optionsTranslated[targetOption] = JSON.stringify(options[sourceOption]);
+              } else {
+                optionsTranslated[targetOption] = options[sourceOption];
+              }
+            }
+          });
+        }
+        return optionsTranslated;
+      };
+
+      if(angular.isFunction(options)) { errorcb = successcb; successcb = options; options = {}; }
+
+      var requestParams = angular.extend({}, defaultParams, preparyQueryParam(queryJson), prepareOptions(options));
+
+      var httpPromise = $http.put(
+                collectionUrl
+              , JSON.stringify(data)
+              , { params:requestParams }
+              );
+      return promiseThen(httpPromise, successcb, errorcb, function(data){ return data;});
+    }
+
     Resource.query = function (queryJson, options, successcb, errorcb) {
 
       var prepareOptions = function(options) {
@@ -105,31 +149,6 @@ angular.module('mongolabResourceHttp', []).factory('$mongolabResourceHttp', ['MO
               );
     };
     
-    Resource.distinctCount = function (field, queryJson, successcb, errorcb) {
-      // note mongolab not support 'group' command https://support.mongolab.com/entries/20433053-REST-API-for-MongoDB
-      var  id = field;  // normally field should be object, to support index order. { fld : 1 } 
-      
-      // optional field may be string "fld1,fld2"
-      if (angular.isString(field)) field  = field.split(/[ ,]+/);
-      
-      // optional fields may be array
-      if (angular.isArray(field)){
-          id  = {}
-          angular.forEach(field,function(fld){ id[fld] = 1 });
-      }
-
-      return Resource.runCommand (
-                {  group : {
-                      ns    : collectionName
-                    , key    : id
-                    , initial: { count : 0 }
-                    , $reduce:  function(curr, result) { result.count++;}
-                    }
-                }
-              , successcb
-              ,  errorcb);
-    };
-
 
     Resource.getById = function (id, successcb, errorcb) {
       var httpPromise = $http.get(collectionUrl + '/' + id, {params:defaultParams});

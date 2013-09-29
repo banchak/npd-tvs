@@ -15,7 +15,7 @@ angular.module('npd.project')
     //, immediate : true
     , apiKey    : 'AIzaSyAkP37SMBfu2WTW0efOo0NfGLzJkKXE_xY'
     , cabinetRoot : 'npd3files'
-    , shareCabinets : ['0B6k4xcbsslocdEVBZGVBdFJLU2c', '0B4yFwOMMfo5HZk96REVZaEkwMkk']
+    , shareCabinets : ['0B6k4xcbssloceFZiVVZPTVJCOXc']
     , clientServices : [
           {name : 'drive', version : 'v2'}
         , {name : 'calendar', version : 'v3'}
@@ -41,8 +41,19 @@ angular.module('npd.project')
 
             if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
               // match domain
-              user.roles = user.roles.concat(['OFFICER'])
-
+              if (!email.match(/user[1-4]/)) {
+                user.roles = user.roles.concat(['OFFICER'])
+              }
+              
+              if (email.match(/user2/)){ 
+                user.roles = user.roles.concat(['OFFICER.COST'])
+              }             
+              if (email.match(/user3/)){ 
+                user.roles = user.roles.concat(['MANAGER'])
+              }
+              if (email.match(/user4/)){ 
+                user.roles = user.roles.concat(['ADMIN'])
+              }
             }
 
             if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/)) {

@@ -27,7 +27,7 @@ angular.module('tvs.project')
 
           if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
             // match domain
-            user.roles = user.roles.concat(['STAFF'])
+            user.roles = user.roles.concat(['STAFF', 'OFFICER'])
 
             // match user in demain
             //if (email.match(/^(noom|admin)\@h2heng.com$/)) {
@@ -40,7 +40,7 @@ angular.module('tvs.project')
             }
 
           if (email.match(/panida66\@gmail\.com/)){ 
-            user.roles = ['STAFF', 'OFFICER']
+            user.roles = ['STAFF','OFFICER']
           }
 
           user.roles.has = user.hasRole

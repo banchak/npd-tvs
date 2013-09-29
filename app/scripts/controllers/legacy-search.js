@@ -48,20 +48,31 @@ angular.module('controllers.legacy-search',['modules.utils'])
       }
 
       $scope.goPathItem = function (name, item, search) {
+        var bound
 
-        utils.$location.path ('/' + name )
+        bound = encodeURIComponent('\'' + item._name)
 
-        if (search) {
+        utils.$location.path ('/' + name + '/view/' + bound )
+
+        if (search)
           utils.$location.search(search)
-        }
-        utils.$location.search('bound',item._name)
+        
+        //utils.$location.search('bound',item._name)
       }
 
       $scope.urlPathItem = function (name, item, search) {
-        var url 
+        var url, bound, qry 
 
-        url = encodeURI('#/' + name) + '?'
-              + utils.serialize(angular.extend({}, (search || utils.$location.search()), {bound : item._name}))
+        bound = encodeURIComponent('\'' + item._name)
+
+        qry = {}
+        if (search)
+          angular.extend(qry, utils.$location.search())
+
+        url = encodeURI('#/' + name + '/view/' + bound)
+
+        if (utils.notEmpty(qry))
+          url += '?' + utils.serialize(qry) 
 
         return url
       }
@@ -77,12 +88,12 @@ angular.module('controllers.legacy-search',['modules.utils'])
 
           if (user && user.roles) {
 
-            if (kmatch[1]=='-' && $cookies.incognito!=user.email) {
-              $cookies.incognito = user.email
+            if (kmatch[1]=='-' && $cookies.npd$incognito!=user.email) {
+              $cookies.npd$incognito = user.email
               GAPI_CONFIG.userSignIn(user)
             }
-            if (kmatch[1]=='+' && $cookies.incognito==user.email) {
-              $cookies.incognito = ''
+            if (kmatch[1]=='+' && $cookies.npd$incognito==user.email) {
+              $cookies.npd$incognito = ''
               GAPI_CONFIG.userSignIn(user)
             }
 
