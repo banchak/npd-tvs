@@ -61,6 +61,7 @@ angular.module('tvs.project', [
           if (ctrl.name=='contracts') {
             var actions = [
                   _act('edit/$id', 'แก้ไข')
+                , _act('edit/$id', 'เพิ่ม(ตามนี้)','ditto')
                 , _act('print/$id', 'พิมพ์')
               ]
             listctrl.adminView = {
@@ -81,6 +82,7 @@ angular.module('tvs.project', [
                 }
                 actions = []
                 actions.push(_act('edit/$id', 'แก้ไข'))
+                actions.push(_act('edit/$id', 'เพิ่ม(ตามนี้)','ditto'))
                 actions.push({})
                 actions.push(_action('contracts')(null, 'สัญญา ที่เกี่ยวข้อง',null, {scopes : JSON.stringify(['\''+data._name])}))
                 temp.set(data,actions)

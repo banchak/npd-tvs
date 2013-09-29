@@ -446,7 +446,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
                         { name : '@draft',  label : 'รออนุมัติ'}
                       , { name : '@approved',  label : 'อนุมัติแล้ว'}
                       , { name : '@posted',  label : 'ผ่านรายการแล้ว'}
-                      , { name : '@cancelled',  label : 'ยกเลิก'}
+                      //, { name : '@cancelled',  label : 'ยกเลิก'}
                       , { name : '@pending',  label : 'ผ่านไม่สำเร็จ'}
                       , { name : '@take',  label : 'ยืม'}
                       , { name : '@sell',  label : 'ขาย'}
