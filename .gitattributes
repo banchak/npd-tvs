@@ -1,1 +1,5 @@
-#* text=auto
+* text=auto
+
+*.jpg binary
+*.png binary
+*.ico binary
