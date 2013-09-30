@@ -1,5 +1,8 @@
 Change logs
 ===========
+## 2013-9-30
+* normalize git repo, fix incompatible line-end problems
+
 ## 2013-9-29
 * legacy-edit เพิ่ม operation ditto, postState
 * legacy-list รองรับ state posted, cancelled, pending
