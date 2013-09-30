@@ -1,93 +1,95 @@
-(function () {
+(function() {
 
-'use strict'
+  'use strict'
 
-angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modules.gdrive'])
-  .controller('legacyImageListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'GDrive', '$rootScope'
-  , function ($scope, legacyListDI, listctrl, $controller, $timeout, GDrive, $rootScope)
-    {
+  angular.module('controllers.legacy-image-list', ['controllers.legacy-list', 'modules.gdrive'])
+    .controller('legacyImageListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'GDrive', '$rootScope',
+      function($scope, legacyListDI, listctrl, $controller, $timeout, GDrive, $rootScope) {
 
-      var success = function ( ){
+        var success = function() {
 
           $scope.imageViewer = {
-              opened  : false
-            , close   : function () { 
-                $scope.imageViewer.show = false 
+            opened: false,
+            close: function() {
+              $scope.imageViewer.show = false
 
-                $timeout(function () {
+              $timeout(function() {
 
-                  $scope.imageViewer.opened = false 
-                  }, 50)
-              }
-            , options : {
-                //backdropFade  : true
-                //dialogFade    : true
-                backdrop      : false
-              }
+                $scope.imageViewer.opened = false
+              }, 50)
+            },
+            options: {
+              //backdropFade  : true
+              //dialogFade    : true
+              backdrop: false
             }
+          }
 
           $scope.viewImage = function(data) {
 
-            var img  
+            var img
 
-            function _showFolder () {
-              angular.forEach(data.meta.folders, function (folder) {
+              function _showFolder() {
+                angular.forEach(data.meta.folders, function(folder) {
 
-                if (!folder.id || folder.links !== undefined) {
-                  $scope.imageViewer.show = true
-                  $scope.$apply()
-                  return
-                }
+                  if (!folder.id || folder.links !== undefined) {
+                    $scope.imageViewer.show = true
+                    $scope.$apply()
+                    return
+                  }
 
-                folder.links = []
-                GDrive.folders({ parents : folder.id })
-                .then(function (resp) {
-                  var count = 0
+                  folder.links = []
+                  GDrive.folders({
+                    parents: folder.id
+                  })
+                    .then(function(resp) {
+                      var count = 0
 
-                  if (resp && resp.items) {
+                      if (resp && resp.items) {
 
-                    $rootScope.authorize().then(function () {
+                        $rootScope.authorize().then(function() {
 
-                      if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
-                        var roles = $rootScope.authorizeData.user.roles
+                          if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+                            var roles = $rootScope.authorizeData.user.roles
 
-                        angular.forEach(resp.items, function (meta) {
+                            angular.forEach(resp.items, function(meta) {
 
-                          if (meta && meta.alternateLink) {
+                              if (meta && meta.alternateLink) {
 
 
-                            if (roles.has(meta.title)) {
-                              folder.links.push({ link : meta.alternateLink, title : meta.title})
-                            }
-                          }
-                          count += 1
+                                if (roles.has(meta.title)) {
+                                  folder.links.push({
+                                    link: meta.alternateLink,
+                                    title: meta.title
+                                  })
+                                }
+                              }
+                              count += 1
 
-                          if (count == resp.items.length) {
+                              if (count == resp.items.length) {
 
+                                $scope.imageViewer.show = true
+                              }
+                            })
+                          } else {
                             $scope.imageViewer.show = true
-                          }                      
+                          }
                         })
-                      }
-                      else {
+                      } else {
                         $scope.imageViewer.show = true
                       }
                     })
-                  }
-                  else {
-                    $scope.imageViewer.show = true
-                  }
                 })
-              })
-            }
+              }
 
-            angular.extend ($scope.imageViewer, {
-                        images : data.meta.images
-                      , folders: data.meta.folders
-                      , opened : true
-                      , show   : !data.meta.folders
-                      , title  : data._name
-                      , description : data.info && data.info.detail
-                      })
+            angular.extend($scope.imageViewer, {
+              images: data.meta.images,
+              folders: data.meta.folders,
+              opened: true,
+              show: !data.meta.folders,
+              title: data._name,
+              description: data.info && data.info.detail
+            })
 
             $timeout(_showFolder, 2000)
           }
@@ -102,20 +104,20 @@ angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modu
 
             images = data.meta.images
 
-            angular.forEach(images, function (img) {
+            angular.forEach(images, function(img) {
 
-              if (img.id && img.thumbnailLink===undefined) {
+              if (img.id && img.thumbnailLink === undefined) {
 
                 img.thumbnailLink = null
 
-                GDrive.fileMeta(img.id).then(function (meta) {
+                GDrive.fileMeta(img.id).then(function(meta) {
 
-                    if (meta.thumbnailLink && !meta.trashed) {
+                  if (meta.thumbnailLink && !meta.trashed) {
 
-                        img.thumbnailLink = meta.thumbnailLink
-                        img.src = meta.webContentLink //'https://docs.google.com/uc?id=' + img.id
-                        
-                    }
+                    img.thumbnailLink = meta.thumbnailLink
+                    img.src = meta.webContentLink //'https://docs.google.com/uc?id=' + img.id
+
+                  }
                 })
               }
 
@@ -125,27 +127,28 @@ angular.module('controllers.legacy-image-list',['controllers.legacy-list', 'modu
           // load thumbnailLink
           angular.forEach($scope.dataList, $scope.images)
 
+        }
+
+        var org_success = listctrl.success
+
+        listctrl.success = function(scope) {
+          if (org_success) {
+            org_success(scope)
+          }
+
+          success(scope)
+        }
+
+        // init by base controller
+        $controller(listctrl.imageCtrlBase || 'legacyListCtrl', {
+
+          $scope: $scope,
+          legacyListDI: legacyListDI,
+          listctrl: listctrl
+        })
+
       }
-    
-    var org_success = listctrl.success
-
-    listctrl.success = function (scope) {
-      if (org_success) {
-        org_success(scope)
-      }
-      
-      success (scope)
-    }
-
-    // init by base controller
-    $controller (listctrl.imageCtrlBase || 'legacyListCtrl', {
-
-        $scope        : $scope
-      , legacyListDI  : legacyListDI
-      , listctrl      : listctrl
-    })
-
-  }])
+    ])
 
 
 }).call(this);

@@ -1,23 +1,22 @@
+(function() {
 
-(function(){
-
-'use strict'
+  'use strict'
 
   var app = angular.module('angularApp')
 
-  app.run(['$route', function($route) {
-    app._routeProvider
+  app.run(['$route',
+    function($route) {
+      app._routeProvider
 
       .when('/', {
         templateUrl: 'views/npd/main.html',
         controller: 'mainCtrl'
       })
 
-      .when('/products/edit/:id', 
-      {
-        templateUrl : 'views/npd/product-edit.html'
-      , controller  : 'productEditCtrl'
-  /*  , resolve     : 
+      .when('/products/edit/:id', {
+        templateUrl: 'views/npd/product-edit.html',
+        controller: 'productEditCtrl'
+        /*  , resolve     : 
         {
           editctrl 
           : function(Database)
@@ -27,11 +26,10 @@
         } */
       })
 
-      .when('/persons/edit/:id', 
-      {
-        templateUrl : 'views/npd/person-edit.html'
-      , controller  : 'personEditCtrl'
-      /*, controller  : 'legacyEditCtrl'
+      .when('/persons/edit/:id', {
+        templateUrl: 'views/npd/person-edit.html',
+        controller: 'personEditCtrl'
+        /*, controller  : 'legacyEditCtrl'
       , resolve     : 
         {
           editctrl 
@@ -43,11 +41,10 @@
       })
 
 
-      .when('/vouchers/print/:id', 
-      {
-        templateUrl : 'views/npd/voucher-print.html'
-      , controller  : 'voucherEditCtrl'
-      /*, controller  : 'legacyEditCtrl'
+      .when('/vouchers/print/:id', {
+        templateUrl: 'views/npd/voucher-print.html',
+        controller: 'voucherEditCtrl'
+        /*, controller  : 'legacyEditCtrl'
       , resolve     : 
         {
           editctrl 
@@ -58,11 +55,10 @@
         }*/
       })
 
-      .when('/vouchers/edit/:id', 
-      {
-        templateUrl : 'views/npd/voucher-edit.html'
-      , controller  : 'voucherEditCtrl'
-      /*, controller  : 'legacyEditCtrl'
+      .when('/vouchers/edit/:id', {
+        templateUrl: 'views/npd/voucher-edit.html',
+        controller: 'voucherEditCtrl'
+        /*, controller  : 'legacyEditCtrl'
       , resolve     : 
         {
           editctrl 
@@ -90,6 +86,7 @@
         //controller: ''
       })
 
-    $route.reload()
-  }])
+      $route.reload()
+    }
+  ])
 }).call(this);

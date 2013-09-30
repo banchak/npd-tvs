@@ -1,238 +1,270 @@
-(function () {
+(function() {
 
-'use strict'
+  'use strict'
 
-angular.module('npd.image-sync',['modules.gdrive', 'modules.utils','npd.database'])
-  .controller('imageSyncCtrl', ['$scope', '$q', 'Database', 'GDrive', 'utils'
-  , function ($scope, $q, Database, GDrive, utils)
-    {
-      var db    = new Database.legacy('Product')
+  angular.module('npd.image-sync', ['modules.gdrive', 'modules.utils', 'npd.database'])
+    .controller('imageSyncCtrl', ['$scope', '$q', 'Database', 'GDrive', 'utils',
+      function($scope, $q, Database, GDrive, utils) {
+        var db = new Database.legacy('Product')
 
-      $scope.utils = utils
+        $scope.utils = utils
 
-      function syncImages (parentId, token) {
+          function syncImages(parentId, token) {
 
-        var promise
+            var promise
 
-        promise = GDrive.folders({parents : parentId, mimeType : 'image/jpeg' }, token)
+            promise = GDrive.folders({
+              parents: parentId,
+              mimeType: 'image/jpeg'
+            }, token)
 
-        promise = promise.then (function (resp) {
-          var promises = []
+            promise = promise.then(function(resp) {
+              var promises = []
 
-          if (resp && resp.items) {
-            
-            angular.forEach(resp.items, function (meta) {
-              var name
+              if (resp && resp.items) {
 
-              if (!meta.title.match(/[A-Z]+\d{1,2}\-\d{3,4}[A-Z]*\.jpg/)) {
+                angular.forEach(resp.items, function(meta) {
+                  var name
 
-                return
-              }
+                  if (!meta.title.match(/[A-Z]+\d{1,2}\-\d{3,4}[A-Z]*\.jpg/)) {
 
-              name = meta.title.replace('.jpg','')
-
-              db.dataAccess.query({_name : name}, {}, function (resp) {
-
-                angular.forEach(resp,function (resource) {
-                  var pm
-
-                  if (!resource.meta) {
-                    resource.meta = {}
+                    return
                   }
 
-                  if (!resource.meta.images) {
-                    resource.meta.images = []
-                  }
+                  name = meta.title.replace('.jpg', '')
 
-                  resource.meta.images[0] = { id : meta.id }
+                  db.dataAccess.query({
+                    _name: name
+                  }, {}, function(resp) {
 
-                  pm = resource.$update().then(function () {
+                    angular.forEach(resp, function(resource) {
+                      var pm
 
-                      $scope.files.push({ id : meta.id, name : name})
-                    })
-                  
-                  promises.push(pm)
+                      if (!resource.meta) {
+                        resource.meta = {}
+                      }
 
-                })
-              })
-            })
-          }
+                      if (!resource.meta.images) {
+                        resource.meta.images = []
+                      }
 
-          return $q.all(promises).then(function () { return resp})
-        })
+                      resource.meta.images[0] = {
+                        id: meta.id
+                      }
 
-        promise = promise.then (function (resp) {
+                      pm = resource.$update().then(function() {
 
-          utils.safe$apply()
-          if (resp.nextPageToken) {
-            // not finish
-            return syncFolders(parentId, resp.nextPageToken)
-          }
+                        $scope.files.push({
+                          id: meta.id,
+                          name: name
+                        })
+                      })
 
-          return resp
-        })
-
-        return promise
-
-      }
-
-
-      function syncFolders (parentId, token) {
-
-        var promise
-
-        promise = GDrive.folders({parents : parentId }, token)
-
-        promise = promise.then (function (resp) {
-          var promises = []
-
-          if (resp && resp.items) {
-            
-            angular.forEach(resp.items, function (meta) {
-              var name
-
-              if (!meta.title.match(/[A-Z]+\d{1,2}\-\d{3,4}[A-Z]*/)) {
-
-                return
-              }
-
-              name = meta.title
-
-              db.dataAccess.query({_name : name}, {}, function (resp) {
-
-
-                angular.forEach(resp,function (resource) {
-
-                  var pm
-
-
-                  if (!resource.meta) {
-                    resource.meta = {}
-                  }
-
-                  if (!resource.meta.folders) {
-                    resource.meta.folders = []
-                  }
-
-                  resource.meta.folders[0] = { id : meta.id }
-
-                  pm = resource.$update().then(function () {
-
-                      $scope.files.push({ id : meta.id, name : name})
+                      promises.push(pm)
 
                     })
-                  
-                  promises.push(pm)
-
+                  })
                 })
-              })
-            })
-          }
-
-          return $q.all(promises).then(function () { return resp})
-        })
-
-        promise = promise.then (function (resp) {
-
-          utils.safe$apply()
-          if (resp.nextPageToken) {
-            // not finish
-            return syncFolders(parentId, resp.nextPageToken)
-          }
-
-          return resp
-        })
-
-        return promise
-
-      }
-
-
-      function getFolders (parent, token) {
-
-        var promise, path
-
-        $scope.folders = $scope.folders || []
-
-        path = parent? parent.title : ' '
-
-        promise = GDrive.folders({ parents : parent? parent.id : 'root', sharedWithMe : parent && !parent.id }, token)
-
-        promise = promise.then(function (resp) {
-          var promises = []
-
-          if (resp && !resp.errror) {
-
-            angular.forEach(resp.items, function (meta) {
-              var data
-
-              if (meta.title.match(/[A-Z]+\d{2}\-\d{3,4}[A-Z]*/)) {
-                return
               }
 
-              data = { title : path + '/' + meta.title, id : meta.id }
-              $scope.folders.push (data)
-
-              promises.push (getFolders (data))
+              return $q.all(promises).then(function() {
+                return resp
+              })
             })
+
+            promise = promise.then(function(resp) {
+
+              utils.safe$apply()
+              if (resp.nextPageToken) {
+                // not finish
+                return syncFolders(parentId, resp.nextPageToken)
+              }
+
+              return resp
+            })
+
+            return promise
+
           }
 
-          return $q.all(promises).then(function() { return resp})
-        })
 
-        promise = promise.then (function (resp) {
+          function syncFolders(parentId, token) {
 
-          utils.safe$apply()
-          if (resp.nextPageToken) {
-            return getFolders(parent, resp.nextPageToken)
+            var promise
+
+            promise = GDrive.folders({
+              parents: parentId
+            }, token)
+
+            promise = promise.then(function(resp) {
+              var promises = []
+
+              if (resp && resp.items) {
+
+                angular.forEach(resp.items, function(meta) {
+                  var name
+
+                  if (!meta.title.match(/[A-Z]+\d{1,2}\-\d{3,4}[A-Z]*/)) {
+
+                    return
+                  }
+
+                  name = meta.title
+
+                  db.dataAccess.query({
+                    _name: name
+                  }, {}, function(resp) {
+
+
+                    angular.forEach(resp, function(resource) {
+
+                      var pm
+
+
+                      if (!resource.meta) {
+                        resource.meta = {}
+                      }
+
+                      if (!resource.meta.folders) {
+                        resource.meta.folders = []
+                      }
+
+                      resource.meta.folders[0] = {
+                        id: meta.id
+                      }
+
+                      pm = resource.$update().then(function() {
+
+                        $scope.files.push({
+                          id: meta.id,
+                          name: name
+                        })
+
+                      })
+
+                      promises.push(pm)
+
+                    })
+                  })
+                })
+              }
+
+              return $q.all(promises).then(function() {
+                return resp
+              })
+            })
+
+            promise = promise.then(function(resp) {
+
+              utils.safe$apply()
+              if (resp.nextPageToken) {
+                // not finish
+                return syncFolders(parentId, resp.nextPageToken)
+              }
+
+              return resp
+            })
+
+            return promise
+
           }
 
-          return resp
-        })
 
-        return promise
-      }
+          function getFolders(parent, token) {
 
-      function finish() { 
+            var promise, path
 
-        $scope.syncBusy = false
-        utils.safe$apply()
-      }
+              $scope.folders = $scope.folders || []
 
-      function doSync (action) {
+              path = parent ? parent.title : ' '
 
-        if ($scope.imageFolder) {
-          var promise
+            promise = GDrive.folders({
+              parents: parent ? parent.id : 'root',
+              sharedWithMe: parent && !parent.id
+            }, token)
 
-          $scope.files = []
-          $scope.syncBusy = true
-          promise = action ($scope.imageFolder)
+            promise = promise.then(function(resp) {
+              var promises = []
 
-          promise.then (finish, finish)
-          return promise
+              if (resp && !resp.errror) {
+
+                angular.forEach(resp.items, function(meta) {
+                  var data
+
+                  if (meta.title.match(/[A-Z]+\d{2}\-\d{3,4}[A-Z]*/)) {
+                    return
+                  }
+
+                  data = {
+                    title: path + '/' + meta.title,
+                    id: meta.id
+                  }
+                  $scope.folders.push(data)
+
+                  promises.push(getFolders(data))
+                })
+              }
+
+              return $q.all(promises).then(function() {
+                return resp
+              })
+            })
+
+            promise = promise.then(function(resp) {
+
+              utils.safe$apply()
+              if (resp.nextPageToken) {
+                return getFolders(parent, resp.nextPageToken)
+              }
+
+              return resp
+            })
+
+            return promise
+          }
+
+          function finish() {
+
+            $scope.syncBusy = false
+            utils.safe$apply()
+          }
+
+          function doSync(action) {
+
+            if ($scope.imageFolder) {
+              var promise
+
+              $scope.files = []
+              $scope.syncBusy = true
+              promise = action($scope.imageFolder)
+
+              promise.then(finish, finish)
+              return promise
+            }
+          }
+
+        $scope.doFileSync = function() {
+
+          doSync(syncImages)
         }
+
+        $scope.doFolderSync = function() {
+
+          doSync(syncFolders)
+        }
+
+        // get folder on initialize
+        $scope.syncBusy = true
+        getFolders()
+          .then(function() {
+            return getFolders({
+              title: '+'
+            })
+          })
+          .then(finish, finish)
+
       }
-
-      $scope.doFileSync = function () {
-
-        doSync (syncImages)
-      } 
-
-      $scope.doFolderSync = function () {
-
-        doSync (syncFolders)
-      }
-
-      // get folder on initialize
-      $scope.syncBusy = true
-      getFolders()
-        .then (function () {
-          return getFolders({title : '+'})
-        })
-        .then(finish, finish)
-
-    }
-  ])
+    ])
 
 
 }).call(this);

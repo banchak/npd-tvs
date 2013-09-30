@@ -1,8 +1,6 @@
-
 (function(){
 
 'use strict';
-
 
 angular.module('angularApp')
   .controller('mainCtrl', function ($scope, $route) {
@@ -13,8 +11,6 @@ angular.module('angularApp')
       'Karma'
     ];
 
-
   })
-
 
 }).call(this);

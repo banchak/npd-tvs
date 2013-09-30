@@ -18,7 +18,9 @@
       </h2>
 
       <div ng-show="adminView">
-        <a ng-href="#{{ basepath }}/edit/new" class="btn btn-danger">เพิ่มใหม่ </a>
+        <a ng-href="#{{ basepath }}/edit/new" class="btn btn-danger">
+          เพิ่มใหม่ 
+        </a>
       </div>
     </div>
 
@@ -29,73 +31,63 @@
     <div ng-hide="inspectMode()">
       <div ng-class="(inspectMode() && 'no-span') || 'span2'">
 
-        <div ng-include="'views/includes/legacy-list-orders.html'" ></div>
+        <div ng-include="'views/includes/legacy-list-orders.html'"></div>
 
-        <div ng-include="'views/includes/legacy-list-scopes.html'" ></div>
+        <div ng-include="'views/includes/legacy-list-scopes.html'"></div>
 
         <div ng-include="'views/includes/legacy-list-categories.html'"></div>
 
       </div>
     </div>
-        
+
     <div ng-class="(inspectMode() && 'span12') || 'span10'">
 
-        <div ng-show="boundList">
-          <ul class="nav nav-tabs">
-            <li ng-repeat="_bound in boundList" ng-class="(_bound.name == bound) && 'active'">
-              <a ng-href="{{ urlBound(_bound.name)}}">
+      <div ng-show="boundList">
+        <ul class="nav nav-tabs">
+          <li ng-repeat="_bound in boundList" ng-class="(_bound.name == bound) && 'active'">
+            <a ng-href="{{ urlBound(_bound.name)}}">
                 {{ _bound.label || _bound.name }}
               </a>
-            </li>
-          </ul> 
-        </div>
+          </li>
+        </ul>
+      </div>
 
-        <div>
-          <ul  class="thumbnails">
-            <li 
-              ng-class="ifSingleShow('span12','span'+utils.gScope.thumb_span)" 
-              ng-repeat="data in dataList | filter : dataList.searchWithin"
-              >
-              <div ng-class="$last && ($parent.filteredLength=$index+1) && ''"></div>
-              <div class="thumbnail hover-opacity" 
-                ng-class="(data.$temp.state && ('state-' + data.$temp.state))">
+      <div>
+        <ul class="thumbnails">
+          <li ng-class="ifSingleShow('span12','span'+utils.gScope.thumb_span)" ng-repeat="data in dataList | filter : dataList.searchWithin">
+            <div ng-class="$last && ($parent.filteredLength=$index+1) && ''"></div>
+            <div class="thumbnail hover-opacity" ng-class="(data.$temp.state && ('state-' + data.$temp.state))">
 
-                <div style="height:0; padding-left:20px;">
-                  <div style="position:relative; z-index:100;">
+              <div style="height:0; padding-left:20px;">
+                <div style="position:relative; z-index:100;">
 
-                    <span class="label-state" ng-class="data.$temp.state" ng-bind="data.$temp.state"></span>
-                    <span class="label-state"
-                      title="{{ data.$temp.postState && (data.postState + ' by ' + data.$temp.poster) }}"
-                      ng-class="data.$temp.postState"
-                      >
-                      {{ data.$temp.postState }}
-                      </span>
+                  <span class="label-state" ng-class="data.$temp.state" ng-bind="data.$temp.state"></span>
+                  <span class="label-state" title="{{ data.$temp.postState && (data.postState + ' by ' + data.$temp.poster) }}" ng-class="data.$temp.postState">
+                    {{ data.$temp.postState }}
+                  </span>
 
-                    <span ng-hide="ifSingleShow(true, !(showSortField && utils.lookup(data,showSortField)))">
-                      <span class="label-sort">
+                  <span ng-hide="ifSingleShow(true, !(showSortField && utils.lookup(data,showSortField)))">
+                    <span class="label-sort">
                       {{ utils.formatValue(utils.lookup(data,showSortField)) }}
-                      </span>
                     </span>
-                  </div>
-
-                </div>
-
-                <div class="container-fluid">
-                  <div 
-                    ng-class="{ 'pull-right span3' : ifSingleShow(false,utils.gScope.thumb_span==12) }" 
-                    ng-include="'views/includes/legacy-list-item-img.html'"
-                    >
-                  </div>
-              
-                  <div ng-include="'views/includes/legacy-list-item.html'"></div>
+                  </span>
                 </div>
 
               </div>
-            </li>
-          </ul>
-        </div>
+
+              <div class="container-fluid">
+                <div ng-class="{ 'pull-right span3' : ifSingleShow(false,utils.gScope.thumb_span==12) }" ng-include="'views/includes/legacy-list-item-img.html'">
+                </div>
+
+                <div ng-include="'views/includes/legacy-list-item.html'"></div>
+              </div>
+
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
-    
+
   </div>
 </div>
 
@@ -103,4 +95,3 @@
 <div ng-include="'views/includes/legacy-list-gdrive-viewer.html'"></div>
 <div ng-include="'views/includes/legacy-list-gcalendar-viewer.html'"></div>
 <div ng-include="'views/includes/legacy-list-errors-viewer.html'"></div>
-

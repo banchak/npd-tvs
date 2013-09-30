@@ -15,7 +15,8 @@
 
           function _isLegalPerson(ttype, name) {
 
-            return (ttype && ttype != Database.BUILT_IN.personTypes[0].name) || ((name || '').search(/บริษัท|ห้างหุ้นส่วน/) >= 0)
+            return (ttype && ttype != Database.BUILT_IN.personTypes[0].name) || ((name || '').search(
+              /บริษัท|ห้างหุ้นส่วน/) >= 0)
           }
 
           function _displayTenantName(tn) {
@@ -24,7 +25,7 @@
             if (!tn)
               return
 
-            data = $scope.isSynced(tn,'name') && utils.temp('data', tn)
+            data = $scope.isSynced(tn, 'name') && utils.temp('data', tn)
             name = tn.name
 
             if (data) {
@@ -199,10 +200,10 @@
               }
 
               ,
-              tenantLegalName : function() {
+              tenantLegalName: function() {
 
-                if (utils.lookup($scope,'resource.info.tenant_type')=='นิติบุคคล') {
-                  return _displayTenantName(utils.lookup($scope,'tenants()[0]'))
+                if (utils.lookup($scope, 'resource.info.tenant_type') == 'นิติบุคคล') {
+                  return _displayTenantName(utils.lookup($scope, 'tenants()[0]'))
                 }
               }
 
@@ -221,14 +222,14 @@
                     if (force != -1)
                       item.register_id = data.info.person_id
 
-                    angular.forEach(utils.lookup(data,'meta.locations'),function(l){
+                    angular.forEach(utils.lookup(data, 'meta.locations'), function(l) {
 
                       locs.push($scope.loc2Address(l))
                     })
 
                     if (locs.length && force != -1) {
 
-                      if (!item.address || locs.indexOf(item.address)==-1) {
+                      if (!item.address || locs.indexOf(item.address) == -1) {
                         item.address = locs[0]
                       }
                     }
@@ -353,7 +354,8 @@
               ,
               tenant_addable: function() {
 
-                return (!_isLegalPerson(entry.info().tenant_type, '')) || ($scope.tenants().length < 1)
+                return (!_isLegalPerson(entry.info().tenant_type, '')) || ($scope.tenants().length <
+                  1)
               }
 
               ,
@@ -464,7 +466,8 @@
                 if (!$scope.resource.info.duration || !$scope.resource.info.rent_date)
                   return true
 
-                return $scope.rent_date_synced == $scope.resource.info.duration + $scope.resource.info.rent_date
+                return $scope.rent_date_synced == $scope.resource.info.duration + $scope.resource
+                  .info.rent_date
               }
 
               ,
@@ -480,7 +483,8 @@
 
                 if (rent_date && $scope.resource.info.duration) {
 
-                  duration = $scope.resource.info.duration.match(/(?:(\d+)\s*ปี)?\s*(?:(\d+)\s*เดือน)?\s*(?:(\d+)\s*วัน)?/)
+                  duration = $scope.resource.info.duration.match(
+                    /(?:(\d+)\s*ปี)?\s*(?:(\d+)\s*เดือน)?\s*(?:(\d+)\s*วัน)?/)
 
                   if (duration) {
 
@@ -519,18 +523,17 @@
               ,
               beforeSave: function(savedata) {
                 if (savedata._name.match(/\*$/)) {
-                  var pattern, xx, yy, sep, digit 
+                  var pattern, xx, yy, sep, digit
 
 
-                  if (savedata._type=='บันทึก') {
+                  if (savedata._type == 'บันทึก') {
                     xx = savedata.info.reference
                     yy = ''
                     sep = '.'
                     digit = 2
-                  }
-                  else {
+                  } else {
                     xx = ''
-                    yy = moment(utils.lookup(savedata,'info.issue_date')).format('BBBB')
+                    yy = moment(utils.lookup(savedata, 'info.issue_date')).format('BBBB')
                     sep = '/'
                     digit = 4
                   }
@@ -547,18 +550,19 @@
                       } else {
                         var runno
 
-                        if (pattern[0]==utils.escapeRegex(xx)) {
-                          savedata._name  = xx + pattern[1] + sep + '*'
+                        if (pattern[0] == utils.escapeRegex(xx)) {
+                          savedata._name = xx + pattern[1] + sep + '*'
                         }
 
-                        savedata._name = savedata._name.replace(/\*$/,'0000000001'.substr(10-digit))
+                        savedata._name = savedata._name.replace(/\*$/, '0000000001'.substr(10 -
+                          digit))
                       }
 
                       return savedata
                     })
                   }
 
-                  savedata._name = savedata._name.replace(/\*$/,'0000000001'.substr(10-digit))
+                  savedata._name = savedata._name.replace(/\*$/, '0000000001'.substr(10 - digit))
                 }
                 return savedata
               }
@@ -636,29 +640,31 @@
               entry.info().tenant_type = entry.meta().tenant_type
               entry.meta().tenant_type = null
             }
-            
-            angular.forEach($scope.tenants(),function(t){
 
-              promises.push($scope.tenantSync(t,-1))
+            angular.forEach($scope.tenants(), function(t) {
+
+              promises.push($scope.tenantSync(t, -1))
             })
 
-            angular.forEach($scope.tenant_signers(),function(t){
+            angular.forEach($scope.tenant_signers(), function(t) {
 
-              promises.push($scope.tenantSync(t,-1))
+              promises.push($scope.tenantSync(t, -1))
             })
 
-            angular.forEach($scope.areas(),function(a){
+            angular.forEach($scope.areas(), function(a) {
 
               promises.push($scope.meta_room_to_floor_building(a))
             })
 
-            $q.all(promises).then(function(){
+            $q.all(promises).then(function() {
 
               $scope.$watch('tenants()', $scope.meta_tenant_render, true)
               $scope.$watch('tenant_signers()', $scope.meta_tenant_render, true)
               $scope.$watch('areas()', $scope.meta_area_render, true)
-              window.setTimeout(function(){ renderAllow = true},50)
-            })          
+              window.setTimeout(function() {
+                renderAllow = true
+              }, 50)
+            })
           }
 
           //$scope.meta_tenant_render(false)

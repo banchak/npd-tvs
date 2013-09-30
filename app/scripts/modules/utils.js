@@ -31,8 +31,8 @@
           return utils.$cookies[key]
         }
 
-        utils.timestamp = function () {
-          return ((new Date()).getTime() / 1000) | 0          
+        utils.timestamp = function() {
+          return ((new Date()).getTime() / 1000) | 0
         }
 
         utils.runningNext = function(runno) {
@@ -67,44 +67,42 @@
           var regx, pmatch, xsegs,
             dim = (xx && 4) || 3
 
-            if (val.match(/\*$/)) {
+          if (val.match(/\*$/)) {
 
-              xsegs = val.match(/^([^\d-\/\*\.]*)(\d*)([-\/\.]?)\*$/)
+            xsegs = val.match(/^([^\d-\/\*\.]*)(\d*)([-\/\.]?)\*$/)
 
-              // custom pattern
-              if (xsegs) {
+            // custom pattern
+            if (xsegs) {
 
-                if (xsegs[3]) {
+              if (xsegs[3]) {
 
-                  sep = xsegs[3]
-                  yy = xsegs[2]
-                }
-                else if (xsegs[2]) {
-                  
-                  yy = xsegs[2]
-                  yy = xsegs[1]
-                }
-                else if (xsegs[1]) {
+                sep = xsegs[3]
+                yy = xsegs[2]
+              } else if (xsegs[2]) {
 
-                  xx = xsegs[1]
-                }
+                yy = xsegs[2]
+                yy = xsegs[1]
+              } else if (xsegs[1]) {
+
+                xx = xsegs[1]
               }
-
-              val = val.replace(/\*$/, '')
-
-              regx = utils.runningRegex(xx, yy, sep, digit)
-
-              pmatch = val.match(regx)
-
-              if (pmatch && !pmatch[dim]) {
-
-                return [
-                  xx && utils.escapeRegex(pmatch[1] || xx || ''), utils.escapeRegex(pmatch[dim-2] || yy || ''), utils.escapeRegex(pmatch[dim-1] || sep || ''), '\\d{' + (digit || 4) + '}'
-                ]
-              }
-              return [utils.escapeRegex(val),'','','\\d{' + (digit || 4) + '}']
-
             }
+
+            val = val.replace(/\*$/, '')
+
+            regx = utils.runningRegex(xx, yy, sep, digit)
+
+            pmatch = val.match(regx)
+
+            if (pmatch && !pmatch[dim]) {
+
+              return [
+                xx && utils.escapeRegex(pmatch[1] || xx || ''), utils.escapeRegex(pmatch[dim - 2] || yy || ''), utils.escapeRegex(pmatch[dim - 1] || sep || ''), '\\d{' + (digit || 4) + '}'
+              ]
+            }
+            return [utils.escapeRegex(val), '', '', '\\d{' + (digit || 4) + '}']
+
+          }
         }
 
         utils.escapeRegex = function(str) {
@@ -355,7 +353,7 @@
           var value = 0,
             getter = (name && $parse(name)) || function(item) {
               return item
-            }, 
+            },
             val
 
             angular.forEach(items, function(item) {
