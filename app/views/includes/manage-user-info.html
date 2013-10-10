@@ -1,0 +1,18 @@
+
+<div class="row-fluid">
+  <h3>
+    Hello! {{ authorizeData.user.given_name }}, 
+    <small ng-class="authorizeData.user.roles && !_roles && (_roles=[].concat(authorizeData.user.roles)) && ''">want to see your ROLES click <a href ng-click="showRoles = !showRoles">here</a>.</small>
+  </h3>
+  <div class="span5 well" ng-show="showRoles">
+    {{ authorizeData.user.given_name }} has roles :
+    <ul>
+      <li ng-repeat="r in authorizeData.user.roles" ng-bind="r"></li>
+    </ul>
+    <div ng-show="authorizeData.user.hasRole('DEVELOPER')">
+      <input class="input-xlarge" ng-list ng-model="_roles" />
+      <button ng-click="authorizeData.user.setRoles(_roles)">set</button>
+    </div>
+  </div>
+
+</div>

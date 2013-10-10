@@ -260,7 +260,7 @@
                                   <input type="text" class="input-medium" 
                                     ng-disabled="resource.info.approved"
                                     ng-model="item.price"
-                                    ng-blur="prohibitPrice(item,!authorizeData.user.roles.has('MANAGER','ADMIN'))"
+                                    ng-blur="prohibitPrice(item,!authorizeData.user.hasRole('MANAGER','ADMIN'))"
                                     numeral="'money'" 
                                      />
                                 </div>
@@ -288,7 +288,7 @@
 
                         </div>
 
-                        <div ng-show="resource._type!='คืน' && authorizeData.user.roles.has('MANAGER','ADMIN')"> 
+                        <div ng-show="resource._type!='คืน' && authorizeData.user.hasRole('MANAGER','ADMIN')"> 
                           <div style="margin:2px 0;">
                             <span class="label" style="margin-right: 4px;" ng-show="item.$temp.data.info.target_price">
                               ราคาตั้งขาย
@@ -425,7 +425,7 @@
                           <div class="input-prepend" ng-class="priceUnsaved(item) && 'input-append'">
                             <span class="add-on">ราคา</span>
                             <input type="text" class="input-medium" 
-                              ng-disabled="resource._type!='ขาย' || resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                              ng-disabled="resource._type!='ขาย' || resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                               ng-model="item.price"
                               numeral="'money'" 
                                />

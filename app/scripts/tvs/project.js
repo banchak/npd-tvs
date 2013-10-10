@@ -97,8 +97,8 @@
       }
 
       this.secure = {
-        path: function(path, roles) {
-          if (!roles.has('OFFICER', 'MANAGER', 'ADMIN', 'STAFF.IT', 'DEVELOPER')) {
+        path: function(path, user) {
+          if (!user.hasRole('OFFICER', 'MANAGER', 'ADMIN', 'STAFF.IT', 'DEVELOPER')) {
 
             console.log('secure', path, roles)
             if (path.match(/^\/manage$/)) {

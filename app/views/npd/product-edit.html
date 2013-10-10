@@ -55,18 +55,18 @@
                 คุณสมบัติ</a></li>
             <li 
               ng-class="__tabIdx==1 && 'active'" 
-              ng-show="!limitEdit && (!resource._id || authorizeData.user.roles.has('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')) "
+              ng-show="!limitEdit && (!resource._id || authorizeData.user.hasRole('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')) "
               >
               <a href ng-click="__tabIdx=1">
                 ซื้อ</a></li>
             <li 
               ng-class="__tabIdx==2 && 'active'" 
-              ng-show="authorizeData.user.roles.has('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
+              ng-show="authorizeData.user.hasRole('ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
               <a href ng-click="__tabIdx=2">
                 ปรับปรุง</a></li>
             <li 
               ng-class="__tabIdx==3 && 'active'"
-              ng-show="authorizeData.user.roles.has('OFFICER', 'MANAGER', 'ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
+              ng-show="authorizeData.user.hasRole('OFFICER', 'MANAGER', 'ADMIN', 'OFFICER.COST', 'STAFF.IT','DEVELOPER')">
               <a href ng-click="__tabIdx=3">
                 {{ 'ที่เก็บ/ยืม/ขาย' }} 
                 <span ng-class="{sold : 'label label-important', taken : 'label label-info'}[getState()]">

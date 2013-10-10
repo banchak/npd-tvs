@@ -108,9 +108,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
 
       , searchable : function() {
           return $rootScope.authorize().then(function () {
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
               return ['_name', 'info.detail', 'meta.refs.name', 'info.serial', 'info.watch.model', 
                       'info.taking.person', 'info.selling.person', 'info.keeping.person',
                       'info.taking.voucher', 'info.selling.voucher', 'info.keeping.voucher']
@@ -121,9 +121,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
 
       , boundList : function () {
           return $rootScope.authorize().then(function () {
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) 
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) 
               return [ 
                       { name : '@sellable', label : 'พร้อมขาย'}
                     , { name : '@taken',    label : 'ค้างยืม'}
@@ -138,9 +138,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
       , limitScope : function (keyword) {
 
           return $rootScope.authorize().then(function () {
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
               return keyword
               
             
@@ -189,13 +189,12 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
 
 
             $rootScope.authorize().then(function () {
+              var user = utils.lookup($rootScope,'authorizeData.user')
+              if (user) {
 
-              if (utils.lookup($rootScope,'authorizeData.user')) {
+                var showFields = utils.temp('singleShowFields')
 
-                var roles = $rootScope.authorizeData.user.roles
-                  , showFields = utils.temp('singleShowFields')
-
-                if (roles && roles.has('STAFF', 'MANAGER', 'ADMIN')) {
+                if (user.hasRole('STAFF', 'MANAGER', 'ADMIN')) {
 
                   if (data.info.target_price || data.info.taking_price || data.info.lowest_price) {
 
@@ -221,7 +220,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
                   }
                 }
 
-                if (roles && roles.has('OFFICER', 'MANAGER', 'ADMIN')) {
+                if (user.hasRole('OFFICER', 'MANAGER', 'ADMIN')) {
 
                   if (data.info.selling) {
 
@@ -272,7 +271,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
                   }
                 }
 
-                if (roles && roles.has('ADMIN')) {
+                if (user.hasRole('ADMIN')) {
 
                   if (data.info.memo || data.info.buying) {
                     item = { label : 'ประวัติ' }
@@ -309,7 +308,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
                   }
                 }
 
-                if (roles && roles.has('STAFF.IT', 'DEVELOPER')) {
+                if (user.hasRole('STAFF.IT', 'DEVELOPER')) {
                   item = { label : 'developer'}
                   item.subfields = [{ label : 'raw data', value : JSON.stringify(data,undefined,2) }]
                   showFields.get(data).push(item)
@@ -356,9 +355,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         ]
       , boundList : function () {
           return $rootScope.authorize().then(function () {
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
                 return [ 
                        { name : '@broker', label : 'ตัวแทนขาย'}
                       ,{ name : '@customer', label : 'ลูกค้า'}
@@ -369,9 +368,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         }
       , searchable : function() {
           return $rootScope.authorize().then(function () {
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
               return ['_name', 'info.person_id', 'info.detail', 'meta.phones.id', 'meta.econtacts.id']
             
           })
@@ -406,9 +405,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         ]        
       , searchable : function() {
           return $rootScope.authorize().then(function () {
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER'))
               return ['_name', 'info.person.name', 'meta.items.name', 'meta.takenItems.name', 'info.approved']
           })
         }
@@ -439,9 +438,9 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         ]
       , boundList : function () {
           return $rootScope.authorize().then(function (){
-            var roles = utils.lookup($rootScope,'authorizeData.user.roles')
+            var user = utils.lookup($rootScope,'authorizeData.user')
 
-            if (roles && roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
+            if (user && user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN', 'DEVELOPER')) {
                 return [ 
                         { name : '@draft',  label : 'รออนุมัติ'}
                       , { name : '@approved',  label : 'อนุมัติแล้ว'}

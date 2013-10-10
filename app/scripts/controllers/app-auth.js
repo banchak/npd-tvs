@@ -22,7 +22,7 @@ angular.module('controllers.app-auth', ['modules.google-api'])
             }
 
             if (APP_CONFIG.secure && APP_CONFIG.secure.path) {
-              if (APP_CONFIG.secure.path(path, auth.user.roles) === false) {
+              if (APP_CONFIG.secure.path(path, auth.user) === false) {
                 goAway()
                 return
               }

@@ -71,10 +71,10 @@
             listctrl.success = function(scope) {
 
               $rootScope.authorize().then(function() {
-                var roles = utils.lookup($rootScope, 'authorizeData.user.roles')
+                var user = utils.lookup($rootScope, 'authorizeData.user')
 
-                if (roles) {
-                  scope.adminView = roles.has('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN',
+                if (user) {
+                  scope.adminView = user.hasRole('STAFF.IT', 'OFFICER', 'MANAGER', 'ADMIN',
                     'DEVELOPER')
 
                   if (scope.adminView && ctrl.name == 'persons') {
@@ -159,10 +159,10 @@
             listctrl.success = function(scope) {
 
               $rootScope.authorize().then(function() {
-                var roles = utils.lookup($rootScope, 'authorizeData.user.roles')
+                var user = utils.lookup($rootScope, 'authorizeData.user')
 
-                if (roles) {
-                  scope.adminView = roles.has('OFFICER', 'STAFF.IT', 'MANAGER', 'ADMIN',
+                if (user) {
+                  scope.adminView = user.hasRole('OFFICER', 'STAFF.IT', 'MANAGER', 'ADMIN',
                     'DEVELOPER')
 
                   if (scope.adminView) {
@@ -180,7 +180,7 @@
                         if (!utils.lookup(data, 'info.selling') && utils.lookup(data,
                           'info.taking')) {
 
-                          if (roles.has('MANAGER', 'ADMIN'))
+                          if (user.hasRole('MANAGER', 'ADMIN'))
                             actions.push(_act('edit/$id', 'ปรับราคายืม', 'taking-edit'))
 
                           actions.push(_act('edit/$id', 'รับคืนของยืม', 'getting'))
@@ -223,8 +223,8 @@
       }
 
       this.secure = {
-        path: function(path, roles) {
-          if (!roles.has('OFFICER', 'MANAGER', 'ADMIN', 'STAFF.IT', 'DEVELOPER')) {
+        path: function(path, user) {
+          if (!user.hasRole('OFFICER', 'MANAGER', 'ADMIN', 'STAFF.IT', 'DEVELOPER')) {
 
             if (path.match(/^\/products\/view\/\'[A-Z]+\d{1,2}\-\d{3,4}[A-Z]*$/)) {
               // allow only /products/view/'XXdd-dddd'
