@@ -16,14 +16,14 @@
               <label>ความสัมพันธ์ :</label>
               <div class="btn-group">
                 <button class="btn" 
-                  xng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                  xng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                   ng-class="resource.info.is_supplier && 'btn-success'" 
                   ng-click="resource.info.is_supplier = !resource.info.is_supplier"
                   >
                   {{ ((resource.info.is_supplier && '&radic; ') || '') + 'เป็นแหล่งซื้อ' }}
                 </button>
                 <button class="btn" 
-                  xng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                  xng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                   ng-class="resource.info.is_broker && 'btn-inverse'" 
                   ng-click="resource.info.is_broker = !resource.info.is_broker">
                   {{ ((resource.info.is_broker && '&radic; ') || '') + 'เป็นตัวแทนขาย' }}
@@ -240,7 +240,7 @@
               <div class="row-fluid">
                 <label>เงื่อนไข :</label>
                 <textarea rows="2" class="input-xxlarge" 
-                  ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                  ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                   ng-model="broker().cond" 
                   ></textarea>
               </div>
@@ -249,7 +249,7 @@
                 <div class="span4">
                   <label>เครดิต(วงเงิน) :</label>
                   <input type="text" class="input-medium" 
-                    ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                    ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                     ng-model="broker().credit"
                     numeral="'money'" 
                      />
@@ -257,7 +257,7 @@
                 <div class="span4">
                   <label>ระยะเวลาถือของ :</label>
                   <input type="text" class="input-medium" 
-                    ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                    ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                     ng-model="broker().hold_days"
                     numeral 
                      />
@@ -268,7 +268,7 @@
                 <label>
                   หลักประกัน :
                   <a href class="btn btn-small btn-danger" 
-                    ng-hide="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                    ng-hide="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                     ng-click="resource$entry.add(deposits())">
                     เพิ่ม</a>
                 </label>
@@ -281,7 +281,7 @@
                   <div class="row-fluid" ng-repeat="deposit in deposits()">
                     <hr ng-show="$index" />
                     <div class="pull-right"
-                      ng-hide="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                      ng-hide="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                       >
                       <a href tabindex="-1" class="btn btn-small btn-warning" 
                         ng-click="resource$entry.remove(deposits(),$index)">
@@ -291,7 +291,7 @@
                     <div class="input-prepend">
                       <span class="add-on">วันที่</span>
                       <input type="text" class="input-medium" 
-                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                         moment="'DD/MM/**BB'"
                         ng-model="deposit.date" 
                         typeahead="d.name as (d.label || d.name) 
@@ -302,7 +302,7 @@
                     <div class="input-prepend">
                       <span class="add-on">รายการ</span>
                       <input type="text" class="input-large"
-                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                         ng-model="deposit.type" 
                         typeahead="itm for itm in selfList('meta.deposits.type', $viewValue)"
                         typeahead-wait-ms="typeaheadWait"
@@ -312,7 +312,7 @@
                     <div class="input-prepend">
                       <span class="add-on">จำนวนเงิน</span>
                       <input type="text" class="input-medium" 
-                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                         ng-model="deposit.amount" 
                         numeral="money" />
                     </div>
@@ -320,7 +320,7 @@
                     <div class="input-prepend">
                       <span class="add-on">ผู้รับฝาก</span>
                       <input type="text" class="input-medium"
-                        ng-disabled="resource.info.approved || !authorizeData.user.roles.has('MANAGER','ADMIN')"
+                        ng-disabled="resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
                         ng-model="deposit.type" 
                         typeahead="itm for itm in selfList('meta.deposits.person', $viewValue)"
                         typeahead-wait-ms="typeaheadWait"

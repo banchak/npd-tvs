@@ -50,14 +50,14 @@
                         $rootScope.authorize().then(function() {
 
                           if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
-                            var roles = $rootScope.authorizeData.user.roles
+                            var user = $rootScope.authorizeData.user
 
                             angular.forEach(resp.items, function(meta) {
 
                               if (meta && meta.alternateLink) {
 
 
-                                if (roles.has(meta.title)) {
+                                if (user.hasRole(meta.title)) {
                                   folder.links.push({
                                     link: meta.alternateLink,
                                     title: meta.title

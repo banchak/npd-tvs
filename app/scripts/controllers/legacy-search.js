@@ -88,12 +88,12 @@ angular.module('controllers.legacy-search',['modules.utils'])
 
           if (user && user.roles) {
 
-            if (kmatch[1]=='-' && $cookies.npd$incognito!=user.email) {
-              $cookies.npd$incognito = user.email
+            if (kmatch[1]=='-') {
+              $cookies.incognito = user.email
               GAPI_CONFIG.userSignIn(user)
             }
-            if (kmatch[1]=='+' && $cookies.npd$incognito==user.email) {
-              $cookies.npd$incognito = ''
+            if (kmatch[1]=='+') {
+              $cookies.incognito = ''
               GAPI_CONFIG.userSignIn(user)
             }
 

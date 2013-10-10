@@ -1,25 +1,10 @@
-
-<h1>Manage</h1>
-<div class="row-fluid" ng-show="authorizeData.ready">
-  <h3>
-    Hello! {{ authorizeData.user.given_name }}, 
-    <small>want to see your ROLES click <a href ng-click="showRoles = !showRoles">here</a>.</small>
-  </h3>
-  <div class="span5 well" ng-show="showRoles">
-    {{ authorizeData.user.given_name }} has roles :
-    <ul>
-      <li ng-repeat="r in authorizeData.user.roles" ng-bind="r"></li>
-    </ul>
-  </div>
-</div>
+<div ng-include="'views/includes/manage-user-info.html'"></div>
 
 <div class="row-fluid">
-  <h3>select your task.</h3>
   <div class="span5">
-    <hr />
+    <h2>Manage</h2>
     <ul class="nav nav-list">
-      <li class="nav-header">Manage</li>
-      <li ng-show="authorizeData.user.roles.has('ADMIN','DEVELOPER')" class="divider"></li>
+      <li class="divider"></li>
       <li ng-show="authorizeData.user.link">
         <a ng-href="{{ authorizeData.user.link }}">goto {{ authorizeData.user.given_name }} page</a>
       </li>

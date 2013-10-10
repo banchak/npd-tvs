@@ -1,7 +1,8 @@
 'use strict'
 
 angular.module('tvs.project')
-  .value('GAPI_CONFIG', {
+.service('GAPI_CONFIG', ['COLLECTIONS', '$cookies', function(COLLECTIONS, $cookies) {
+  return {
     client_id: '1088349293256.apps.googleusercontent.com',
     scopes: [
       'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email',
@@ -21,39 +22,42 @@ angular.module('tvs.project')
       version: 'v3'
     }],
     userSignIn: function(user) {
-      var email = user.email
+      var roles
+        , email = user.email
+        , incog = ($cookies.incognito == email)
 
       if (email) {
 
-        user.roles = ['MEMBER']
+        roles = ['MEMBER']
 
-        if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
-          // match domain
-          user.roles = user.roles.concat(['STAFF', 'OFFICER'])
+        if (!incog) {
 
-          // match user in domain
-          //if (email.match(/^(noom|admin)\@h2heng.com$/)) {
-          //  user.roles = user.roles.concat( ['MANAGER', 'ADMIN'])
-          //}
-        }
+          if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
+            // match domain
+            roles = roles.concat(['STAFF', 'OFFICER'])
 
-        if (email.match(/tvs_u\.siwarut\@adm-thai\.homeip\.net/)) {
-          user.roles = user.roles.concat(['MANAGER'])
-        }
+            // match user in domain
+            //if (email.match(/^(noom|admin)\@h2heng.com$/)) {
+            //  roles = roles.concat( ['MANAGER', 'ADMIN'])
+            //}
+          }
 
-        if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/)) {
-          user.roles = user.roles.concat(['STAFF', 'DEVELOPER'])
-        }
+          if (email.match(/tvs_u\.siwarut\@adm-thai\.homeip\.net/))
+            roles = roles.concat(['MANAGER'])
 
-        if (email.match(/panida66\@gmail\.com/)) {
-          user.roles = ['STAFF', 'OFFICER']
-        }
+          if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/))
+            roles = roles.concat(['STAFF', 'DEVELOPER'])
+          
 
-        user.roles.has = user.hasRole
+          if (email.match(/panida66\@gmail\.com/))
+            roles = ['STAFF', 'OFFICER']
+        }        
       }
 
-      user.limitAccess = !(user.roles && user.roles.indexOf('STAFF') >= 0)
+      user.setRoles(roles)
 
       return user
     }
-  })
+  }
+}])
+

@@ -311,6 +311,10 @@
 
                 if (user) {
                   user.hasRole = $rootScope.authorizeData.userHasRole
+                  user.setRoles = function(roles) {
+                    user.roles = roles
+                    user.limitAccess = !(user.hasRole('STAFF'))
+                  }
                 }
 
                 if (GAPI_CONFIG.userSignIn) {
