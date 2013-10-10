@@ -31,10 +31,14 @@ angular.module('tvs.project')
           // match domain
           user.roles = user.roles.concat(['STAFF', 'OFFICER'])
 
-          // match user in demain
+          // match user in domain
           //if (email.match(/^(noom|admin)\@h2heng.com$/)) {
           //  user.roles = user.roles.concat( ['MANAGER', 'ADMIN'])
           //}
+        }
+
+        if (email.match(/tvs_u\.siwarut\@adm-thai\.homeip\.net/)) {
+          user.roles = user.roles.concat(['MANAGER'])
         }
 
         if (email.match(/^(jsat66|adm\.thai|banchag|jackkrit07)\@gmail\.com$/)) {

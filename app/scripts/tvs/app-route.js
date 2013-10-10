@@ -31,7 +31,7 @@
 
       .when('/areas/edit/:id', {
         templateUrl: 'views/tvs/area-edit.html',
-        controller: 'areaEditCtrl'
+        controller: 'areaEditCtrl' // 'legacyEditCtrl'
         /*, resolve     : 
         {
           editctrl 
