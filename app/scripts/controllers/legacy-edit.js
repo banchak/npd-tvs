@@ -107,7 +107,10 @@ angular.module('controllers.legacy-edit', ['modules.uis', 'modules.utils'])
 
         name = name || 'name'
 
-
+      if (!item) {
+        
+        return $q.when(null)
+      }
       if (!item[name]) {
 
         tempsynced.set(item, item[name])
