@@ -1,14 +1,14 @@
 
 <h5>ข้อ 2. วัตถุประสงค์ในการเช่า</h5>
 <p>
-  ผู้เช่าตกลงเช่าสถานที่เพื่อประกอบกิจการค้าประเภท <strong>{{ resource.info.business_type || '-' }}</strong> 
+  <nobr>ผู้เช่า</nobr>ตกลงเช่าสถานที่เพื่อประกอบกิจการค้าประเภท <strong>{{ resource.info.business_type || '-' }}</strong> 
   <span ng-show="goods().length">โดยมีชนิดสินค้าดังนี้</span>
   <div ng-repeat="g in goods()">
     (2.{{$index+1}}) {{ g.name }}
   </div>
 </p>
 <p ng-show="resource.info.brand_name || resource.info.shop_name">
-  โดยผู้เช่าจัดจำหน่ายสินค้า/ประกอบกิจการ
+  โดย<nobr>ผู้เช่า</nobr>จัดจำหน่ายสินค้า/ประกอบกิจการ
   ภายใต้เครื่องหมายการค้า <strong>{{ resource.info.brand_name || '-' }}</strong>
   และใช้ชื่อร้าน “<strong>{{ resource.info.shop_name || '-' }}</strong>” 
   สำหรับจำหน่ายสินค้า/ประกอบกิจการ
