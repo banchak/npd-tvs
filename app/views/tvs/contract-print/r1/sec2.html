@@ -6,14 +6,14 @@
   ถึงวันที่ <strong>{{ resource.info.rent_until| moment:'thaitext' }}</strong>
 
   <span ng-show="resource.info.rental_deposit">
-  โดย<nobr>ผู้เช่า</nobr>จะชำระค่าเช่าล่วงหน้าแก่<nobr>ผู้ให้เช่า</nobr>ครบถ้วนเป็นจำนวน 
+  โดย<span class="nobr">ผู้เช่า</span>จะชำระค่าเช่าล่วงหน้าแก่<span class="nobr">ผู้ให้เช่า</span>ครบถ้วนเป็นจำนวน 
   {{ resource.info.rental_deposit | numeral }} บาท ({{ resource.info.rental_deposit | numeral:'bahttext' }})
   ในวันที่ทำสัญญาฉบับนี้
   </span>
 
   <span ng-show="rent_rates().length && rent_rates()[0].value">
-  โดย<nobr>ผู้เช่า</nobr>จะต้องชำระค่าเช่าล่วงหน้าเป็นรายเดือนให้แก่<nobr>ผู้ให้เช่า</nobr> 
-  ณ ที่ทำการของ<nobr>ผู้ให้เช่า</nobr>ในโครงการ ธัญญะ ช็อปปิ้ง พาร์ค 
+  โดย<span class="nobr">ผู้เช่า</span>จะต้องชำระค่าเช่าล่วงหน้าเป็นรายเดือนให้แก่<span class="nobr">ผู้ให้เช่า</span> 
+  ณ ที่ทำการของ<span class="nobr">ผู้ให้เช่า</span>ในโครงการ ธัญญะ ช็อปปิ้ง พาร์ค 
   เลขที่ 735/1-8 ถนนศรีนครินทร์ แขวงสวนหลวง เขตสวนหลวง กรุงเทพมหานคร 
   ในวันทำสัญญา และภายในวันที่ 5 ของทุกๆ เดือน 
   </span>
@@ -31,22 +31,22 @@
   </div>
 </p>
 <p>
-  <nobr>ผู้เช่า</nobr>มีระยะเวลาตกแต่งสถานที่เช่า โดยไม่เสียค่าเช่า 
+  <span class="nobr">ผู้เช่า</span>มีระยะเวลาตกแต่งสถานที่เช่า โดยไม่เสียค่าเช่า 
   นับแต่วันที่ <strong>{{ resource.info.decorate_date | moment:'thaitext' }}</strong> 
   ถึงวันที่ <strong>{{ resource.info.decorate_until | moment:'thaitext'}}</strong> 
-  แต่<nobr>ผู้เช่า</nobr>ต้องชำระเงินค่า สาธารณูปโภค น้ำ, ไฟ ตามที่ได้ใช้ในระหว่างงานตกแต่ง
+  แต่<span class="nobr">ผู้เช่า</span>ต้องชำระเงินค่า สาธารณูปโภค น้ำ, ไฟ ตามที่ได้ใช้ในระหว่างงานตกแต่ง
 </p>
 <p>
-  ทั้งนี้ <nobr>ผู้เช่า</nobr>ต้องเป็นผู้รับผิดชอบในการจัดทำประกันภัย CONTRACTOR ALL RISKS INSURANCE “CAR”
+  ทั้งนี้ <span class="nobr">ผู้เช่า</span>ต้องเป็นผู้รับผิดชอบในการจัดทำประกันภัย CONTRACTOR ALL RISKS INSURANCE “CAR”
   กับบริษัทประกันภัยที่เชื่อถือได้ เพื่อคุ้มครองภัยในระหว่างการตกแต่งสถานที่เช่า
-  และเป็นหน้าที่ของ<nobr>ผู้เช่า</nobr> ที่จะต้องนำสำเนากรมธรรม์ดังกล่าวมาส่งมอบให้กับ<nobr>ผู้ให้เช่า</nobr> ก่อนเริ่มดำเนินการตกแต่งสถานที่เช่า
+  และเป็นหน้าที่ของ<span class="nobr">ผู้เช่า</span> ที่จะต้องนำสำเนากรมธรรม์ดังกล่าวมาส่งมอบให้กับ<span class="nobr">ผู้ให้เช่า</span> ก่อนเริ่มดำเนินการตกแต่งสถานที่เช่า
 </p>
 <p ng-show="rent_rates().length && rent_rates()[0].value">
-  <nobr>ผู้เช่า</nobr>เริ่มชำระค่าเช่า ตั้งแต่วันที่ <strong>{{ resource.info.pay_date | moment:'thaitext' }}</strong> 
+  <span class="nobr">ผู้เช่า</span>เริ่มชำระค่าเช่า ตั้งแต่วันที่ <strong>{{ resource.info.pay_date | moment:'thaitext' }}</strong> 
   ถึงวันที่ <strong>{{ resource.info.pay_until | moment:'thaitext' }}</strong>
 </p>
 <p ng-show="rent_rates().length && rent_rates()[0].value">
-  ในกรณีที่<nobr>ผู้เช่า</nobr>ชำระเงินช้ากว่ากำหนด 
-  <nobr>ผู้เช่า</nobr>ยินยอมเสียค่าปรับเพื่อเป็นค่าเสียหายเท่ากับอัตราดอกเบี้ยร้อยละ 0.5 ต่อวัน 
+  ในกรณีที่<span class="nobr">ผู้เช่า</span>ชำระเงินช้ากว่ากำหนด 
+  <span class="nobr">ผู้เช่า</span>ยินยอมเสียค่าปรับเพื่อเป็นค่าเสียหายเท่ากับอัตราดอกเบี้ยร้อยละ 0.5 ต่อวัน 
   ของเงินที่ค้างชำระ จนกว่าจะชำระค่าเช่าครบถ้วน
 </p>
