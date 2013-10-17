@@ -34,7 +34,9 @@
                 </label>
                 <input type="text" class="input-medium" 
                   ng-disabled="!unlockEdit"
-                  ng-model="resource._name" />
+                  ng-model="resource._name"
+                  ng-change="resource._name = resource._name.toUpperCase()" 
+                  />
               </div>
             </div>
             <div ng-show="toggle_memo">
@@ -227,7 +229,7 @@
                             <input type="text" class="input-small"
                               ng-disabled="resource.info.approved"
                               ng-model="metal().gold_weight" 
-                              numeral="'0[.]0'"
+                              numeral="'0[.]00'"
                               />
                           </div>
 
@@ -247,7 +249,7 @@
                             <span class="add-on">เบอร์แหวน</span>
                             <input type="text" class="input-small"
                               ng-model="metal().ring_size" 
-                              numeral="'0[.]0'"
+                              numeral="'0[.]0[0]'"
                               />
                           </div>
 
@@ -302,25 +304,46 @@
                               </div>
 
                               <div class="input-prepend">
-                                <span class="add-on">น้ำหนัก</span>
+                                <span class="add-on">มิติ</span>
                                 <input type="text" class="input-small" 
+                                  ng-model="gem.dimension" />
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">น้ำหนัก</span>
+                                <input type="text" class="input-mini" 
                                   ng-disabled="resource.info.approved"
                                   ng-model="gem.weight" 
-                                  numeral="'0[.]0'" />
+                                  numeral="'0[.]00'" />
+                              </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">cert</span>
+                                <input type="text" class="input-medium" 
+                                  ng-model="gem.cert" />
                               </div>
 
                               <div class="input-prepend">
                                 <span class="add-on">จำนวน</span>
-                                <input type="text" class="input-small" 
+                                <input type="text" class="input-mini" 
                                   ng-disabled="resource.info.approved"
                                   ng-model="gem.qty" 
                                   numeral="'qty'" />
                               </div>
 
                               <div class="input-prepend">
-                                <span class="add-on">cert</span>
-                                <input type="text" class="input-medium" ng-model="gem.cert" />
+                                <span class="add-on">มูลค่า</span>
+                                <input type="text" class="input-small" 
+                                  ng-model="gem.price" 
+                                  numeral="'money'" />
                               </div>
+
+                              <div class="input-prepend">
+                                <span class="add-on">หมายเหตุ</span>
+                                <input type="text" class="input-xlarge" 
+                                  ng-model="gem.note" />
+                              </div>
+
                             </div>
 
                           </div>

@@ -87,7 +87,8 @@
               required
               popover="ใส่ * เพื่อrun อัตโนมัติ" popover-trigger="focus"
               ng-disabled = "!unlockEdit || resource.info.approved"
-              ng-model="resource._name" />
+              ng-model="resource._name" 
+              ng-change="resource._name = resource._name.toUpperCase()"/>
           </div>
 
         </div>

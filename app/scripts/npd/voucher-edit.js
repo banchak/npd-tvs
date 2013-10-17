@@ -174,7 +174,7 @@
               date = $scope.resource.info.issue_date,
               voucher = $scope.resource._name
 
-              state = state || 'taken'
+            state = state || 'taken'
             field = field || 'info.taking'
 
             return function(item) {
@@ -193,10 +193,17 @@
                 return
               }
 
+              if (state=='sold' && data.state=='taken') {
+
+                // allow selling from 'taken' item with same person
+                taking = utils.lookup(data, 'info.taking')
+                if (taking.person == person)
+                  return
+              }
+
               if (data.state)
                 return 'not allow for state "' + data.state + '"'
             }
-
           }
 
           function _verifyItemGetting() {
