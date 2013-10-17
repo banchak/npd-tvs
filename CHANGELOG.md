@@ -1,5 +1,24 @@
 Change logs
 ===========
+
+## 2013-10-18
+
+### NPD
+* product-edit ตัวเลขทศนิยม ในฟิลด์ อัญมณี->น้ำหนัก ป้อน 2 หลัก แต่แสดงแค่หลักเดียว
+* product-edit เพิ่มฟิลด์ อัญมณี->มิติ, มูลค่า, หมายเหตุ
+* product-edit รหัสสินค้า เมื่อ input แปลงเป็น uppercase อัตโนมัติ
+* voucher-edit เลขที่เอกสาร เมื่อ input แปลงเป็น uppercase อัตโนมัติ
+* voucher-edit แก้ bug กรณีขาย สินค้า ที่ค้างยืม โดยชื่อตรงกัน ผ่านรายการไม่ได้ ติด verify error
+
+### TVS
+* contract-print เลือก font ได้
+* contract-print เพิ่ม function swapRunning เพื่อสลับเลขที่เอกสาร จาก 2555/0001 -> 0001/2555
+
+## 2013-10-16
+### TVS
+* contract-print ปรับปรุงตัดคำ ฟอร์มสัญญาที่พิมพ์ ใส่ nobr ครอบ คำที่ห้ามแบ่งข้ามบรรทัด เช่น ผู้เช่า ผู้ให้เช่า
+* contract-print แก้ bug ฟอร์มสัญญาที่พิมพ์ ชื่อฟิลด์ผิด เงินค่าเช่าล่วงหน้า เงินประกัน 
+
 ## 2013-9-30
 * normalize git repo, fix incompatible line-end problems
 
