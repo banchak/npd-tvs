@@ -180,6 +180,16 @@
           var entry = $scope.resource$entry,
             services = {
 
+              swapRunning : function (s, sep) {
+
+                sep = sep || '/'
+                if (s && s.indexOf(sep)>=0)
+                  s = s.split(sep).reverse().join(sep)
+
+                return s
+              }
+
+              ,
               getTerm: function() {
                 if ($scope.resource._type) {
 
