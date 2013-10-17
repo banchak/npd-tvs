@@ -2,7 +2,9 @@
   <div ng-init="
     printForm = utils.$router.current.params.form; 
     formRev = '2';
-    revList = [{val:'2', lbl:'rev.2 (ล่าสุด)'},{val:'1', lbl:'rev.1'}]
+    revList = [{val:'2', lbl:'rev.2 (ล่าสุด)'},{val:'1', lbl:'rev.1'}];
+    fontFace = '';
+    fontList = [{val:'', lbl: 'default font'},{val:'cordia', lbl:'cordiaNew'}];
     "
     >
     <div class="no-print">
@@ -17,6 +19,7 @@
 
       <div>
         <select class="input-medium" ng-model="formRev" ng-options="r.val as (r.lbl || r.val) for r in revList"></select>
+        <select class="input-medium" ng-model="fontFace" ng-options="r.val as (r.lbl || r.val) for r in fontList"></select>
       </div>
       
       <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
@@ -51,7 +54,7 @@
       </ul>
     </div>
     <div class="page-boundary">
-      <div class="print-page" ng-show="printForm">
+      <div class="print-page" ng-show="printForm" ng-class="fontFace">
         <div ng-include="printForm && ('views/tvs/contract-print-' + printForm.replace('$',formRev) + '.html')"></div>
       </div>
     </div>

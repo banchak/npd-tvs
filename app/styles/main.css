@@ -317,6 +317,7 @@ tr.dotted td {
   page-break-inside: avoid;
   overflow : hidden;
 }
+
 @media print {
   .print-page {
     margin-left : 0.25in;
@@ -336,4 +337,17 @@ tr.dotted td {
   .page-break {
     page-break-before : always;
   }
+}
+
+.cordia {
+  font-family: "cordia New", Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  line-height: 1.2
+}
+
+.cordia h4 {
+  font-size: 23.5px;
+}
+.cordia h5 {
+  font-size: 20px;
 }
