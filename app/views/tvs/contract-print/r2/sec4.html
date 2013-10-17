@@ -6,10 +6,10 @@
   นับแต่วันที่ <strong>{{ resource.info.rent_date | moment:'thaitext' }}</strong> 
   ถึงวันที่ <strong>{{ resource.info.rent_until| moment:'thaitext' }}</strong>
 
-  <span ng-show="resource.info.rental_deposit">
+  <span ng-show="resource.info.rental_prepaid">
   โดย<span class="nobr">ผู้เช่า</span>จะชำระค่าเช่าล่วงหน้าแก่<span class="nobr">ผู้ให้เช่า</span>ครบถ้วนเป็นจำนวน 
-  <strong>{{ resource.info.rental_deposit | numeral }}</strong> บาท 
-  <strong>({{ resource.info.rental_deposit | numeral:'bahttext' }})</strong>
+  <strong>{{ resource.info.rental_prepaid | numeral }}</strong> บาท 
+  <strong>({{ resource.info.rental_prepaid | numeral:'bahttext' }})</strong>
   ในวันที่ทำสัญญาฉบับนี้
   </span>
 

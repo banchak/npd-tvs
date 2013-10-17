@@ -1,0 +1,120 @@
+AddDefaultCharset utf-8
+
+## cannot borwse folder
+Options -Indexes +FollowSymLinks
+#IndexIgnore *
+
+## ok can browse folder
+#Options +Indexes +FollowSymLinks 
+#IndexOptions +FancyIndexing
+#IndexOrderDefault Ascending Name
+## option file that not browse
+#IndexIgnore *
+
+<Files ~ '.inc$'>
+Order allow,deny
+Deny from all
+</Files>
+
+#################################################################################
+
+# Add Proper MIME-Type for Favicon
+AddType image/x-icon .ico
+AddType application/x-javascript .js
+AddType application/x-httpd-php .php
+
+AddType font/ttf .ttf
+AddType font/eot .eot
+AddType font/otf .otf
+AddType font/woff .woff
+
+###AddType video/flash        .mp4
+AddType video/mp4             .mp4
+AddType video/webm            .webm
+AddType video/ogg             .ogv
+
+AddType application/x-mpegurl .m3u8
+# hls transport stream segments:
+AddType video/mp2t            .ts
+
+#########################################################################
+
+<IfModule mod_headers.c>
+	Header unset Pragma
+	FileETag MTime Size
+	##FileETag None
+	##Header unset ETag
+</IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresDefault "access plus 60 days"
+</IfModule>
+
+# default expire separate by object type
+#<IfModule mod_expires.c>
+###ExpiresByType text/html "access plus 300 seconds"
+###ExpiresByType text/php "access plus 300 seconds"
+###ExpiresByType text/plain "access plus 300 seconds"
+###ExpiresByType text/css "access plus 60 days"
+###ExpiresByType text/javascript "access plus 60 days"
+###ExpiresByType text/js "access plus 60 days"
+###ExpiresByType image/x-icon "access plus 60 days"
+###ExpiresByType image/ico "access plus 60 days"
+###ExpiresByType image/gif "access plus 60 days"
+###ExpiresByType image/jpg "access plus 60 days"
+###ExpiresByType image/jpeg "access plus 60 days"
+###ExpiresByType image/png "access plus 60 days"
+###ExpiresByType video/x-flv "access plus 60 days"
+###ExpiresByType video/x-swf "access plus 60 days"
+###ExpiresByType application/x-httpd-php "access plus 300 seconds"
+###ExpiresByType application/x-javascript "access plus 60 days"
+###ExpiresByType application/pdf "access plus 60 days"
+###ExpiresByType application/x-shockwave-flash "access plus 60 days"
+#</IfModule>
+
+<FilesMatch "\.(ico|jpg|jpeg|png|gif|js|css|swf|pdf|flv|mp3|mp4)$">
+	#ExpiresDefault "access plus 60 days"
+	#Header set Cache-Control "public, max-age=5184000"
+
+	ExpiresDefault "access plus 30 days"
+	Header set Cache-Control "public, max-age=2592000"
+
+	#use with care
+	#Header unset Last-Modified
+</FilesMatch>
+
+<FilesMatch "\.(html|htm|xml|txt|xsl)$">
+	ExpiresDefault "access plus 600 seconds"
+	#Header set Cache-Control: "max-age=600, must-revalidate"
+	#Header set Cache-Control: "private, max-age=600, must-revalidate"
+	Header set Cache-Control: "public, max-age=600"
+</FilesMatch> 
+
+# disable caching for dynamic files
+<FilesMatch "\.(pl|php|cgi|spl|scgi|fcgi)$">
+	#Header unset Cache-Control
+	#Header unset Expires
+	#Header unset Last-Modified
+	#Header unset Pragma
+	
+	#Header set Cache-Control: "private, max-age=0, no-cache, no-store, must-revalidate"
+	Header set Cache-Control: "max-age=0, no-cache, no-store, must-revalidate"
+	Header set Pragma "no-cache"
+	
+	##ExpiresDefault A0
+	##Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+	##Header set Pragma "no-cache"
+	
+	#ExpiresDefault "access plus 180 seconds"
+	#Header set Cache-Control: "max-age=180, must-revalidate"
+	#Header set Cache-Control: "private, max-age=180, proxy-revalidate"
+</FilesMatch> 
+
+#########################################################################
+
+<IfModule mod_deflate.c>
+	###AddOutputFilterByType DEFLATE text/css text/xhtml text/html text/plain text/xml text/javascript application/x-javascript application/x-httpd-php application/json
+	AddOutputFilterByType DEFLATE text/css text/xhtml text/html text/plain text/xml text/javascript application/x-javascript application/x-httpd-php application/json application/javascript application/xml application/xhtml+xml application/rss+xml
+</IfModule>
+
