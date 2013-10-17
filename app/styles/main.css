@@ -56,6 +56,9 @@ input[numeral]:focus {
 .break-word {
   word-wrap: break-word;
 }
+.nobr {
+    white-space:nowrap; 
+}
 dl .margins-remove {
   margin: 0;
   padding: 0;
