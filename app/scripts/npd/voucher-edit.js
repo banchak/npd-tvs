@@ -312,11 +312,11 @@
             utils.deepStrip(_taking)
 
             state = state || null
-            field = field || 'info.taking'
+            
             angular.forEach($scope.items(), function(item) {
               var pm, _sys, taking, qry, changes, data = tempdata.get(item)
 
-                if ((data.state || null) == state) {
+                if ((data.state || null) != state) {
                   _sys = angular.extend({}, data._sys)
                   _sys.modifier = modifier
                   _sys.modified = modified
@@ -327,7 +327,7 @@
                     }
                   }
 
-                  if (!state) { // post
+                  if (state) { // post
 
                     taking = angular.extend({
                       price: item.price
@@ -380,9 +380,6 @@
           function postTaking(unpost, state, field) {
             var promise
 
-            state = state || 'taken'
-            field = field || 'info.taking'
-
             promise = _postVerify(unpost, _verifyItemTaking(state, field))
 
             promise = promise.then(function() {
@@ -395,7 +392,7 @@
 
             promise = promise.then(function() {
 
-              _postTaking(unpost && state, field)
+              _postTaking(!unpost && state, field)
             })
 
             promise = promise.then(function() {
