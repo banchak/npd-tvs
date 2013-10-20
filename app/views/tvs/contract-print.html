@@ -24,7 +24,7 @@
       
       <ul class="nav nav-tabs" ng-hide="utils.$router.current.params.form">
         <li ng-class="printForm=='r$' && 'active'" 
-          ng-show="(utils.notEmpty(rent_rates())) && (printForm=printForm||'r$')">
+          ng-show="(utils.notEmpty(resource.info.rental_prepaid || rent_rates())) && (printForm=printForm||'r$')">
           <a href ng-click="printForm='r$'">
             เช่า</a></li>
         <li ng-class="printForm=='s$' && 'active'"
