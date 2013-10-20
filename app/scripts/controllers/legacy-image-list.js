@@ -7,6 +7,7 @@
       function($scope, legacyListDI, listctrl, $controller, $timeout, GDrive, $rootScope) {
 
         var success = function() {
+          var utils = legacyListDI.utils
 
           $scope.imageViewer = {
             opened: false,
@@ -105,18 +106,18 @@
             images = data.meta.images
 
             angular.forEach(images, function(img) {
+              var thumbnail = utils.temp('thumbnailLink')
 
-              if (img.id && img.thumbnailLink === undefined) {
+              if (img.id && thumbnail.get(img) === undefined) {
 
-                img.thumbnailLink = null
+                thumbnail.set(img, null)
 
                 GDrive.fileMeta(img.id).then(function(meta) {
 
                   if (meta.thumbnailLink && !meta.trashed) {
 
-                    img.thumbnailLink = meta.thumbnailLink
-                    img.src = meta.webContentLink //'https://docs.google.com/uc?id=' + img.id
-
+                    thumbnail.set(img, meta.thumbnailLink)
+                    utils.temp('src').set(img, meta.webContentLink) //'https://docs.google.com/uc?id=' + img.id
                   }
                 })
               }

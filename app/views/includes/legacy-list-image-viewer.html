@@ -6,7 +6,7 @@
     <div class="modal-body">
         <div>
           <div ng-repeat="img in imageViewer.images | limitTo : 1">
-            <img ng-src="{{ img.src }}" />
+            <img ng-src="{{ utils.temp('src',img) }}" />
           </div>
         </div>
         <p style="word-wrap:break-word;" class="text-center" ng-bind="imageViewer.description">

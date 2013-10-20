@@ -5,7 +5,7 @@
           <a href ng-click="viewImage(data)" >
             <img class="img-polaroid" alt="album" title="{{ data._name }}"
               ng-hide="ifSingleShow(false,utils.gScope.thumb_hide_desc)" 
-              ng-src="{{ img.thumbnailLink }}" 
+              ng-src="{{ utils.temp('thumbnailLink', img) }}" 
               />
             <span ng-show="ifSingleShow(false,utils.gScope.thumb_hide_desc)">album</span>
           </a>
