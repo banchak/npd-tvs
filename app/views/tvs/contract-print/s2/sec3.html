@@ -5,12 +5,12 @@
   สัญญาจ้างบริการฉบับนี้มีกำหนดระยะเวลา <strong>{{ resource.info.duration }}</strong> 
   ตั้งแต่วันที่ <strong>{{ resource.info.rent_date | moment:'thaitext' }}</strong> 
   ถึงวันที่ <strong>{{ resource.info.rent_until| moment:'thaitext' }}</strong>
-  และ ผู้รับบริการเริ่มชำระค่าบริการ
+  และ <span class="nobr">ผู้รับบริการ</span>เริ่มชำระค่าบริการ
   ตั้งแต่วันที่ <strong>{{ resource.info.pay_date | moment:'thaitext' }}</strong> 
   ถึงวันที่ <strong>{{ resource.info.pay_until | moment:'thaitext' }}</strong>
 </p>
 <p>
-  ผู้รับบริการไม่ต้องชำระค่าบริการ 
+  <span class="nobr">ผู้รับบริการ</span>ไม่ต้องชำระค่าบริการ 
   ในระยะเวลาที่ตกแต่งสถานที่เช่า 
   นับตั้งแต่วันที่ <strong>{{ resource.info.decorate_date | moment:'thaitext' }}</strong> 
   ถึงวันที่ <strong>{{ resource.info.decorate_until | moment:'thaitext' }}</strong> 
