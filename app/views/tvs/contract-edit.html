@@ -26,22 +26,32 @@
               </div>
 
               <div class="span4" ng-show="resource._type=='บันทึก'">
-                <label>
-                  <span ng-class="!resource.info.reference && 'text-error'">
-                    อ้างถึงสัญญา : 
-                    <span
-                      ng-hide="resource.info.reference" 
-                      popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
-                      > 
-                      &lowast; 
+                <form style="margin:0;padding:0;display:inline;" ng-submit="referenceSync()">
+                  <input type="submit" tabindex="-1" 
+                    style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>              
+                  <label>
+                    <span ng-class="!resource.info.reference && 'text-error'">
+                      อ้างถึงสัญญา : 
+                      <span
+                        ng-hide="resource.info.reference" 
+                        popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
+                        > 
+                        &lowast; 
+                      </span>
                     </span>
+                  </label>
+                  <input type="text" class="input-medium" 
+                    required
+                    ng-disabled = "!unlockEdit || resource.info.approved"
+                    ng-model="resource.info.reference" />
+                  <span class="add-on btn" 
+                    ng-disabled = "resource.info.approved"
+                    ng-class="!reference_isSynced() && 'btn-info'"
+                    ng-click="syncReference()"
+                    >
+                    &crarr;
                   </span>
-                </label>
-                <input type="text" class="input-medium" 
-                  required
-                  ng-disabled = "!unlockEdit || resource.info.approved"
-                  ng-model="resource.info.reference" />
-                <span></span>
+                </form>
               </div>
 
           </div>
@@ -147,9 +157,8 @@
                   
                   <div class="input-prepend input-append">
                     <form style="margin:0;" ng-submit="tenantSync(tenants()[$index])">
-                      <div style="height:0; width:0; overflow:hidden;">
-                        <input type="submit" />
-                      </div>                          
+                      <input type="submit" tabindex="-1" 
+                        style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
                       <span class="add-on">ชื่อผู้เช่า</span>
                       <input type="text" class="input-xlarge" 
                         ng-disabled = "resource.info.approved"
@@ -209,9 +218,9 @@
 
                   <div class="input-prepend input-append">
                     <form style="margin:0;" ng-submit="tenantSync(tenant_signers()[$index])">
-                      <div style="height:0; width:0; overflow:hidden;">
-                        <input type="submit" />
-                      </div>                          
+                      <input type="submit" tabindex="-1" 
+                            style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+
                       <span class="add-on">ผู้ลงนาม</span>
                       <input type="text" class="input-xlarge" placeholder="กรรมการ หรือ ผู้รับมอบอำนาจ(ถ้ามี)" 
                         ng-model="signer.name" 
@@ -301,9 +310,8 @@
                   </div>
                   <div class="input-prepend input-append">
                     <form style="margin:0;" ng-submit="meta_room_to_floor_building(area)">
-                      <div style="height:0; width:0; overflow:hidden;">
-                        <input type="submit" />
-                      </div>                          
+                      <input type="submit" tabindex="-1" 
+                            style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
 
                       <span class="add-on">ห้อง</span>
                       <input type="text" class="input-small" 
@@ -451,9 +459,8 @@
               <label>วันที่เริ่มเช่า : </label>
               <div class="input-append">
                 <form style="margin:0;" ng-submit="sync_rent_date()">
-                  <div style="height:0; width:0; overflow:hidden;">
-                    <input type="submit" />
-                  </div>                          
+                  <input type="submit" tabindex="-1" 
+                        style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
 
                   <input type="text" class="input-medium" placeholder="เริ่ม" 
                     ng-disabled = "resource.info.approved"
