@@ -509,10 +509,15 @@
 
                 if ($scope.resource.info.reference) {
 
+                  if (!$scope.reference_synced)
+                    $scope.reference_synced = {}
+
                   $scope.reference_synced.name = $scope.resource.info.reference
                   promise = $scope.xdataSync($scope.reference_synced, 'name', 'Contract', force)
 
                   return promise.then(function(data) {
+
+                      $scope.reference_synced.data = data
                       if (data) {
                         angular.forEach([
                           'info.tenant_type','info.signer2',
@@ -523,13 +528,16 @@
                           ], function(n){
                             var fld = utils.$parse(n)
 
-                            fld.assign($scope.resource,fld(data))
+                            if (force!=-1)
+                              fld.assign($scope.resource,fld(data))
                         })
                         return _initialSync().then(function(){ return data })
                       }
+
                       return data
                   })
                 }
+                return $q.when(null)
               }
 
               ,
@@ -712,7 +720,13 @@
               entry.meta().tenant_type = null
             }
 
-            _initialSync().then(function() {
+            //_initialSync().then(function() {
+            $scope.sync_reference(-1).then(function(data) { 
+
+              if (!data) 
+                return _initialSync()
+
+            }).then(function () {
 
               $scope.$watch('tenants()', $scope.meta_tenant_render, true)
               $scope.$watch('tenant_signers()', $scope.meta_tenant_render, true)

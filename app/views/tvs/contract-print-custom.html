@@ -3,6 +3,7 @@
     ng-class="(resource._type=='บันทึก') 
       && (_params.contractCalled = 'บันทึกข้อตกลง') 
       && (_params.term='บันทึกแนบท้าย') 
+      && ((_params.hidePartiesCloseMessage=custom().area_section) || true)
       && '' "
     >
 
@@ -23,8 +24,14 @@
       </div>
     </div>
 
+    <div ng-class="!printForm && 'muted'" ng-show="custom().area_section">
+      <div class="paragraph">
+        <div ng-include="'views/tvs/contract-print/ref_area.html'"></div>
+      </div>
+    </div>
+
     <div class="alert" ng-show="__mdOpen">
-      <button type="button" class="close" ng-click="__mdOpen=false">&times;</button>
+      <button type="button" class="close" ng-click="$parent.__mdOpen=false">&times;</button>
       <textarea rows="{{ utils.textLines(custom().text).length + 3 }}" class="span12"
         ng-model="custom().text" 
         >

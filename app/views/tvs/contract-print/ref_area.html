@@ -1,0 +1,13 @@
+
+<p>
+  เนื่องด้วย{{ _params.signer2Called }} ได้ทำ{{ custom().ref_title || 'สัญญาบริการ' }}
+  โครงการ THANYA SHOPPING PARK สัญญาเลขที่ <strong>{{ custom().code || '*' }} {{ swapRunning(resource.info.reference) }}</strong>
+  ฉบับลงวันที่ <strong>{{ reference_synced.data.info.issue_date | moment:'thaitext' }}</strong>
+  <strong>{{ reference_synced.data.display.area }}</strong> 
+  เนื้อที่ประมาณ <strong>
+  {{ reference_synced.data.info.area_xsize && '*' }} {{ reference_synced.data.info.area_size }}
+  </strong> ตารางเมตร 
+  กำหนดระยะเวลา <strong>{{ reference_synced.data.info.duration }}</strong> 
+  (<strong>{{ reference_synced.data.info.duration | numeral :'text' }}</strong>)
+  บัดนี้คู่สัญญาทั้งสองมีความประสงค์แก้ไขเพิ่มเติมสัญญาดังนี้
+</p>

@@ -340,18 +340,14 @@ tr.dotted td {
 }
 
 .cordia {
-<<<<<<< HEAD
-  font-family: "cordia New", Helvetica, Arial, sans-serif;
-=======
   font-family: "Cordia New", "Helvetica Neue", Helvetica, Arial, sans-serif;
->>>>>>> 28941dfd029ef8f06f03496c22a8c2c077ef1d59
-  font-size: 20px;
-  line-height: 1.2
+  font-size: 19px;
+  line-height: 1.17
 }
 
 .cordia h4 {
-  font-size: 23.5px;
+  font-size: 22.5px;
 }
 .cordia h5 {
-  font-size: 20px;
+  font-size: 19px;
 }
