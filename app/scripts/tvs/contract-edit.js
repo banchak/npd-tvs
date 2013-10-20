@@ -13,6 +13,27 @@
           $scope.BUILT_IN = Database.BUILT_IN
           $scope.utils = utils
 
+          function _initialSync() {
+            var promises = []
+
+            angular.forEach($scope.tenants(), function(t) {
+
+              promises.push($scope.tenantSync(t, -1))
+            })
+
+            angular.forEach($scope.tenant_signers(), function(t) {
+
+              promises.push($scope.tenantSync(t, -1))
+            })
+
+            angular.forEach($scope.areas(), function(a) {
+
+              promises.push($scope.meta_room_to_floor_building(a))
+            })
+
+            return $q.all(promises)
+          }
+
           function _isLegalPerson(ttype, name) {
 
             return (ttype && ttype != Database.BUILT_IN.personTypes[0].name) || ((name || '').search(
@@ -471,6 +492,47 @@
               }
 
               ,
+              reference_isSynced: function(){
+                if (!$scope.reference_synced)
+                  $scope.reference_synced = {}
+
+                if (!$scope.resource.info.reference)
+                  return true
+
+                $scope.reference_synced.name = $scope.resource.info.reference
+                return $scope.isSynced($scope.reference_synced)
+              }
+
+              ,
+              sync_reference : function (force) {
+                var promise
+
+                if ($scope.resource.info.reference) {
+
+                  $scope.reference_synced.name = $scope.resource.info.reference
+                  promise = $scope.xdataSync($scope.reference_synced, 'name', 'Contract', force)
+
+                  return promise.then(function(data) {
+                      if (data) {
+                        angular.forEach([
+                          'info.tenant_type','info.signer2',
+                          'meta.tenants','meta.tenant_signers',
+                          'display.tenant',
+                          'info.area_size','info.area_xsize','meta.areas',
+                          'display.area'
+                          ], function(n){
+                            var fld = utils.$parse(n)
+
+                            fld.assign($scope.resource,fld(data))
+                        })
+                        return _initialSync().then(function(){ return data })
+                      }
+                      return data
+                  })
+                }
+              }
+
+              ,
               rent_date_isSynced: function() {
 
                 if (!$scope.resource.info.duration || !$scope.resource.info.rent_date)
@@ -666,7 +728,7 @@
               promises.push($scope.meta_room_to_floor_building(a))
             })
 
-            $q.all(promises).then(function() {
+            _initialSync().then(function() {
 
               $scope.$watch('tenants()', $scope.meta_tenant_render, true)
               $scope.$watch('tenant_signers()', $scope.meta_tenant_render, true)

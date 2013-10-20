@@ -26,7 +26,7 @@
               </div>
 
               <div class="span4" ng-show="resource._type=='บันทึก'">
-                <form style="margin:0;padding:0;display:inline;" ng-submit="referenceSync()">
+                <form style="margin:0;padding:0;display:inline;" ng-submit="sync_reference()">
                   <input type="submit" tabindex="-1" 
                     style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>              
                   <label>
@@ -40,17 +40,19 @@
                       </span>
                     </span>
                   </label>
-                  <input type="text" class="input-medium" 
-                    required
-                    ng-disabled = "!unlockEdit || resource.info.approved"
-                    ng-model="resource.info.reference" />
-                  <span class="add-on btn" 
-                    ng-disabled = "resource.info.approved"
-                    ng-class="!reference_isSynced() && 'btn-info'"
-                    ng-click="syncReference()"
-                    >
-                    &crarr;
-                  </span>
+                  <div ng-class="unlockEdit && !resource.info.approved && 'input-append'">
+                    <input type="text" class="input-medium" 
+                      required
+                      ng-disabled = "!unlockEdit || resource.info.approved"
+                      ng-model="resource.info.reference" />
+                    <span class="add-on btn" 
+                      ng-show="unlockEdit && !resource.info.approved"
+                      ng-class="!reference_isSynced() && 'btn-info'"
+                      ng-click="sync_reference(true)"
+                      >
+                      &crarr;
+                    </span>
+                  </div>
                 </form>
               </div>
 
