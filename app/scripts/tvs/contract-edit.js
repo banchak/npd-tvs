@@ -702,7 +702,6 @@
             renderAllow = true
 
           } else {
-            var promises = []
 
             if ($scope.resource._type == entry.info().duration)
               $scope.resource._type = $scope.BUILT_IN.contractTypes[0].name
@@ -712,21 +711,6 @@
               entry.info().tenant_type = entry.meta().tenant_type
               entry.meta().tenant_type = null
             }
-
-            angular.forEach($scope.tenants(), function(t) {
-
-              promises.push($scope.tenantSync(t, -1))
-            })
-
-            angular.forEach($scope.tenant_signers(), function(t) {
-
-              promises.push($scope.tenantSync(t, -1))
-            })
-
-            angular.forEach($scope.areas(), function(a) {
-
-              promises.push($scope.meta_room_to_floor_building(a))
-            })
 
             _initialSync().then(function() {
 
