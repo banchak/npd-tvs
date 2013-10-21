@@ -27,8 +27,8 @@
   แก่<span class="nobr">ผู้ให้บริการ</span>ในอาคารจอดรถยนต์ของ<span class="nobr">ผู้ให้บริการ</span> (แบบหมุนเวียน) 
   ไม่ว่า<span class="nobr">ผู้รับบริการ</span>จะได้ใช้บริการในวันใดหรือไม่ก็ตาม 
   โดยชำระล่วงน้าเป็นรายเดือน ภายในวันที่ 5 ของทุกเดือน 
-  เป็นจำนวนเงินเดือนละ <strong>{{ resource.info.parking_rate | numeral }}</strong> บาท 
-  <strong>({{resource.info.parking_rate | numeral:'bahttext'}})</strong>
+  เป็นจำนวนเงินเดือนละ <strong>{{ (resource.info.parking_rate | numeral) || '0' }}</strong> บาท 
+  <strong>({{ (resource.info.parking_rate | numeral:'bahttext') || 'ศูนย์บาทถ้วน'}})</strong>
   ซึ่งเป็นอัตราที่ยังไม่รวมภาษีมูลค่าเพิ่ม และ<span class="nobr">ผู้รับบริการ</span>/<span class="nobr">ผู้เช่า</span>เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม
 </p>
 <p>
