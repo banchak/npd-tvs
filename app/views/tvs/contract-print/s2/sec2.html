@@ -60,6 +60,6 @@
 <p>
   2.4 <span class="nobr">ผู้รับบริการ</span>ตกลงวางเงินประกันการใช้ น้ำประปา ไฟฟ้าและแก๊ส
   ในส่วนของพื้นที่เช่า เป็นเงินจำนวน 
-  <strong>{{ resource.info.service_deposit | numeral }}</strong> บาท 
-  <strong>({{ resource.info.service_deposit | numeral:'bahttext' }})</strong>
+  <strong>{{ (resource.info.service_deposit | numeral) || '0' }}</strong> บาท 
+  <strong>({{ (resource.info.service_deposit | numeral:'bahttext') || 'ศูนย์บาทถ้วน' }})</strong>
 </p>
