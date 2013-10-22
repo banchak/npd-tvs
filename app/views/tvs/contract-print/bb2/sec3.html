@@ -1,7 +1,7 @@
 
 <p>
   ข้อ 3. ในวันทำสัญญานี้ <span class="nobr">ผู้รับบริการ</span>ได้นำเงินจำนวน
-  <strong>{{ billboard().coverage|numeral }}</strong> บาท 
-  <strong>({{ billboard().coverage|numeral:'bahttext' }})</strong>
+  <strong>{{ (billboard().coverage|numeral) || '0' }}</strong> บาท 
+  <strong>({{ (billboard().coverage|numeral:'bahttext') || 'ศูนย์บาทถ้วน' }})</strong>
   วางเป็นประกันแก่<span class="nobr">ผู้ให้บริการ</span>  เพื่อประกันการปฏิบัติตามสัญญาบริการตลอดระยะเวลาบริการ   
 </p> 

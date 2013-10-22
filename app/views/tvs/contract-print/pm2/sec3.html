@@ -33,21 +33,21 @@
 </p>
 <p>
   (3.2.1) ค่าโทรศัพท์ <span class="nobr">ผู้รับบริการ</span>ตกลงชำระเงินมัดจำการใช้โทรศัพท์ 
-  แก่<span class="nobr">ผู้ให้บริการ</span> จำนวน <strong>{{ pm().tel_qty }}</strong> เครื่อง 
-  (<strong>{{ pm().tel_deposit_rate | numeral  }}</strong> บาท/เครื่อง) 
-  คิดเป็นเงินจำนวน <strong>{{ (pm().tel_qty * pm().tel_deposit_rate) | numeral }}</strong> บาท 
-  <strong>({{ (pm().tel_qty * pm().tel_deposit_rate) | numeral:'bahttext' }})</strong>
+  แก่<span class="nobr">ผู้ให้บริการ</span> จำนวน <strong>{{ (pm().tel_qty | numeral) || '0' }}</strong> เครื่อง 
+  (<strong>{{ (pm().tel_deposit_rate | numeral) || '0' }}</strong> บาท/เครื่อง) 
+  คิดเป็นเงินจำนวน <strong>{{ ((pm().tel_qty * pm().tel_deposit_rate) | numeral) || '0' }}</strong> บาท 
+  <strong>({{ ((pm().tel_qty * pm().tel_deposit_rate) | numeral:'bahttext') || 'ศูนย์บาทถ้วน'}})</strong>
 </p>
 <p> 
   <span class="nobr">ผู้รับบริการ</span>ตกลงชำระเงินค่าติดตั้งโทรศัพท์ให้แก่<span class="nobr">ผู้ให้บริการ</span>จำนวน <strong>{{ pm().tel_qty }}</strong> เครื่อง 
   (<strong>{{ pm().tel_install_rate | numeral }}</strong> บาท/เครื่อง) 
   คิดเป็นเงินจำนวน <strong>{{(pm().tel_qty * pm().tel_install_rate)|numeral }}</strong> บาท
-  <strong>({{(pm().tel_qty * pm().tel_install_rate)|numeral:'bahttext' }})</strong>
+  <strong>({{ ((pm().tel_qty * pm().tel_install_rate)| numeral:'bahttext') || 'ศูนย์บาทถ้วน' }})</strong>
 </p>
 <p>
   (3.2.2) ค่าบริการสาธารณูปโภค <span class="nobr">ผู้รับบริการ</span>ตกลงวางเงินประกันค่าสาธารณูปโภคอื่นๆ 
   ให้แก่<span class="nobr">ผู้ให้บริการ</span>จำนวน <strong>{{ pm().utils_deposit|numeral }}</strong> บาท
-  <strong>({{ pm().utils_deposit | numeral:'bahttext' }})</strong>
+  <strong>({{ (pm().utils_deposit | numeral:'bahttext')   || 'ศูนย์บาทถ้วน' }})</strong>
   และจะชำระค่าสาธารณูปโภคในอัตราดังนี้
   <div ng-repeat="rate in pm_utilities()">
     &bull; {{ rate.description }} <span ng-show="rate.value">{{ rate.value|numeral }} บาท/หน่วย</span> (ยังไม่รวมภาษีมูลค่าเพิ่ม)
