@@ -1,6 +1,6 @@
 
 
-<h5>ข้อ 4. กำหนดเวลา และอัตราค่าเช่า</h5>
+<h5>ข้อ&nbsp;4.&nbsp;กำหนดเวลา และอัตราค่าเช่า</h5>
 <p >
   สัญญาเช่าสถานที่ฉบับนี้ มีกำหนดระยะเวลาเช่า <strong>{{ resource.info.duration }}</strong> 
   นับแต่วันที่ <strong>{{ resource.info.rent_date | moment:'thaitext' }}</strong> 
@@ -14,7 +14,7 @@
   </span>
 
   <span ng-show="rent_rates().length && rent_rates()[0].value">
-  โดย<span class="nobr">ผู้เช่า</span>จะต้องชำระค่าเช่าล่วงหน้าเป็นรายเดือนให้แก่<span class="nobr">ผู้ให้เช่า</span> 
+  โดย<span class="nobr">ผู้เช่า</span>จะต้องชำระค่าเช่าล่วงหน้าเป็นรายเดือน &nbsp;&nbsp;ให้แก่<span class="nobr">ผู้ให้เช่า</span> 
   ณ ที่ทำการของ<span class="nobr">ผู้ให้เช่า</span>ในโครงการ ธัญญะ ช็อปปิ้ง พาร์ค 
   เลขที่ 735/1-8 ถนนศรีนครินทร์ แขวงสวนหลวง เขตสวนหลวง กรุงเทพมหานคร 
   ในวันทำสัญญา และภายในวันที่ 5 ของทุกๆ เดือน 
@@ -32,8 +32,7 @@
 
 <p ng-show="rent_rates().length &gt; 1">
   <div ng-repeat="rate in rent_rates()">
-  (4.{{$index+1}}) {{rate.description}} 
-  <span ng-show="rate.value">{{rate.value | numeral}} บาท ({{rate.value | numeral:'bahttext'}})</span>
+  (4.{{$index+1}}) {{rate.description}}&nbsp;<span ng-show="rate.value">{{rate.value | numeral}} บาท ({{rate.value | numeral:'bahttext'}})</span>
   </div>
 </p>
 
