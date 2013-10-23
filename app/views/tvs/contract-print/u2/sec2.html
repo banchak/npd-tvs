@@ -1,7 +1,7 @@
 
-<h5>ข้อ 2. อัตราและการชำระค่าบริการ</h5>
+<h5>ข้อ&nbsp;2.&nbsp;อัตราและการชำระค่าบริการ</h5>
 <p>
-  2.1 <span class="nobr">ผู้รับบริการ</span>ตกลงชำระค่าบริการดังกล่าวข้างต้น ในข้อ 1.1 ถึงข้อ 1.4 แก่<span class="nobr">ผู้ให้บริการ</span> ไม่ว่า<span class="nobr">ผู้รับบริการ</span>จะได้เปิดดำเนินธุรกิจในวันใดหรือไม่ก็ตาม 
+  2.1&nbsp;<span class="nobr">ผู้รับบริการ</span>ตกลงชำระค่าบริการดังกล่าวข้างต้น ในข้อ 1.1 ถึงข้อ 1.4 แก่<span class="nobr">ผู้ให้บริการ</span> ไม่ว่า<span class="nobr">ผู้รับบริการ</span>จะได้เปิดดำเนินธุรกิจในวันใดหรือไม่ก็ตาม 
   โดยชำระล่วงหน้าเป็นรายเดือนภายในวันที่ 5 ของทุกเดือน 
 
   <span ng-show="utility_rates().length==1" ng-repeat="rate in utility_rates()">
@@ -14,8 +14,7 @@
 </p>
 <p ng-show="utility_rates().length &gt; 1">
   <div ng-repeat="rate in utility_rates()">
-  (2.1.{{$index+1}}) {{rate.description}} 
-  <span ng-show="rate.value">{{rate.value | numeral}} บาท ({{rate.value | numeral:'bahttext'}})</span>
+  (2.1.{{$index+1}})&nbsp;{{rate.description}}&nbsp;&nbsp;<span ng-show="rate.value">{{rate.value | numeral}}&nbsp;&nbsp;บาท &nbsp;({{rate.value | numeral:'bahttext'}})</span>
   </div>
 </p>
 <p>
@@ -23,9 +22,9 @@
   และ<span class="nobr">ผู้รับบริการ</span>/<span class="nobr">ผู้เช่า</span> เป็นผู้ชำระค่าภาษีมูลค่าเพิ่ม
 </p>
 <p>
-  2.2 <span class="nobr">ผู้รับบริการ</span>ตกลงชำระค่าบริการจอดรถยนต์ในข้อ 1.5 
-  แก่<span class="nobr">ผู้ให้บริการ</span>ในอาคารจอดรถยนต์ของ<span class="nobr">ผู้ให้บริการ</span> (แบบหมุนเวียน) 
-  ไม่ว่า<span class="nobr">ผู้รับบริการ</span>จะได้ใช้บริการในวันใดหรือไม่ก็ตาม 
+  2.2&nbsp;<span class="nobr">ผู้รับบริการ</span>ตกลงชำระค่าบริการจอดรถยนต์ในข้อ 1.5 
+  แก่<span class="nobr">ผู้ให้บริการ</span>ในอาคารจอดรถยนต์ของ<span class="nobr">ผู้ให้บริการ</span>&nbsp;(แบบหมุนเวียน) &nbsp;&nbsp;
+  ไม่ว่า<span class="nobr">ผู้รับบริการ</span>จะได้ใช้บริการในวันใดหรือไม่ก็ตาม &nbsp;
   โดยชำระล่วงน้าเป็นรายเดือน ภายในวันที่ 5 ของทุกเดือน 
   เป็นจำนวนเงินเดือนละ <strong>{{ (resource.info.parking_rate | numeral) || '0' }}</strong> บาท 
   <strong>({{ (resource.info.parking_rate | numeral:'bahttext') || 'ศูนย์บาทถ้วน'}})</strong>
@@ -33,5 +32,5 @@
 </p>
 <p>
   ในกรณีที่<span class="nobr">ผู้รับบริการ</span> ไม่ชำระเงินตามที่กล่าวข้างต้นภายในกำหนด 
-  <span class="nobr">ผู้รับบริการ</span>ยินยามเสียค่าปรับเป็นค่าเสียหายในอัตราร้อยละ 15 ต่อปีของเงินที่ค้างชำระ จนกว่าจะชำระครบถ้วน แต่การที่ชำระค่าเสียหายดังกล่าว จะไม่เป็นเหตุให้ถือเป็นข้ออ้างว่า <span class="nobr">ผู้รับบริการ</span>มิได้ผิดสัญญาแต่อย่างใด
+  <span class="nobr">ผู้รับบริการ</span>ยินยามเสียค่าปรับเป็นค่าเสียหายในอัตราร้อยละ&nbsp;&nbsp;15&nbsp;&nbsp;ต่อปีของเงินที่ค้างชำระ จนกว่าจะชำระครบถ้วน แต่การที่ชำระค่าเสียหายดังกล่าว จะไม่เป็นเหตุให้ถือเป็นข้ออ้างว่า <span class="nobr">ผู้รับบริการ</span>มิได้ผิดสัญญาแต่อย่างใด
 </p>
