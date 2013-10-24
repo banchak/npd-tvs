@@ -1,6 +1,6 @@
 
-<h5>ข้อ 3. ค่าบริการ</h5>
-<p>3.1 ค่าบริการพื้นที่ส่งเสริมการขาย</p>
+<h5>ข้อ&nbsp;3.&nbsp;ค่าบริการ</h5>
+<p>3.1&nbsp;ค่าบริการพื้นที่ส่งเสริมการขาย</p>
 <p ng-show="pm().gp">
   <span class="nobr">ผู้รับบริการ</span>ตกลงชำระค่าบริการพื้นที่ส่งเสริมการขายให้แก่<span class="nobr">ผู้ให้บริการ</span>
   เป็นเงินในอัตราร้อยละ {{ (pm().gp * 100) }} ของยอดรายได้ (ไม่รวมภาษีมูลค่าเพิ่ม) 
@@ -19,11 +19,11 @@
   อัตราค่าบริการดังกล่าวยังไม่รวมภาษีมูลค่าเพิ่ม
   โดย<span class="nobr">ผู้รับบริการ</span>จะต้องชำระค่าบริการให้แก่<span class="nobr">ผู้ให้บริการ</span> ดังนี้
   <div ng-repeat="rate in pm_rates()">
-    (3.1.{{$index+1}}) งวดที่ {{ $index+1 }} ชำระเงินจำนวน {{ rate.value | numeral }} บาท 
+    (3.1.{{$index+1}})&nbsp;งวดที่ {{ $index+1 }} ชำระเงินจำนวน {{ rate.value | numeral }} บาท 
     ภายในวันที่ {{ rate.date | moment:'thaitext' }}
   </div>
 </p>
-<p>3.2 ค่าโทรศัพท์และ ค่าบริการสาธารณูปโภค</p>
+<p>3.2&nbsp;ค่าโทรศัพท์และ ค่าบริการสาธารณูปโภค</p>
 <p>
   นอกเหนือจากค่าบริการตามข้อ 3.1 
   <span class="nobr">ผู้รับบริการ</span>ตกลงชำระเงินค่าโทรศัพท์ และค่าบริการสาธารณูปโภคต่างๆ 
@@ -32,29 +32,29 @@
   ให้แก่<span class="nobr">ผู้ให้บริการ</span>ดังนี้
 </p>
 <p>
-  (3.2.1) ค่าโทรศัพท์ <span class="nobr">ผู้รับบริการ</span>ตกลงชำระเงินมัดจำการใช้โทรศัพท์ 
-  แก่<span class="nobr">ผู้ให้บริการ</span> จำนวน <strong>{{ pm().tel_qty }}</strong> เครื่อง 
-  (<strong>{{ pm().tel_deposit_rate | numeral  }}</strong> บาท/เครื่อง) 
-  คิดเป็นเงินจำนวน <strong>{{ (pm().tel_qty * pm().tel_deposit_rate) | numeral }}</strong> บาท 
-  <strong>({{ (pm().tel_qty * pm().tel_deposit_rate) | numeral:'bahttext' }})</strong>
+  (3.2.1)&nbsp;ค่าโทรศัพท์ <span class="nobr">ผู้รับบริการ</span>ตกลงชำระเงินมัดจำการใช้โทรศัพท์ 
+  แก่<span class="nobr">ผู้ให้บริการ</span> จำนวน <strong>{{ (pm().tel_qty | numeral) || '0' }}</strong> เครื่อง 
+  (<strong>{{ (pm().tel_deposit_rate | numeral) || '0' }}</strong> บาท/เครื่อง) 
+  คิดเป็นเงินจำนวน <strong>{{ ((pm().tel_qty * pm().tel_deposit_rate) | numeral) || '0' }}</strong> บาท 
+  <strong>({{ ((pm().tel_qty * pm().tel_deposit_rate) | numeral:'bahttext') || 'ศูนย์บาทถ้วน'}})</strong>
 </p>
 <p> 
   <span class="nobr">ผู้รับบริการ</span>ตกลงชำระเงินค่าติดตั้งโทรศัพท์ให้แก่<span class="nobr">ผู้ให้บริการ</span>จำนวน <strong>{{ pm().tel_qty }}</strong> เครื่อง 
   (<strong>{{ pm().tel_install_rate | numeral }}</strong> บาท/เครื่อง) 
   คิดเป็นเงินจำนวน <strong>{{(pm().tel_qty * pm().tel_install_rate)|numeral }}</strong> บาท
-  <strong>({{(pm().tel_qty * pm().tel_install_rate)|numeral:'bahttext' }})</strong>
+  <strong>({{ ((pm().tel_qty * pm().tel_install_rate)| numeral:'bahttext') || 'ศูนย์บาทถ้วน' }})</strong>
 </p>
 <p>
-  (3.2.2) ค่าบริการสาธารณูปโภค <span class="nobr">ผู้รับบริการ</span>ตกลงวางเงินประกันค่าสาธารณูปโภคอื่นๆ 
+  (3.2.2)&nbsp;ค่าบริการสาธารณูปโภค <span class="nobr">ผู้รับบริการ</span>ตกลงวางเงินประกันค่าสาธารณูปโภคอื่นๆ 
   ให้แก่<span class="nobr">ผู้ให้บริการ</span>จำนวน <strong>{{ pm().utils_deposit|numeral }}</strong> บาท
-  <strong>({{ pm().utils_deposit | numeral:'bahttext' }})</strong>
+  <strong>({{ (pm().utils_deposit | numeral:'bahttext')   || 'ศูนย์บาทถ้วน' }})</strong>
   และจะชำระค่าสาธารณูปโภคในอัตราดังนี้
   <div ng-repeat="rate in pm_utilities()">
     &bull; {{ rate.description }} <span ng-show="rate.value">{{ rate.value|numeral }} บาท/หน่วย</span> (ยังไม่รวมภาษีมูลค่าเพิ่ม)
   </div>
 </p>
 <p>
-  3.3 <span class="nobr">ผู้รับบริการ</span>จะต้องชำระค่าบริการต่างๆ ล่วงหน้าในข้อ 3.1, และ ข้อ 3.2.1, ข้อ 3.2.2 
+  3.3&nbsp;<span class="nobr">ผู้รับบริการ</span>จะต้องชำระค่าบริการต่างๆ ล่วงหน้าในข้อ 3.1, และ ข้อ 3.2.1, ข้อ 3.2.2 
   และภาษีมูลค่าเพิ่ม ให้แก่<span class="nobr">ผู้ให้บริการ</span> ในวันชำระค่าบริการพื้นที่ส่งเสริมการขาย
   ในข้อ 3.1 ณ ที่ทำการของ<span class="nobr">ผู้ให้บริการ</span>ในโครงการ THANYA SHOPPING PARK 
   เลขที่ 735 ถนนศรีนครินทร์ แขวงสวนหลวง เขตสวนหลวง กรุงเทพมหานคร 
