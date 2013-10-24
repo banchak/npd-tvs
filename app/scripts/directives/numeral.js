@@ -7,29 +7,41 @@
 
   .filter('numeral', function() {
     return function(input, format, lang) {
-      var num = numeral(input)
+      var num
+
+      if (!input && !format)
+        return
+
+      num = numeral(input)
 
       if (num) {
-        if (format && format.toLowerCase() == 'bahttext') {
+
+        if (!angular.isString(format)) // format = true (force display 0)
+          format = ''
+
+        if (format && format.toLowerCase() == 'bahttext')
           return num2str.bahtText(num.value(), lang || 'th')
-        }
+        
         if (format && format.toLowerCase() == 'text') {
           var inp
 
           input = (input || '').toString()
           inp = input.split(/(\d+)\s*/)
+
           if (inp) {
+
             for (var i = 1; i < inp.length; i += 2) {
               inp[i] = num2str.format(inp[i] | 0, lang || 'th')
             }
+
             input = inp.join('')
           }
           return input
         }
 
-        if (lang) {
+        if (lang)
           num.language(lang)
-        }
+        
         return num.format(format || '0,0[.]00')
       }
     }
