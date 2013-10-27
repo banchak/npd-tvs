@@ -426,7 +426,7 @@
                           <div class="input-prepend" ng-class="priceUnsaved(item) && 'input-append'">
                             <span class="add-on">ราคา</span>
                             <input type="text" class="input-medium" 
-                              ng-disabled="resource._type!='ขาย' || resource.info.approved || !authorizeData.user.hasRole('MANAGER','ADMIN')"
+                              disabled
                               ng-model="item.price"
                               numeral="'money'" 
                                />
