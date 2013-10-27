@@ -38,10 +38,13 @@ angular.module('npd.project')
                 // match domain
                 roles = roles.concat(['STAFF'])
 
-                // match user in demain
+                // match user in domain
+                if (email.match(/^choo456\@h2heng.com$/))
+                  roles = roles.concat(['MANAGER'])
+                
+                // match user in domain
                 if (email.match(/^(noom|admin)\@h2heng.com$/))
                   roles = roles.concat(['MANAGER', 'ADMIN'])
-                
               }
 
               if (email.match(/\@(adm\-thai\.homeip\.net)$/)) {
