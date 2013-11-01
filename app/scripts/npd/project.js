@@ -90,6 +90,10 @@
                         actions.push(_act('edit/$id', 'แก้ไข'))
                         actions.push(_act('edit/$id', 'เพิ่ม(ตามนี้)', 'ditto'))
                         actions.push({})
+                        actions.push(_action('vouchers/edit/new')(null, 'เพิ่มเอกสารใหม่', null, {
+                          preset: JSON.stringify({info : {person : {name : data._name}}})
+                        }))
+                        actions.push({})
                         actions.push(_action('products')(null, 'สินค้า ที่เกี่ยวข้อง', null, {
                           scopes: JSON.stringify(['\'' + data._name])
                         }))
