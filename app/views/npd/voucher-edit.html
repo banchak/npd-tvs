@@ -240,11 +240,18 @@
                                   style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
 
                                 <div class="input-prepend input-append">
-                                  <span class="add-on">รหัส</span>
+                                  <span class="add-on ">
+                                    รหัส
+                                    <a class="badge badge-info"
+                                      ng-show="item.$temp.data._name" 
+                                      ng-href="{{'#/products/view/\''+item.$temp.data._name}}"
+                                      target="_blank"
+                                      >i</a>
+                                  </span>
                                   <input type="text" class="input-medium" 
                                     ng-disabled="resource.info.approved"
                                     ng-model="item.name" />
-                                  <span class="add-on btn btn-small" 
+                                  <span class="add-on btn btn-small"
                                     ng-disabled="resource.info.approved"
                                     ng-class="!isSynced(item) && 'btn-info'"
                                     ng-click="itemSync(item,true)"
@@ -415,8 +422,13 @@
                             </label>
                           </div>
                           <div class="input-prepend">
-                            <span class="add-on" ng-show="resource._type!='ยืม'">
+                            <span class="add-on">
                               รหัส
+                              <a class="badge badge-info"
+                                ng-show="item.$temp.data._name" 
+                                ng-href="{{'#/products/view/\''+item.$temp.data._name}}"
+                                target="_blank"
+                                >i</a>
                             </span>
                             <input type="text" class="input-medium" 
                               disabled
