@@ -623,7 +623,7 @@ angular.module('controllers.legacy-edit', ['modules.uis', 'modules.utils'])
     if (id && id != 'new') {
       dataPromise = $scope.db.dataAccess.getById(id)
     } else {
-      dataPromise = $q.when({})
+      dataPromise = $q.when(angular.fromJson(legacyEditDI.$routeParams.preset) || {})
     }
 
     dataPromise.then(function(data) {
