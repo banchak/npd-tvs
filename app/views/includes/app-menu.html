@@ -50,6 +50,7 @@
           </button>
           <a class="brand" ng-href="{{ menu.root || './' }}">/</a>
           <a class="brand" ng-href="{{ menu.home || '#/' }}" title="{{ menu.version }}">{{ menu.title }}</a>
+          <a class="brand" ng-href="{{ menu.home || '#/' }}" target="_blank" title="new page">&raquo;</a>
           <div ng-hide="appmenu_collapse">
             <ul class="nav" 
               ng-hide="signIn && (!authorizeData.user || authorizeData.user.limitAccess)"
