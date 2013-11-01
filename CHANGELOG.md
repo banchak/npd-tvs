@@ -1,5 +1,14 @@
 Change logs
 ===========
+## 2013-11-2
+* app-menu เพิ่ม link open new page
+* legacy-edit กรณี edit/new สามารถกำหนด preset value ได้
+
+### NPD
+* voucher-edit เพิ่ม link สำหรับกดเพิ่มเปิด page ข้อมูลสินค้า
+
+## 2013-10-25
+* numeric directive แก้ไข กรณี value เป็น null หรือ undefined จะ format เป็น empty string แทน 0
 
 ## 2013-10-20
 ### TVS

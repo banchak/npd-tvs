@@ -13,7 +13,7 @@
 
       this.appMenu = {
         title: 'Npd3',
-        version: '0.7.1.0 2013-10-18 jsat66@gmail.com',
+        version: '0.7.1.1 2013-11-2 jsat66@gmail.com',
         menus: [
           'Product', 'Person', 'Voucher'
         ]
