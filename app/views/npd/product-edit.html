@@ -31,6 +31,9 @@
                   <span>
                     <a href class="btn btn-small" ng-class="resource.info.memo && 'btn-info'" ng-click="toggle_memo = !toggle_memo">memo</a>
                   </span>
+                  <span>
+                    <a href class="btn btn-small" ng-class="resource.info.warranty_text && 'btn-info'" ng-click="toggle_warranty = !toggle_warranty">บัตรรับประกัน</a>
+                  </span>
                 </label>
                 <input type="text" class="input-medium" 
                   ng-disabled="!unlockEdit"
@@ -39,13 +42,23 @@
                   />
               </div>
             </div>
+
             <div ng-show="toggle_memo">
               <div  class="alert alert-info">
                   <textarea rows="3" class="input-xxlarge" 
-                    ng-model="resource.info.memo" placeholder="บันทึก"
+                    ng-model="resource.info.memo" placeholder="บันทึก.."
                     ></textarea>
               </div>
             </div>
+
+            <div ng-show="toggle_warranty">
+              <div  class="alert alert-info">
+                  <textarea rows="3" class="input-xxlarge" 
+                    ng-model="resource.info.warranty_text" placeholder="ข้อความบัตรรับประกัน.."
+                    ></textarea>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -811,6 +824,14 @@
                       </span>
                     </span>
 
+                    <div>
+                      <textarea rows="{{ utils.textLines(selling().note).length}}" 
+                        class="input-xxlarge" placeholder="บันทึก"
+                        ng-disabled="!unlockEdit"
+                        ng-hide="!selling().note && !unlockEdit"
+                        ng-model="selling().note"
+                        ></textarea>
+                    </div>
                   </div>
                 </div>
 
@@ -818,8 +839,11 @@
                   <label>
                     ยืมโดย : 
                     <span ng-show="getState()=='taken'">
-                      <a href class="btn btn-small" ng-click="_allowChangeTaking=!_allowChangeTaking">
-                      ปรับราคายืม
+                      <a href class="btn btn-small" 
+                        ng-class="_allowChangeTaking && 'btn-warning'"
+                        ng-click="_allowChangeTaking=!_allowChangeTaking"
+                        >
+                        ปรับราคายืม
                       </a>
                     </span>
                   </label>
@@ -907,18 +931,17 @@
                         />
                     </div>
 
-
                     <div>
-                      <textarea rows="{{ utils.textLines(custom().memo).length}}" class="input-xxlarge"  placeholder="memo"
+                      <textarea rows="{{ utils.textLines(taking().note).length}}" 
+                        class="input-xxlarge"  placeholder="บันทึก"
                         ng-disabled="!unlockEdit && !_allowChangeTaking"
-                        ng-model="taking().memo"
+                        ng-model="taking().note"
                       ></textarea>
                     </div>
-
                   </div>
                 </div>
 
-                <label ng-show="tooks().length">
+                <label ng-show="tooks().length || unlockEdit">
                   ประวัติยืม :
                   <span ng-hide="!unlockEdit">
                     <a href="" class="btn btn-small btn-danger" ng-click="resource$entry.add(tooks())">
@@ -1005,9 +1028,10 @@
                       </div>
                     </div>
                     <div>
-                      <textarea rows="{{ utils.textLines(custom().memo).length}}" class="input-xxlarge"  placeholder="memo"
+                      <textarea rows="{{ utils.textLines(took.note).length}}" 
+                        class="input-xxlarge"  placeholder="บันทึก"
                         ng-disabled="!unlockEdit && !_allowChangeTaking && !(limitEdit.keeping && took.until==keeping().date)"
-                        ng-model="took.memo"
+                        ng-model="took.note"
                       ></textarea>
                     </div>
 
@@ -1049,7 +1073,13 @@
                         />
                     </div>
 
-
+                    <div>
+                      <textarea rows="{{ utils.textLines(keeping().note).length}}" 
+                        class="input-xxlarge"  placeholder="บันทึก"
+                        ng-disabled="!unlockEdit"
+                        ng-model="keeping().note"
+                      ></textarea>
+                    </div>
                   </div>
                 </div>
 
@@ -1082,6 +1112,7 @@
                           />
                       </div>
                     </div>
+
                     <div>
                       <div class="input-prepend">
                         <span class="add-on">วันที่เก็บ</span>
@@ -1100,6 +1131,14 @@
                           ng-model="kept.voucher" 
                           />
                       </div>
+                    </div>
+
+                    <div>
+                      <textarea rows="{{ utils.textLines(kept.note).length}}" 
+                        class="input-xxlarge"  placeholder="บันทึก"
+                        ng-disabled="!unlockEdit"
+                        ng-model="kept.note"
+                      ></textarea>
                     </div>
                   </div>
                 </div>

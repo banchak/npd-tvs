@@ -59,7 +59,7 @@
                 if ($scope.taking().remark)
                   memo += ': ' + $scope.taking().remark
 
-                if (!$scope.taking().memo || $scope.taking().memo.indexOf(memo) == -1) {
+                if (!$scope.taking().note || $scope.taking().note.indexOf(memo) == -1) {
 
                   return memo
                 }
@@ -72,7 +72,7 @@
 
               if (oldmsg) {
 
-                if (!$scope.taking().memo || $scope.taking().memo.indexOf(oldmsg)) {
+                if (!$scope.taking().note || $scope.taking().note.indexOf(oldmsg)) {
 
                   msg = $scope.takingMsg()
 
@@ -86,17 +86,17 @@
 
               if (msg) {
 
-                if ($scope.taking().memo && $scope.taking().memo.indexOf(msg) == 0)
+                if ($scope.taking().note && $scope.taking().note.indexOf(msg) == 0)
                   return
 
-                if (!$scope.taking().memo && $scope.taking().date)
-                  msg += " (" + utils.formatValue($scope.taking().date) + ")"
+                if (!$scope.taking().note && $scope.taking().date)
+                  msg += " *" + utils.formatValue($scope.taking().date) + "*"
 
 
-                $scope.taking().memo = msg + '\n' + ($scope.taking().memo || '')
+                $scope.taking().note = msg + '\n' + ($scope.taking().note || '')
 
                 if (!$scope.taking().remark || msg.indexOf($scope.taking().remark))
-                  $scope.taking().remark = "(" + utils.formatValue(new Date()) + ")"
+                  $scope.taking().remark = "*" + utils.formatValue(new Date()) + "*"
 
               }
             }
