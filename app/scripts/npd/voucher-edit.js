@@ -330,8 +330,12 @@
                   if (state) { // post
 
                     taking = angular.extend({
-                      price: item.price
+                      price: item.price,
+                      note: item.note
                     }, _taking)
+
+                    utils.deepStrip(taking)
+
                     changes.$set[field] = taking
                   } else { // unpost
 
@@ -432,7 +436,7 @@
               modified = utils.lookup($scope.resource, '_sys.modified'),
               modifier = utils.lookup($scope.resource, '_sys.modifier'),
               tempdata = utils.temp('data'),
-              keeping = {
+              _keeping = {
                 date: utils.lookup($scope.resource, 'info.issue_date'),
                 person: '*รับคืน*',
                 voucher: $scope.resource._name
@@ -473,6 +477,11 @@
 
                     meta.tooks.push(taking)
 
+                    keeping = angular.extend({
+                      note: item.note
+                    }, _keeping)
+
+                    utils.deepStrip(keeping)
                     changes = {
                       $unset: {},
                       $set: {

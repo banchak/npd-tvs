@@ -281,6 +281,12 @@
                             </div>
                           </div>
 
+                          <div>
+                            <textarea rows="1" class="input-xxlarge" placeholder="บันทึก" 
+                              ng-disabled="resource.info.approved"
+                              ng-model="item.note"
+                              ></textarea>
+                          </div>
                           <div class="text-error">
                             {{ item.$temp.data.error }}
                           </div>
