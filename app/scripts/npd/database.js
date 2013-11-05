@@ -393,6 +393,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         ] 
       , descriptions : [
           { name : 'info.issue_date' , searchIn : false }
+        , { name : 'info.site', label : 'สาขา'}
         , { name : 'info.person.name', label : 'ผู้เกี่ยวข้อง'}
         , { name : 'meta.items', label : 'จำนวนเงิน', searchIn : ['meta.items.name'],
             formatter : function(v) {return utils.formatValue(utils.sum(v, 'price')) },viewClass : 'text-large text-info'  }
