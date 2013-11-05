@@ -389,6 +389,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
       , categories : 
         [
           { name : '_type',               label : 'ประเภท'}
+        , { name : 'info.site',           label : 'สาขา'}
         ] 
       , descriptions : [
           { name : 'info.issue_date' , searchIn : false }
