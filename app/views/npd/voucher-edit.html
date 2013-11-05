@@ -98,6 +98,9 @@
             <label>
               <span ng-class="!person().name && 'text-error'">
                 ชื่อ :
+                <span>
+                  <a href class="btn btn-small" ng-class="resource.info.memo && 'btn-info'" ng-click="toggle_memo = !toggle_memo">memo</a>
+                </span>
                 <span
                   ng-hide="person().name" 
                   popover="ห้ามว่าง" popover-trigger="mouseenter"  popover-placement="right"
@@ -132,6 +135,14 @@
                 </span>
               </form>
             </div>
+          </div>
+        </div>
+
+        <div ng-show="toggle_memo">
+          <div  class="alert alert-info">
+              <textarea rows="3" class="input-xxlarge" 
+                ng-model="resource.info.memo" placeholder="บันทึก"
+                ></textarea>
           </div>
         </div>
 
