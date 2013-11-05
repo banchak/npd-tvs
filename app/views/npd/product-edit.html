@@ -31,6 +31,9 @@
                   <span>
                     <a href class="btn btn-small" ng-class="resource.info.memo && 'btn-info'" ng-click="toggle_memo = !toggle_memo">memo</a>
                   </span>
+                  <span>
+                    <a href class="btn btn-small" ng-class="resource.info.warranty_text && 'btn-info'" ng-click="toggle_warranty = !toggle_warranty">บัตรรับประกัน</a>
+                  </span>
                 </label>
                 <input type="text" class="input-medium" 
                   ng-disabled="!unlockEdit"
@@ -39,13 +42,23 @@
                   />
               </div>
             </div>
+
             <div ng-show="toggle_memo">
               <div  class="alert alert-info">
                   <textarea rows="3" class="input-xxlarge" 
-                    ng-model="resource.info.memo" placeholder="บันทึก"
+                    ng-model="resource.info.memo" placeholder="บันทึก.."
                     ></textarea>
               </div>
             </div>
+
+            <div ng-show="toggle_warranty">
+              <div  class="alert alert-info">
+                  <textarea rows="3" class="input-xxlarge" 
+                    ng-model="resource.info.warranty_text" placeholder="ข้อความบัตรรับประกัน.."
+                    ></textarea>
+              </div>
+            </div>
+
           </div>
         </div>
 

@@ -65,6 +65,7 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         ] 
       , descriptions : [
           { name : 'info.detail' }
+        , { name : 'info.warranty_text',       label : 'บัตรรับประกัน' }
         , { name : 'info.category',       label : 'หมวด'}
         , { name : 'info.serial',         label : 'serial' }
         , { name : 'info.brand',          label : 'brand' }
