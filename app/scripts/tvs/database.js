@@ -25,6 +25,11 @@ angular.module('tvs.database', ['modules.legacy-database','modules.utils'])
         {name    : 'ถาวร' }
       , {name    : 'ชั่วคราว'}
       ]
+    , equipmentTypes : [
+      {name    : 'ไฟฟ้า' }
+    , {name    : 'น้ำ'}
+    , {name    : 'แก๊ส'}
+    ]
 
     , selfLists : 
       [

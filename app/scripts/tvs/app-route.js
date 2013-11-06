@@ -55,6 +55,19 @@
         }*/
       })
 
+      .when('/equipments/edit/:id', {
+        templateUrl: 'views/tvs/equipment-edit.html',
+        controller: 'equipmentEditCtrl'
+        /*, resolve     : 
+        {
+          editctrl 
+          : function(Database)
+            {
+              return { db  : new Database.legacy('Equipment') }
+            }
+        }*/
+      })
+      
       $route.reload()
     }
   ])
