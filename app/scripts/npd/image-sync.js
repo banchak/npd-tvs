@@ -77,7 +77,7 @@
               utils.safe$apply()
               if (resp.nextPageToken) {
                 // not finish
-                return syncFolders(parentId, resp.nextPageToken)
+                return syncImages(parentId, resp.nextPageToken)
               }
 
               return resp
