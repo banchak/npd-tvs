@@ -446,7 +446,8 @@
               field = 'info.taking'
 
             angular.forEach($scope.items(), function(item) {
-              var pm, _sys, meta, taking, kept, qry, changes, data = tempdata.get(item)
+              var pm, _sys, meta, taking, keeping, kept, qry, changes
+                , data = tempdata.get(item)
 
                 if ((data.state || null) == state) {
                   _sys = angular.extend({}, data._sys)
