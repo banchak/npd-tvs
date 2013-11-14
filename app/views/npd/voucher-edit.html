@@ -123,7 +123,7 @@
                   required 
                   ng-disabled="resource.info.approved"
                   ng-model="person().name" 
-                  typeahead="itm for itm in selfList('Person/_name,info.person_id,meta.phones.id,meta.econtacts.id', $viewValue)"
+                  typeahead="itm for itm in selfList('Person/_name,info.detail,info.person_id,meta.phones.id,meta.econtacts.id', $viewValue)"
                   typeahead-wait-ms="typeaheadWait"
                   />
                 <span class="add-on btn" 
