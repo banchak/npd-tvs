@@ -54,7 +54,7 @@
             </small>
           </h3>
         </div>
-        <div ng-hide="ifSingleShow(true ,false)">
+        <div ng-hide="ifSingleShow(true ,false) || utils.gScope.thumb_hide_desc">
           <span style="padding-right:4px;" ng-repeat="cat in categories">
             <span class="label hover-opacity-high" style="margin:1px 0;" ng-init="_v=utils.lookup(data,cat.name);" ng-show="_v">
               <span ng-init="_q={}; _q[cat.name]=_v" ng-bind="cat.label"></span>
