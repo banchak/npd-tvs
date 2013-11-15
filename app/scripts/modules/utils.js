@@ -20,6 +20,9 @@
             date: 'DD/MM/BBBB',
             dateTime: 'DD/MM/BBBB hh:mm',
             number: '0,0[.]00'
+          },
+          gScope : {
+            thumb_hide_desc : true
           }
         }
 
