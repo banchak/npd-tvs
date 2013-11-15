@@ -70,7 +70,11 @@ angular.module('npd.database', ['modules.legacy-database', 'modules.utils'])
         , { name : 'info.serial',         label : 'serial' }
         , { name : 'info.brand',          label : 'brand' }
         , { name : 'info.watch.model',    label : 'model' }
-        , { name : 'info.target_price',   label : 'ราคา'   ,viewClass : 'text-large text-info'}
+        , { name : 'info',   label : 'ราคา'   , viewClass : 'text-large text-info',
+            formatter : function(v) { return !utils.lookup(v,'taking.price') && utils.formatValue(v.target_price) }
+            }
+        , { name : 'info.taking.price',   label : 'ราคายืม'   ,viewClass : 'text-large text-info'}
+        , { name : 'info.selling.price',   label : 'ราคาขาย'   ,viewClass : 'text-large text-error'}
         , { name : 'no_data', searchIn : ['info.selling.voucher', 'info.taking.voucher', 'info.keeping.voucher'] }
         ]
       , orders : [
