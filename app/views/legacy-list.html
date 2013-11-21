@@ -54,7 +54,10 @@
 
       <div>
         <ul class="thumbnails">
-          <li ng-class="ifSingleShow('span12','span'+utils.gScope.thumb_span)" ng-repeat="data in dataList | filter : dataList.searchWithin">
+          <li ng-class="ifSingleShow('span12','span'+utils.gScope.thumb_span)" 
+            ng-repeat="data in dataList | filter : dataList.searchWithin"
+            ng-mouseenter="_mouseover=1"  ng-mouseleave="_mouseover=0" >
+            
             <div ng-class="$last && ($parent.filteredLength=$index+1) && ''"></div>
             <div class="thumbnail hover-opacity" ng-class="(data.$temp.state && ('state-' + data.$temp.state))">
 
