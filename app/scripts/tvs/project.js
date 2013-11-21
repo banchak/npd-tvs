@@ -3,7 +3,7 @@
   'use strict'
 
   angular.module('tvs.project', [
-    'tvs.database', 'tvs.contract-edit', 'tvs.area-edit', 'tvs.tenant-edit',
+    'tvs.database', 'tvs.contract-edit', 'tvs.area-edit', 'tvs.tenant-edit', 'tvs.equipment-edit',
     'controllers.app-auth', 'controllers.legacy-image-list', 'controllers.legacy-gdrive-list',
     'controllers.legacy-gcalendar-list', 'directives.markdown'
 
