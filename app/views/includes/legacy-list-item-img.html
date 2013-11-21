@@ -2,12 +2,12 @@
 
         <div ng-repeat="img in data.meta.images | limitTo : 1">
 
-          <a href ng-click="viewImage(data)" >
+          <a href ng-click="viewImage(data)">
             <img class="img-polaroid" alt="album" title="{{ data._name }}"
-              ng-hide="ifSingleShow(false,utils.gScope.thumb_hide_desc)" 
+              ng-hide="ifSingleShow(false,utils.gScope.thumb_hide_desc && !_mouseover)" 
               ng-src="{{ utils.temp('thumbnailLink', img) }}" 
               />
-            <span ng-show="ifSingleShow(false,utils.gScope.thumb_hide_desc)">album</span>
+            <span ng-show="ifSingleShow(false,utils.gScope.thumb_hide_desc && !_mouseover)">album</span>
           </a>
           
         </div>
