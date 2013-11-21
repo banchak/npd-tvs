@@ -232,6 +232,11 @@ angular.module('controllers.legacy-edit', ['modules.uis', 'modules.utils'])
       promise = db.dataAccess.distinct(name, qry).then(function(data) {
 
         data = data || []
+
+        if (data.length && !names.length && value) {
+          data = $filter('filter')(data, value)
+        }
+        
         if (mixlist) {
           angular.forEach(mixlist, function(v) {
             if (data.indexOf(v) == -1) {
