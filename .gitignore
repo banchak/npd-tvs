@@ -13,3 +13,6 @@ nbproject
 .tmp
 .sass-cache
 app/bower_components
+
+
+*.7z
