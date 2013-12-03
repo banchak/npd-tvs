@@ -14,7 +14,7 @@
 
       this.appMenu = {
         title: 'Thanya',
-        version: '0.7.1.0 2013-10-28 jsat66@gmail.com banchag@gmail.com',
+        version: '0.8.0.0 2013-12-3 jsat66@gmail.com banchag@gmail.com',
         menus: [
           'Contract', 'Tenant', 'Area', 'Equipment'
         ]

@@ -1,5 +1,9 @@
 Change logs
 ===========
+## 2013-12-3 version 0.8.0.0
+* update package angular 1.2.3, angular-ui 0.7.0
+* legacy-edit fix bug คำสั่งลบข้อมูล ไม่สามารถกด Cancel
+
 ## 2013-11-2
 * app-menu เพิ่ม link open new page
 * legacy-edit กรณี edit/new สามารถกำหนด preset value ได้
