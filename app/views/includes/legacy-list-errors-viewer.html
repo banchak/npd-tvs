@@ -1,5 +1,5 @@
 
-<div modal="errorsViewer.opened" close="errorsViewer.close()" options="errorsViewer.options">
+<script type="text/ng-template" id="errors-viewer-modal.html">
     <div class="modal-header">
         <h3 ng-bind="errorsViewer.title"></h3>
     </div>
@@ -19,8 +19,7 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-warning cancel" ng-click="errorsViewer.close()">Close</button>
+      <button class="btn btn-warning cancel" ng-click="$dismiss()">Close</button>
     </div>
 
-</div>
-<div class="modal-backdrop" ng-show="errorsViewer.opened" ng-click="errorsViewer.close()"></div>
+</script>

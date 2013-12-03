@@ -3,46 +3,40 @@
   'use strict'
 
   angular.module('controllers.legacy-gdrive-list', ['controllers.legacy-list', 'modules.gdrive'])
-    .controller('legacyGDriveListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'GDrive',
-      function($scope, legacyListDI, listctrl, $controller, $timeout, GDrive) {
+
+    .controller('gdriveViewerCtrl',[
+    '$scope','$modalInstance', 'GDrive','data', 
+    function($scope,$modalInstance,GDrive,data) {
+      $scope.gdriveViewer = {
+        data: data,
+        title: data._name,
+        description: data.info && data.info.detail,
+        newDrawer: function(cab) {
+          GDrive.drawers(cab.id, $scope.gdriveViewer.data._name, true).then(function(items) {
+            if (items && items.length) {
+              cab.items = items
+            }
+          })
+        }
+      }
+    }])
+
+    .controller('legacyGDriveListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', 'GDrive','$modal',
+      function($scope, legacyListDI, listctrl, $controller, GDrive, $modal) {
         var utils = legacyListDI.utils
 
         var success = function() {
 
-          $scope.gdriveViewer = {
-            opened: false,
-            close: function() {
-              $scope.gdriveViewer.show = false
-
-              $timeout(function() {
-
-                $scope.gdriveViewer.opened = false
-              }, 50)
-            },
-            options: {
-              //backdropFade  : true
-              //dialogFade    : true
-              backdrop: false
-            },
-            newDrawer: function(cab) {
-              GDrive.drawers(cab.id, $scope.gdriveViewer.data._name, true).then(function(items) {
-                if (items && items.length) {
-                  cab.items = items
-                }
-              })
-            }
-          }
-
           $scope.viewGDrive = function(data) {
 
-            var temp = utils.temp('cabinets'),
-              shtemp = utils.temp('shareCabinets')
+            var temp = utils.temp('cabinets')
+              , shtemp = utils.temp('shareCabinets')
 
-              if (!temp.get(data)) {
-                GDrive.drawerList(data._name, listctrl.db.name).then(function(cabs) {
-                  temp.set(data, cabs || [])
-                })
-              }
+            if (!temp.get(data)) {
+              GDrive.drawerList(data._name, listctrl.db.name).then(function(cabs) {
+                temp.set(data, cabs || [])
+              })
+            }
 
             if (!shtemp.get(data)) {
               GDrive.drawerList(data._name, listctrl.db.name, '@shared').then(function(cabs) {
@@ -50,15 +44,15 @@
               })
             }
 
-            angular.extend($scope.gdriveViewer, {
-              opened: true
-              //, show   : true
-              ,
-              data: data,
-              title: data._name,
-              description: data.info && data.info.detail
+            $modal.open({
+              templateUrl: 'gdrive-viewer-modal.html',
+              controller: 'gdriveViewerCtrl',
+              resolve: {
+                data: function () {
+                  return data;
+                }
+              }
             })
-
           }
 
           // check gdrive

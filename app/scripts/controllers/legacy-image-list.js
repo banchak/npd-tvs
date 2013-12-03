@@ -3,105 +3,84 @@
   'use strict'
 
   angular.module('controllers.legacy-image-list', ['controllers.legacy-list', 'modules.gdrive'])
-    .controller('legacyImageListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'GDrive', '$rootScope',
-      function($scope, legacyListDI, listctrl, $controller, $timeout, GDrive, $rootScope) {
+
+    .controller('imageViewerCtrl',[
+      '$scope','$modalInstance','GDrive','$rootScope','data', 
+      function($scope,$modalInstance,GDrive,$rootScope,data) {
+
+      $scope.imageViewer = {
+        images: data.meta.images,
+        folders: data.meta.folders,
+        title: data._name,
+        description: data.info && data.info.detail
+      }
+
+      $scope.imageViewer.waiting = 0
+      angular.forEach(data.meta.folders, function(folder) {
+
+        if (!folder.id || folder.links !== undefined)
+          return
+
+        folder.links = []
+
+        $scope.imageViewer.waiting += 1
+
+        GDrive.folders({ parents: folder.id }).then(function(resp) {
+
+          $scope.imageViewer.waiting -= 1
+          if (!resp || !resp.items)
+            return
+
+
+          $rootScope.authorize().then(function() {
+
+            if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
+              var user = $rootScope.authorizeData.user
+
+              angular.forEach(resp.items, function(meta) {
+
+                if (meta && meta.alternateLink && user.hasRole(meta.title)) {
+
+                  folder.links.push({
+                    link: meta.alternateLink,
+                    title: meta.title
+                  })
+                }
+              })
+            }
+          })
+        })
+      })          
+      
+    }])
+
+    .controller('legacyImageListCtrl', [
+      '$scope', 'legacyListDI', 'listctrl', '$controller','$modal', 'GDrive',
+      function($scope, legacyListDI, listctrl, $controller,$modal, GDrive) {
+
 
         var success = function() {
+
           var utils = legacyListDI.utils
 
-          $scope.imageViewer = {
-            opened: false,
-            close: function() {
-              $scope.imageViewer.show = false
+           $scope.viewImage = function(data) {
 
-              $timeout(function() {
-
-                $scope.imageViewer.opened = false
-              }, 50)
-            },
-            options: {
-              //backdropFade  : true
-              //dialogFade    : true
-              backdrop: false
-            }
-          }
-
-          $scope.viewImage = function(data) {
-
-            var img
-
-              function _showFolder() {
-                angular.forEach(data.meta.folders, function(folder) {
-
-                  if (!folder.id || folder.links !== undefined) {
-                    $scope.imageViewer.show = true
-                    $scope.$apply()
-                    return
-                  }
-
-                  folder.links = []
-                  GDrive.folders({
-                    parents: folder.id
-                  })
-                    .then(function(resp) {
-                      var count = 0
-
-                      if (resp && resp.items) {
-
-                        $rootScope.authorize().then(function() {
-
-                          if ($rootScope.authorizeData && $rootScope.authorizeData.user) {
-                            var user = $rootScope.authorizeData.user
-
-                            angular.forEach(resp.items, function(meta) {
-
-                              if (meta && meta.alternateLink) {
-
-
-                                if (user.hasRole(meta.title)) {
-                                  folder.links.push({
-                                    link: meta.alternateLink,
-                                    title: meta.title
-                                  })
-                                }
-                              }
-                              count += 1
-
-                              if (count == resp.items.length) {
-
-                                $scope.imageViewer.show = true
-                              }
-                            })
-                          } else {
-                            $scope.imageViewer.show = true
-                          }
-                        })
-                      } else {
-                        $scope.imageViewer.show = true
-                      }
-                    })
-                })
+            $modal.open({
+              templateUrl: 'image-viewer-modal.html',
+              controller: 'imageViewerCtrl',
+              resolve: {
+                data: function () {
+                  return data;
+                }
               }
-
-            angular.extend($scope.imageViewer, {
-              images: data.meta.images,
-              folders: data.meta.folders,
-              opened: true,
-              show: !data.meta.folders,
-              title: data._name,
-              description: data.info && data.info.detail
             })
-
-            $timeout(_showFolder, 2000)
           }
 
           $scope.images = function(data) {
             var images, img
 
-            if (!data.meta || !data.meta.images) {
-
+            if (!data.meta || !data.meta.images)
               return
-            }
 
             images = data.meta.images
 

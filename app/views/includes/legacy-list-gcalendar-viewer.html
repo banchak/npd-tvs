@@ -1,5 +1,5 @@
 
-<div modal="gcalendarViewer.opened" close="gcalendarViewer.close()" options="gcalendarViewer.options">
+<script type="text/ng-template" id="gcalendar-viewer-modal.html">
     <div class="modal-header">
         <h3 ng-bind="gcalendarViewer.title"></h3>
     </div>
@@ -48,8 +48,7 @@
       <span ng-hide="gcalendarViewer.data.$temp.events != null">
         <img src="images/spinner.gif" />
       </span>
-      <button class="btn btn-warning cancel" ng-click="gcalendarViewer.close()">Close</button>
+      <button class="btn btn-warning cancel" ng-click="$dismiss()">Close</button>
     </div>
 
-</div>
-<div class="modal-backdrop" ng-show="gcalendarViewer.opened" ng-click="gcalendarViewer.close()"></div>
+</script>

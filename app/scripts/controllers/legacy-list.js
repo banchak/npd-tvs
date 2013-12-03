@@ -14,6 +14,16 @@ angular.module('controllers.legacy-list',['modules.utils'])
     }
   ])
 
+  .controller('errorsViewerCtrl',['$scope','$modalInstance','data', 
+  function($scope,$modalInstance,data) {
+
+    $scope.errorsViewer = {
+      data   : data
+    , title  : data._name
+    }
+
+  }])
+
   .controller('legacyListCtrl', ['$scope', 'legacyListDI', 'listctrl', 'APP_CONFIG'
   , function($scope, legacyListDI, listctrl, APP_CONFIG)
     {
@@ -334,31 +344,20 @@ angular.module('controllers.legacy-list',['modules.utils'])
         $scope.singleShowFields = listctrl.singleShowFields || listctrl.db.singleShowFields
       }
 
-      $scope.errorsViewer = {
-          opened  : false
-        , close   : function () { 
-            $scope.errorsViewer.show = false 
-            $scope.errorsViewer.opened = false 
-          }
-        , options : {
-            //backdropFade  : true
-            //dialogFade    : true
-            backdrop      : false
-          }
-        }
-
       $scope.viewErrors = function(data, errors) {
         var temp = utils.temp('errors')
 
         temp.set(data,errors)
 
-        angular.extend ($scope.errorsViewer, {
-                    opened : true
-                  //, show   : true
-                  , data   : data
-                  , title  : data._name
-                  , description : utils.temp('description',data)
-                  })
+        $modal.open({
+          templateUrl: 'errors-viewer-modal.html',
+          controller: 'errorsViewerCtrl',
+          resolve: {
+            data: function () {
+              return data;
+            }
+          }
+        })
 
       }
 
