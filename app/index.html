@@ -12,8 +12,9 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <!-- build:css({.tmp,app}) styles/main.css -->
-        <link rel="stylesheet" href="styles/bootstrap.css">
+        <link rel="stylesheet" href="styles/bootstrap-2.3.2.css">
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/bootstrap-responsive-2.3.2.css">
         <!-- endbuild -->
 </head>
   <body>
@@ -33,6 +34,7 @@
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.min.js"></script>
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
@@ -41,7 +43,7 @@
     <!-- script src="scripts/tvs/contract-edit.js"></script -->
     <script>
         angular.module('project',[])
-        angular .module('modules',[])
+        angular .module('modules',['ngRoute'])
 
         function appMenuCtrl($scope){
             $scope.menu = { title : "scraft" }
