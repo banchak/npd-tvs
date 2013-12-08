@@ -399,8 +399,9 @@ angular.module('controllers.legacy-edit', ['modules.uis', 'modules.utils'])
                 return $q.reject()
               }
             })
+            return result
           }
-          return result
+          return $q.reject()
         })
 
         return promise.then(function(result) {

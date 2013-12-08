@@ -1,5 +1,5 @@
 
-<div modal="gdriveViewer.opened" close="gdriveViewer.close()" options="gdriveViewer.options">
+<script type="text/ng-template" id="gdrive-viewer-modal.html">
     <div class="modal-header">
         <h3 ng-bind="gdriveViewer.title"></h3>
     </div>
@@ -28,7 +28,7 @@
         </div>
 
         <div ng-show="gdriveViewer.data.$temp.cabinets"> 
-          <h4>User's drive</h4>
+          <h4>User drive</h4>
           <div class="alert alert-block alert-info">
 
             <div class="row-fluid" style="padding:2px;" ng-repeat="cab in gdriveViewer.data.$temp.cabinets">
@@ -55,8 +55,7 @@
       <span ng-hide="gdriveViewer.data.$temp.cabinets != null && gdriveViewer.data.$temp.shareCabinets != null">
         <img src="images/spinner.gif" />
       </span>
-      <button class="btn btn-warning cancel" ng-click="gdriveViewer.close()">Close</button>
+      <button class="btn btn-warning cancel" ng-click="$dismiss()">Close</button>
     </div>
 
-</div>
-<div class="modal-backdrop" ng-show="gdriveViewer.opened" ng-click="gdriveViewer.close()"></div>
+</script>

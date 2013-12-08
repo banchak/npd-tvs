@@ -1,25 +1,24 @@
 
-<div modal="imageViewer.opened" close="imageViewer.close()" options="imageViewer.options">
+<script type="text/ng-template" id="image-viewer-modal.html">
     <div class="modal-header">
         <h3 ng-bind="imageViewer.title"></h3>
     </div>
     <div class="modal-body">
         <div>
           <div ng-repeat="img in imageViewer.images | limitTo : 1">
-            <img ng-src="{{ utils.temp('src',img) }}" />
+            <img ng-src="{{ img.$temp.src }}" />
           </div>
         </div>
         <p style="word-wrap:break-word;" class="text-center" ng-bind="imageViewer.description">
         </p>
     </div>
     <div class="modal-footer">
-      <span ng-hide="imageViewer.show" class="text-center">
+      <span ng-show="imageViewer.waiting" class="text-center">
         <img src="images/spinner.gif" />
       </span>
       <span ng-repeat="folder in imageViewer.folders | limitTo : 1">
         <a class="btn" target="_blank" ng-repeat="lnk in folder.links | orderBy:'title'" ng-href="{{lnk.link}}" ng-bind="lnk.title"></a>
       </span>  
-      <button class="btn btn-warning cancel" ng-click="imageViewer.close()">Close</button>
+      <button class="btn btn-warning cancel" ng-click="$dismiss()">Close</button>
     </div>
-</div>
-<div class="modal-backdrop" ng-show="imageViewer.opened" ng-click="imageViewer.close()"></div>
+</script>

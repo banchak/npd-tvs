@@ -3,48 +3,46 @@
   'use strict'
 
   angular.module('controllers.legacy-gcalendar-list', ['controllers.legacy-list', 'modules.gcalendar'])
-    .controller('legacyGCalendarListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', '$timeout', 'GCalendar',
-      function($scope, legacyListDI, listctrl, $controller, $timeout, GCalendar) {
+
+    .controller('gcalendarViewerCtrl',[
+    '$scope', 'legacyListDI','$modalInstance','GCalendar','data', 
+    function($scope,legacyListDI,$modalInstance,GCalendar,data) {
+      var utils = legacyListDI.utils
+
+      $scope.gcalendarViewer = {
+        data: data,
+        title: data._name,
+        description: data.info && data.info.detail
+      }
+
+      $scope.eventComposeUrl = function(text, src) {
+        var params = {
+          action: 'TEMPLATE'
+        }
+
+        if (text) {
+
+          if (text[0] != '@')
+            text = '@' + text
+
+          params.text = text + ' - '
+          params.details = text + ' - '
+        }
+
+        if (src)
+          params.src = src
+
+        return 'http://www.google.com/calendar/event?' + utils.serialize(params)
+      }
+
+
+    }])
+
+    .controller('legacyGCalendarListCtrl', ['$scope', 'legacyListDI', 'listctrl', '$controller', 'GCalendar', '$modal',
+      function($scope, legacyListDI, listctrl, $controller, GCalendar, $modal) {
         var utils = legacyListDI.utils
 
         var success = function() {
-
-          $scope.gcalendarViewer = {
-            opened: false,
-            close: function() {
-              $scope.gcalendarViewer.show = false
-
-              $timeout(function() {
-
-                $scope.gcalendarViewer.opened = false
-              }, 50)
-            },
-            options: {
-              //backdropFade  : true
-              //dialogFade    : true
-              backdrop: false
-            }
-          }
-
-          $scope.eventComposeUrl = function(text, src) {
-            var params = {
-              action: 'TEMPLATE'
-            }
-
-            if (text) {
-
-              if (text[0] != '@')
-                text = '@' + text
-
-              params.text = text + ' - '
-              params.details = text + ' - '
-            }
-
-            if (src)
-              params.src = src
-
-            return 'http://www.google.com/calendar/event?' + utils.serialize(params)
-          }
 
           $scope.viewGCalendar = function(data) {
             var temp = utils.temp('events')
@@ -54,13 +52,15 @@
               temp.set(data, resp || [])
             })
 
-            angular.extend($scope.gcalendarViewer, {
-              opened: true,
-              data: data,
-              title: data._name,
-              description: data.info && data.info.detail
+            $modal.open({
+              templateUrl: 'gcalendar-viewer-modal.html',
+              controller: 'gcalendarViewerCtrl',
+              resolve: {
+                data: function () {
+                  return data;
+                }
+              }
             })
-
           }
 
           // check gcalendar
@@ -91,6 +91,7 @@
               })
             }
           })
+
         }
 
         var org_success = listctrl.success
@@ -111,9 +112,7 @@
           legacyListDI: legacyListDI,
           listctrl: listctrl
         })
-
       }
     ])
-
 
 }).call(this);

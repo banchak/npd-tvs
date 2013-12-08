@@ -7,7 +7,7 @@
     'modules', [
       'modules.utils', 'controllers.app-menu', 'controllers.legacy-list',
       'controllers.legacy-edit', 'controllers.legacy-search', 'directives.numeral',
-      'directives.moment', 'ngCookies'
+      'directives.moment', 'ngCookies','ngRoute'
     ])
 
   var app = angular.module('angularApp');

@@ -5,7 +5,7 @@
   /* App Module */
   var app = angular.module('angularApp', ['modules', 'project'])
 
-  app.config(function($routeProvider) {
+  app.config(['$routeProvider',function($routeProvider) {
     app._routeProvider = $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -14,6 +14,6 @@
       .otherwise({
         redirectTo: '/'
       });
-  })
+  }])
 
 }).call(this);
