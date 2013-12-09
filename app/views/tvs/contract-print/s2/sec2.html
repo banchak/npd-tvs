@@ -17,13 +17,12 @@
   ดังนี้
   </span>
 </p>
-<p ng-show="service_rates().length &gt; 1">
+<div ng-show="service_rates().length &gt; 1">
   <div ng-repeat="rate in service_rates()">
   (2.1.{{$index+1}}) {{rate.description}}&nbsp;
   <span ng-show="rate.value">{{rate.value | numeral}} บาท ({{rate.value | numeral:'bahttext'}})</span>
   </div>
-</p>
-
+</div>
 <p>
   <table style="margin:0 auto;text-indent:0;">
     <tr >
